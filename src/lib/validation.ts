@@ -81,19 +81,48 @@ export const summarySchema = z.object({
 export type SummaryValues = z.infer<typeof summarySchema>;
 
 export const resumeSchema = z.object({
-  ...generalInfoSchema.shape,
-  ...personalInfoSchema.shape,
-  ...workExperienceSchema.shape,
-  ...educationSchema.shape,
-  ...skillsSchema.shape,
-  ...summarySchema.shape,
+  title: optionalString,
+  description: optionalString,
+  photo: z.any().optional(),
+  firstName: optionalString,
+  lastName: optionalString,
+  jobTitle: optionalString,
+  city: optionalString,
+  country: optionalString,
+  phone: optionalString,
+  email: optionalString,
+  summary: optionalString,
+  workExperiences: z
+    .array(
+      z.object({
+        position: optionalString,
+        company: optionalString,
+        startDate: optionalString,
+        endDate: optionalString,
+        description: optionalString,
+      }),
+    )
+    .optional(),
+  educations: z
+    .array(
+      z.object({
+        degree: optionalString,
+        school: optionalString,
+        startDate: optionalString,
+        endDate: optionalString,
+      }),
+    )
+    .optional(),
+  skills: z.array(z.string()).default([]),
   colorHex: optionalString,
   borderStyle: z.custom<BorderStyle>().optional(),
+  templateType: optionalString,
 });
 
 export type ResumeValues = Omit<z.infer<typeof resumeSchema>, "photo"> & {
   id?: string;
   photo?: File | string | null;
+  templateType?: string;
 };
 
 export const generateWorkExperienceSchema = z.object({

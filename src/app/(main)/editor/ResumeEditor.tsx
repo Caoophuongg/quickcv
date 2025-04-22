@@ -4,6 +4,7 @@ import useUnloadWarning from "@/hooks/useUnloadWarning";
 import { ResumeServerData } from "@/lib/types";
 import { cn, mapToResumeValues } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
+import { TemplateType } from "@/components/resume-templates";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import Breadcrumbs from "./Breadcrumbs";
@@ -14,14 +15,20 @@ import useAutoSaveResume from "./useAutoSaveResume";
 
 interface ResumeEditorProps {
   resumeToEdit: ResumeServerData | null;
+  templateType?: TemplateType;
 }
 
-export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
+export default function ResumeEditor({
+  resumeToEdit,
+  templateType = TemplateType.BLANK,
+}: ResumeEditorProps) {
   const searchParams = useSearchParams();
 
-  const [resumeData, setResumeData] = useState<ResumeValues>(
-    resumeToEdit ? mapToResumeValues(resumeToEdit) : {},
-  );
+  const [resumeData, setResumeData] = useState<ResumeValues>({
+    skills: [],
+    ...(resumeToEdit ? mapToResumeValues(resumeToEdit) : {}),
+    templateType,
+  } as unknown as ResumeValues);
 
   const [showSmResumePreview, setShowSmResumePreview] = useState(false);
 
@@ -70,6 +77,7 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
           <ResumePreviewSection
             resumeData={resumeData}
             setResumeData={setResumeData}
+            templateType={templateType}
             className={cn(showSmResumePreview && "flex")}
           />
         </div>

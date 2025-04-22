@@ -1,4 +1,5 @@
 import ResumePreview from "@/components/ResumePreview";
+import { TemplateType } from "@/components/resume-templates";
 import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
 import BorderStyleButton, { BorderStyle } from "./BorderStyleButton";
@@ -8,12 +9,14 @@ interface ResumePreviewSectionProps {
   resumeData: ResumeValues;
   setResumeData: (data: ResumeValues) => void;
   className?: string;
+  templateType?: TemplateType;
 }
 
 export default function ResumePreviewSection({
   resumeData,
   setResumeData,
   className,
+  templateType = TemplateType.BLANK,
 }: ResumePreviewSectionProps) {
   return (
     <div
@@ -37,6 +40,7 @@ export default function ResumePreviewSection({
         <ResumePreview
           resumeData={resumeData}
           className="max-w-2xl shadow-md"
+          templateType={templateType}
         />
       </div>
     </div>

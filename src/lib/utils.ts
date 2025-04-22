@@ -49,5 +49,6 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     borderStyle: data.borderStyle as BorderStyle,
     colorHex: data.colorHex,
     summary: data.summary || undefined,
+    templateType: data.templateType,
   };
 }

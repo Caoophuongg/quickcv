@@ -11,7 +11,7 @@ export async function saveResume(values: ResumeValues) {
 
   console.log("received values", values);
 
-  const { photo, workExperiences, educations, ...resumeValues } =
+  const { photo, workExperiences, educations, templateType, ...resumeValues } =
     resumeSchema.parse(values);
 
   const { userId } = await auth();
@@ -52,6 +52,7 @@ export async function saveResume(values: ResumeValues) {
       where: { id },
       data: {
         ...resumeValues,
+        templateType,
         photoUrl: newPhotoUrl,
         workExperiences: {
           deleteMany: {},
@@ -76,6 +77,7 @@ export async function saveResume(values: ResumeValues) {
     return prisma.resume.create({
       data: {
         ...resumeValues,
+        templateType,
         userId,
         photoUrl: newPhotoUrl,
         workExperiences: {

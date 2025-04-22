@@ -26,6 +26,7 @@ import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { useReactToPrint } from "react-to-print";
 import { deleteResume } from "./actions";
+import { TemplateType } from "@/components/resume-templates";
 
 interface ResumeItemProps {
   resume: ResumeServerData;
@@ -34,12 +35,35 @@ interface ResumeItemProps {
 export default function ResumeItem({ resume }: ResumeItemProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
+  const resumeTemplate =
+    (resume.templateType as TemplateType) || TemplateType.BLANK;
+  const wasUpdated = resume.updatedAt !== resume.createdAt;
+
   const reactToPrintFn = useReactToPrint({
     contentRef,
     documentTitle: resume.title || "Resume",
+    pageStyle: `
+      @page {
+        size: A4;
+        margin: 0cm;
+      }
+      @media print {
+        html, body {
+          height: 100%;
+          background-color: white !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
+        * {
+          box-shadow: none !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
+      }
+    `,
   });
-
-  const wasUpdated = resume.updatedAt !== resume.createdAt;
 
   return (
     <div className="group relative rounded-lg border border-transparent bg-secondary p-3 transition-colors hover:border-border">
@@ -67,8 +91,8 @@ export default function ResumeItem({ resume }: ResumeItemProps) {
             resumeData={mapToResumeValues(resume)}
             contentRef={contentRef}
             className="overflow-hidden shadow-sm transition-shadow group-hover:shadow-lg"
+            templateType={resumeTemplate}
           />
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent" />
         </Link>
       </div>
       <MoreMenu resumeId={resume.id} onPrintClick={reactToPrintFn} />
