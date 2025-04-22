@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function CreateResumeButton() {
   return (
-    <Button asChild className="flex w-full items-center justify-center gap-2">
+    <Button asChild className="mx-auto flex w-fit gap-2">
       <Link href="/editor">
         <PlusSquare className="size-5" />
         New resume
