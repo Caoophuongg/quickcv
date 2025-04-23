@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { resumeSchema, ResumeValues } from "@/lib/validation";
-import { auth } from "@clerk/nextjs/server";
+import { getAuthSession } from "@/lib/auth";
 import { del, put } from "@vercel/blob";
 import path from "path";
 
@@ -14,11 +14,13 @@ export async function saveResume(values: ResumeValues) {
   const { photo, workExperiences, educations, templateType, ...resumeValues } =
     resumeSchema.parse(values);
 
-  const { userId } = await auth();
+  const session = await getAuthSession();
 
-  if (!userId) {
+  if (!session) {
     throw new Error("User not authenticated");
   }
+
+  const userId = session.id;
 
   const existingResume = id
     ? await prisma.resume.findUnique({ where: { id, userId } })

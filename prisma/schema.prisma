@@ -14,9 +14,31 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  avatarUrl String?
+  role      UserRole @default(USER)
+  resumes   Resume[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model Resume {
   id     String @id @default(cuid())
   userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   title       String?
   description String?

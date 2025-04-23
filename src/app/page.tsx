@@ -1,13 +1,12 @@
 "use client";
 
 import ThemeToggle from "@/components/ThemeToggle";
-import { dark } from "@clerk/themes";
 import { Button } from "@/components/ui/button";
-import { UserButton, useAuth } from "@clerk/nextjs";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { Bot, FileText, Share2 } from "lucide-react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const newsData = [
   {
@@ -41,8 +40,7 @@ const newsData = [
 ];
 
 export default function Home() {
-  const { isSignedIn } = useAuth();
-  const { theme } = useTheme();
+  const { isAuthenticated, user } = useAuthContext();
 
   return (
     <div className="px-72">
@@ -50,28 +48,22 @@ export default function Home() {
         <Image src="/logo.png" alt="Logo" width={50} height={50} />
         <div className="flex items-center justify-between gap-4">
           <ThemeToggle />
-          {isSignedIn ? (
-            <UserButton
-              appearance={{
-                baseTheme: theme === "dark" ? dark : undefined,
-                elements: {
-                  avatarBox: {
-                    width: 50,
-                    height: 50,
-                  },
-                },
-              }}
-            />
+          {isAuthenticated ? (
+            <Avatar className="h-12 w-12">
+              <AvatarFallback className="bg-primary text-primary-foreground">
+                {user?.firstName?.[0] || user?.email[0].toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
           ) : (
             <div className="flex gap-3 text-lg font-medium">
-              <Link href="/sign-in" className="text-prim px-4 py-2">
-                Log in
+              <Link href="/login" className="px-5 py-3 text-prim">
+                Đăng nhập
               </Link>
               <Link
-                href="/sign-up"
-                className="bg-prim rounded-lg px-5 py-3 text-white hover:bg-[#3d4080]"
+                href="/register"
+                className="rounded-lg bg-prim px-5 py-3 text-white hover:bg-[#3d4080]"
               >
-                Sign up
+                Đăng ký
               </Link>
             </div>
           )}
@@ -82,11 +74,11 @@ export default function Home() {
         {/* banner */}
         <section className="flex items-center justify-between py-52">
           <div className="flex flex-1 flex-col items-start gap-5">
-            <p className="text-prim text-xl font-semibold uppercase">
+            <p className="text-xl font-semibold uppercase text-prim">
               Welcome to QuickCV
             </p>
             <h1 className="scroll-m-20 text-4xl font-semibold !leading-tight tracking-tight lg:text-6xl">
-              <span className="text-prim inline-block">
+              <span className="inline-block text-prim">
                 Create a Compelling CV
               </span>{" "}
               with AI assistance in minutes.
@@ -114,7 +106,7 @@ export default function Home() {
           </div>
         </section>
         {/* feat */}
-        <section className="text-prim space-y-10 text-3xl">
+        <section className="space-y-10 text-3xl text-prim">
           <h2 className="text-center font-bold">Our Features</h2>
           <div className="flex flex-col gap-6 lg:flex-row">
             {" "}
@@ -155,7 +147,7 @@ export default function Home() {
         </section>
         {/* news */}
         <section className="my-32 space-y-10">
-          <h2 className="text-prim text-center text-3xl font-bold">
+          <h2 className="text-center text-3xl font-bold text-prim">
             Latest News
           </h2>
           <div className="grid grid-cols-3 gap-6 lg:flex-row">
@@ -178,7 +170,7 @@ export default function Home() {
                     </p>
                     |<p>{data.date}</p>
                   </div>
-                  <p className="text-prim text-xl font-semibold !leading-7">
+                  <p className="text-xl font-semibold !leading-7 text-prim">
                     {data.title}
                   </p>
                   <p className="line-clamp-2 text-gray-600">{data.content}</p>

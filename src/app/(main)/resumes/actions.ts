@@ -1,16 +1,18 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { getAuthSession } from "@/lib/auth";
 import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 
 export async function deleteResume(id: string) {
-  const { userId } = await auth();
+  const session = await getAuthSession();
 
-  if (!userId) {
+  if (!session) {
     throw new Error("User not authenticated");
   }
+
+  const userId = session.id;
 
   const resume = await prisma.resume.findUnique({
     where: {

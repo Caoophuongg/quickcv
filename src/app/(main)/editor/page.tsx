@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { resumeDataInclude, ResumeServerData } from "@/lib/types";
 import { resumeTemplates } from "@/lib/templates";
-import { auth } from "@clerk/nextjs/server";
+import { getAuthSession } from "@/lib/auth";
 import { Metadata } from "next";
 import ResumeEditor from "./ResumeEditor";
 import { TemplateType } from "@/components/resume-templates";
@@ -17,11 +17,13 @@ export const metadata: Metadata = {
 export default async function Page({ searchParams }: PageProps) {
   const { resumeId, template } = await searchParams;
 
-  const { userId } = await auth();
+  const session = await getAuthSession();
 
-  if (!userId) {
+  if (!session) {
     return null;
   }
+
+  const userId = session.id;
 
   let resumeToEdit: ResumeServerData | null = null;
   let templateType: TemplateType = TemplateType.BLANK;

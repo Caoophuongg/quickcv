@@ -8,12 +8,12 @@ import {
   generateWorkExperienceSchema,
   WorkExperience,
 } from "@/lib/validation";
-import { auth } from "@clerk/nextjs/server";
+import { getAuthSession } from "@/lib/auth";
 
 export async function generateSummary(input: GenerateSummaryInput) {
-  const { userId } = await auth();
+  const session = await getAuthSession();
 
-  if (!userId) {
+  if (!session) {
     throw new Error("Unauthorized");
   }
 
@@ -84,9 +84,9 @@ export async function generateSummary(input: GenerateSummaryInput) {
 export async function generateWorkExperience(
   input: GenerateWorkExperienceInput,
 ) {
-  const { userId } = await auth();
+  const session = await getAuthSession();
 
-  if (!userId) {
+  if (!session) {
     throw new Error("Unauthorized");
   }
 

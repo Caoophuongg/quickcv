@@ -1,5 +1,6 @@
 import { getUserSubscriptionLevel } from "@/lib/subscription";
-import { auth } from "@clerk/nextjs/server";
+import { getAuthSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import Navbar from "./Navbar";
 import SubscriptionLevelProvider from "./SubscriptionLevelProvider";
 
@@ -8,10 +9,10 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const { userId } = await auth();
+  const session = await getAuthSession();
 
-  if (!userId) {
-    return null;
+  if (!session) {
+    redirect("/login");
   }
 
   const userSubscriptionLevel = await getUserSubscriptionLevel();
