@@ -1,4 +1,4 @@
-# Next.js 15 AI Resume Builder
+# Next.js 15 Quick CV
 
 Build and deploy a professional **full-stack** application with the **ChatGPT API** for AI-powered resume building.
 

@@ -78,21 +78,21 @@ export default function Home() {
               Welcome to QuickCV
             </p>
             <h1 className="scroll-m-20 text-4xl font-semibold !leading-tight tracking-tight lg:text-6xl">
-              <span className="inline-block text-prim">
-                Create a Compelling CV
-              </span>{" "}
-              with AI assistance in minutes.
+              <span className="inline-block text-prim">Tạo một CV hấp dẫn</span>{" "}
+              với sự hỗ trợ của AI trong vài phút.
             </h1>
             <div className="text-xl text-[#212529]">
-              <p>Online resume builder with AI assistance</p>
+              <p>Trình tạo sơ yếu lý lịch trực tuyến với sự hỗ trợ của AI</p>
               <p>
-                <span className="text-prim">Create a professional resume</span>{" "}
-                - effortlessly with our AI-powered builder.
+                <span className="text-prim">
+                  Tạo một sơ yếu lý lịch chuyên nghiệp
+                </span>{" "}
+                - dễ dàng với trình xây dựng hỗ trợ AI của chúng tôi.
               </p>
             </div>
             <Button asChild className="bg-prim hover:bg-[#3d4080]">
               <Link href="/resumes" className="px-8 py-7 text-xl">
-                Get started
+                Bắt đầu
               </Link>
             </Button>
           </div>
@@ -107,40 +107,40 @@ export default function Home() {
         </section>
         {/* feat */}
         <section className="space-y-10 text-3xl text-prim">
-          <h2 className="text-center font-bold">Our Features</h2>
+          <h2 className="text-center font-bold">Tính năng của chúng tôi</h2>
           <div className="flex flex-col gap-6 lg:flex-row">
             {" "}
             {/* Feature 1 */}
             <div className="w-full flex-1 transform rounded-xl border border-[#a5a8e6] px-8 py-12 text-center shadow-xl transition duration-300 hover:-translate-y-3">
               <FileText className="mx-auto mb-4 h-10 w-10 text-indigo-600" />
               <h3 className="mb-2 text-2xl font-semibold">
-                Create Resume Easily
+                Tạo Sơ yếu lý lịch dễ dàng
               </h3>
               <p className="text-lg text-gray-600">
-                Whether you&apos;re just starting out or experienced, build a
-                polished resume in minutes.
+                Cho dù bạn mới bắt đầu hay đã có kinh nghiệm, hãy xây dựng một
+                bản sơ yếu lý lịch hoàn hảo chỉ trong vài phút.
               </p>
             </div>
             {/* Feature 2 */}
             <div className="w-full flex-1 transform rounded-xl border border-[#a5a8e6] px-8 py-12 text-center shadow-xl transition duration-300 hover:-translate-y-3">
               <Share2 className="mx-auto mb-4 h-10 w-10 text-green-600" />
               <h3 className="mb-2 text-2xl font-semibold">
-                Auto-Save & Easy Sharing
+                Tự động lưu và chia sẻ dễ dàng
               </h3>
               <p className="text-lg text-gray-600">
-                Your resume is saved automatically. Download as PDF or share
-                with a click.
+                Sơ yếu lý lịch của bạn được lưu tự động. Tải xuống dưới dạng PDF
+                hoặc chia sẻ chỉ bằng một cú nhấp chuột.
               </p>
             </div>
             {/* Feature 3 */}
             <div className="w-full flex-1 transform rounded-xl border border-[#a5a8e6] px-8 py-12 text-center shadow-xl transition duration-300 hover:-translate-y-3">
               <Bot className="mx-auto mb-4 h-10 w-10 text-red-500" />
               <h3 className="mb-2 text-2xl font-semibold">
-                Smart AI Content Suggestions
+                Gợi ý nội dung AI thông minh
               </h3>
               <p className="text-lg text-gray-600">
-                Not sure what to write? Let our AI generate the perfect content
-                for you.
+                Không biết nên viết gì? Hãy để AI của chúng tôi tạo ra nội dung
+                hoàn hảo cho bạn.
               </p>
             </div>
           </div>
@@ -148,7 +148,7 @@ export default function Home() {
         {/* news */}
         <section className="my-32 space-y-10">
           <h2 className="text-center text-3xl font-bold text-prim">
-            Latest News
+            Tin tức mới nhất
           </h2>
           <div className="grid grid-cols-3 gap-6 lg:flex-row">
             {newsData.map((data) => (
@@ -175,7 +175,7 @@ export default function Home() {
                   </p>
                   <p className="line-clamp-2 text-gray-600">{data.content}</p>
                   <button className="text-prim underline underline-offset-4">
-                    Read more
+                    Chi tiết
                   </button>
                 </div>
               </div>

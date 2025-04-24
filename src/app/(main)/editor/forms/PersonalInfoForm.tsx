@@ -45,8 +45,10 @@ export default function PersonalInfoForm({
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">Personal info</h2>
-        <p className="text-sm text-muted-foreground">Tell us about yourself.</p>
+        <h2 className="text-2xl font-semibold">Thông tin cá nhân</h2>
+        <p className="text-sm text-muted-foreground">
+          Hãy kể cho chúng tôi về bạn
+        </p>
       </div>
       <Form {...form}>
         <form className="space-y-3">
@@ -55,7 +57,7 @@ export default function PersonalInfoForm({
             name="photo"
             render={({ field: { value, ...fieldValues } }) => (
               <FormItem>
-                <FormLabel>Your photo</FormLabel>
+                <FormLabel>Ảnh của bạn</FormLabel>
                 <div className="flex items-center gap-2">
                   <FormControl>
                     <Input
@@ -79,7 +81,7 @@ export default function PersonalInfoForm({
                       }
                     }}
                   >
-                    Remove
+                    Xóa
                   </Button>
                 </div>
                 <FormMessage />
@@ -92,7 +94,7 @@ export default function PersonalInfoForm({
               name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First name</FormLabel>
+                  <FormLabel>Họ</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -105,7 +107,7 @@ export default function PersonalInfoForm({
               name="lastName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last name</FormLabel>
+                  <FormLabel>Tên</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -119,7 +121,7 @@ export default function PersonalInfoForm({
             name="jobTitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Job title</FormLabel>
+                <FormLabel>Vị trí công việc</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -133,7 +135,7 @@ export default function PersonalInfoForm({
               name="city"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>City</FormLabel>
+                  <FormLabel>Thành phố</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -146,7 +148,7 @@ export default function PersonalInfoForm({
               name="country"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Country</FormLabel>
+                  <FormLabel>Quốc gia</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -160,7 +162,7 @@ export default function PersonalInfoForm({
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone</FormLabel>
+                <FormLabel>Số điện thoại</FormLabel>
                 <FormControl>
                   <Input {...field} type="tel" />
                 </FormControl>

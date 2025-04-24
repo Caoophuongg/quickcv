@@ -38,9 +38,9 @@ export default function GeneralInfoForm({
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">General info</h2>
+        <h2 className="text-2xl font-semibold">Thông tin chung</h2>
         <p className="text-sm text-muted-foreground">
-          This will not appear on your resume.
+          Nội dung này sẽ không xuất hiện trong sơ yếu lý lịch của bạn
         </p>
       </div>
       <Form {...form}>
@@ -50,9 +50,9 @@ export default function GeneralInfoForm({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Project name</FormLabel>
+                <FormLabel>Tên dự án</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="My cool resume" autoFocus />
+                  <Input {...field} placeholder="" autoFocus />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -63,12 +63,12 @@ export default function GeneralInfoForm({
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Giới thiệu dự án</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="A resume for my next job" />
+                  <Input {...field} placeholder="" />
                 </FormControl>
                 <FormDescription>
-                  Describe what this resume is for.
+                  Hãy mô tả mục đích sử dụng của CV này.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

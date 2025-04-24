@@ -38,13 +38,13 @@ export default function Footer({
             }
             disabled={!previousStep}
           >
-            Previous step
+            Quay lại
           </Button>
           <Button
             onClick={nextStep ? () => setCurrentStep(nextStep) : undefined}
             disabled={!nextStep}
           >
-            Next step
+            Tiếp tục
           </Button>
         </div>
         <Button
@@ -60,7 +60,7 @@ export default function Footer({
         </Button>
         <div className="flex items-center gap-3">
           <Button variant="secondary" asChild>
-            <Link href="/resumes">Close</Link>
+            <Link href="/resumes">Đóng</Link>
           </Button>
           <p
             className={cn(
@@ -68,7 +68,7 @@ export default function Footer({
               isSaving && "opacity-100",
             )}
           >
-            Saving...
+            Đang lưu
           </p>
         </div>
       </div>

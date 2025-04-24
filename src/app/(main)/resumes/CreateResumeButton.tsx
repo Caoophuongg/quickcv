@@ -9,7 +9,7 @@ export default function CreateResumeButton() {
     <Button asChild className="flex w-fit gap-2">
       <Link href="/editor">
         <PlusSquare className="size-5" />
-        New resume
+        CV mới
       </Link>
     </Button>
   );
