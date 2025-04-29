@@ -262,19 +262,31 @@ function SkillsSection({ resumeData }: SectionProps) {
 
   if (!skills?.length) return null;
 
+  const safeColorHex = colorHex || "#000000";
+  
+  const getTextColor = (hexColor: string) => {
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+    
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    return luminance > 0.5 ? "#000000" : "#FFFFFF";
+  };
+
   return (
     <>
       <hr
         className="border-2"
         style={{
-          borderColor: colorHex,
+          borderColor: safeColorHex,
         }}
       />
       <div className="space-y-3">
         <p
           className="text-lg font-semibold"
           style={{
-            color: colorHex,
+            color: safeColorHex,
           }}
         >
           Kỹ năng
@@ -283,10 +295,11 @@ function SkillsSection({ resumeData }: SectionProps) {
           {skills.map((skill, index) => (
             <span
               key={index}
-              className="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"
+              className="inline-block rounded-full border px-2.5 py-0.5 text-xs font-medium"
               style={{
-                backgroundColor: colorHex,
-                color: "white",
+                backgroundColor: safeColorHex,
+                color: getTextColor(safeColorHex),
+                borderColor: safeColorHex,
               }}
             >
               {skill}

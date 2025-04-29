@@ -37,7 +37,7 @@ export default async function Page() {
   ]);
 
   return (
-    <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">
+    <main className="mx-auto w-full max-w-7xl space-y-6 px-2 md:px-4 lg:px-6 py-6">
       <div className="flex items-center justify-center gap-3 py-12">
         <CreateResumeButton />
         <TemplatesDialog />

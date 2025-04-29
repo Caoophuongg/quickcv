@@ -126,7 +126,7 @@ function MoreMenu({ resumeId, onPrintClick }: MoreMenuProps) {
             onClick={() => setShowDeleteConfirmation(true)}
           >
             <Trash2 className="size-4" />
-            XóaXóa
+            Xóa
           </DropdownMenuItem>
           <DropdownMenuItem
             className="flex items-center gap-2"

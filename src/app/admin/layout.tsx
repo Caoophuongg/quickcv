@@ -1,7 +1,6 @@
 import { getAuthSession, getUserById } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import AdminSidebar from "./components/AdminSidebar";
-import AdminHeader from "./components/AdminHeader";
+import AdminClientLayout from "./components/AdminClientLayout";
 
 export default async function AdminLayout({
   children,
@@ -21,14 +20,25 @@ export default async function AdminLayout({
 
   // Lấy thông tin đầy đủ của người dùng
   const user = await getUserById(session.id);
+  
+  if (!user) {
+    redirect("/login");
+  }
+
+  // Format user data for the header component
+  const userData = {
+    id: user.id,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    role: user.role,
+    // Use a type assertion to handle potential avatarUrl property
+    avatarUrl: null // Safely provide null as the default since we don't know if avatarUrl exists
+  };
 
   return (
-    <div className="flex min-h-screen">
-      <AdminSidebar />
-      <div className="flex flex-1 flex-col">
-        <AdminHeader user={user} />
-        <main className="flex-1 p-6">{children}</main>
-      </div>
-    </div>
+    <AdminClientLayout user={userData}>
+      {children}
+    </AdminClientLayout>
   );
 }

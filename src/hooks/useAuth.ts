@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { UserRole } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { STORAGE_KEYS, getStoredData, storeData, safeLocalStorage, isDataStale } from "@/lib/localStorage";
 
 interface User {
   id: string;
@@ -61,13 +62,28 @@ export function useAuth(): UseAuthReturn {
       setLoading(true);
       setError(null);
 
+      // Check localStorage for cached user data first
+      const cachedUser = getStoredData<User>(STORAGE_KEYS.USER_PROFILE);
+      
+      // Use cached data if it exists and is not stale (30 minutes)
+      if (cachedUser && !isDataStale(cachedUser.timestamp)) {
+        setUser(cachedUser.data);
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch("/api/auth/me");
 
       if (response.ok) {
         const data = await response.json();
         setUser(data.user);
+        
+        // Store user data in localStorage with timestamp
+        storeData(STORAGE_KEYS.USER_PROFILE, data.user);
       } else {
         setUser(null);
+        // Clear stored data if no user is authenticated
+        safeLocalStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
       }
     } catch (err) {
       console.error("Lỗi khi lấy thông tin người dùng:", err);
@@ -132,6 +148,9 @@ export function useAuth(): UseAuthReturn {
       }
 
       setUser(result.user);
+      
+      // Store user data in localStorage after successful login
+      storeData(STORAGE_KEYS.USER_PROFILE, result.user);
 
       // Tải lại trang để middleware kiểm tra cookies
       router.refresh();
@@ -153,6 +172,9 @@ export function useAuth(): UseAuthReturn {
       });
 
       setUser(null);
+      
+      // Remove user data from localStorage on logout
+      safeLocalStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
 
       // Chuyển hướng về trang chủ
       router.push("/");
@@ -214,10 +236,17 @@ export function useAuth(): UseAuthReturn {
         return;
       }
 
-      // Cập nhật thông tin người dùng trong state
-      setUser((prevUser) =>
-        prevUser ? { ...prevUser, ...result.user } : null,
-      );
+      // Cập nhật thông tin người dùng trong state và localStorage
+      setUser((prevUser) => {
+        const updatedUser = prevUser ? { ...prevUser, ...result.user } : null;
+        
+        // Update localStorage if user data was successfully updated
+        if (updatedUser) {
+          storeData(STORAGE_KEYS.USER_PROFILE, updatedUser);
+        }
+        
+        return updatedUser;
+      });
     } catch (err) {
       console.error("Lỗi khi cập nhật hồ sơ:", err);
       setError({ error: "Có lỗi xảy ra khi cập nhật hồ sơ" });

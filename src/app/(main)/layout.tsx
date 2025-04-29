@@ -1,7 +1,7 @@
 import { getUserSubscriptionLevel } from "@/lib/subscription";
 import { getAuthSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Navbar from "./Navbar";
+import Navbar from "@/components/Navbar";
 import SubscriptionLevelProvider from "./SubscriptionLevelProvider";
 
 export default async function Layout({

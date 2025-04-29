@@ -17,7 +17,7 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
+    
   });
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -29,7 +29,6 @@ export default function ProfilePage() {
       setFormData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
-        email: user.email,
       });
     }
   }, [user]);
@@ -172,18 +171,7 @@ export default function ProfilePage() {
                   />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  disabled
-                />
-                <p className="text-sm text-muted-foreground">
-                  Email không thể thay đổi.
-                </p>
-              </div>
+              
               <div className="flex justify-center gap-4 pt-2">
                 <Button
                   type="button"

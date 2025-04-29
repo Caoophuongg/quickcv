@@ -42,7 +42,7 @@ export default function TemplatesDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex w-fit gap-2">
+        <Button variant="outline" className="flex w-fit gap-2 bg-[#e1e1ec]">
           <BookTemplate className="size-5" />
           Chọn từ mẫu có sẵn
         </Button>

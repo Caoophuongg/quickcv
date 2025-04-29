@@ -27,11 +27,47 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Search, UserPlus, Loader2 } from "lucide-react";
+import { 
+  Search, 
+  UserPlus, 
+  Loader2, 
+  MoreHorizontal, 
+  Eye,
+  Pencil,
+  Trash2,
+  AlertTriangle
+} from "lucide-react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { UserRole } from "@prisma/client";
+import { cn } from "@/lib/utils";
+import api from "@/lib/axios";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface User {
   id: string;
@@ -62,6 +98,9 @@ export default function UsersPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   // Fetch users
   const fetchUsers = async (page = 1, search = searchTerm) => {
@@ -76,13 +115,7 @@ export default function UsersPage() {
         params.append("search", search);
       }
 
-      const response = await fetch(`/api/admin/users?${params.toString()}`);
-
-      if (!response.ok) {
-        throw new Error("Không thể lấy danh sách người dùng");
-      }
-
-      const data = await response.json();
+      const data = await api.get(`/api/admin/users?${params.toString()}`);
       setUsers(data.users);
       setPagination(data.pagination);
     } catch (error) {
@@ -96,17 +129,7 @@ export default function UsersPage() {
   // Xử lý thay đổi role
   const handleRoleChange = async (userId: string, newRole: UserRole) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ role: newRole }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Không thể cập nhật quyền người dùng");
-      }
+      await api.patch(`/api/admin/users/${userId}`, { role: newRole });
 
       // Cập nhật danh sách người dùng
       setUsers((prevUsers) =>
@@ -118,6 +141,21 @@ export default function UsersPage() {
       toast.success("Cập nhật quyền thành công");
     } catch (error) {
       toast.error("Có lỗi xảy ra khi cập nhật quyền");
+      console.error(error);
+    }
+  };
+
+  // Xử lý xóa người dùng
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    
+    try {
+      await api.delete(`/api/admin/users/${selectedUser.id}`);
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== selectedUser.id));
+      toast.success("Xóa người dùng thành công");
+      setIsDeleteOpen(false);
+    } catch (error) {
+      toast.error("Có lỗi xảy ra khi xóa người dùng");
       console.error(error);
     }
   };
@@ -218,43 +256,63 @@ export default function UsersPage() {
                         handleRoleChange(user.id, value as UserRole)
                       }
                     >
-                      <SelectTrigger className="w-24">
+                      <SelectTrigger 
+                        className={cn(
+                          "w-28 justify-center font-medium",
+                          user.role === "ADMIN" 
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        )}
+                      >
                         <SelectValue>
-                          <Badge
-                            variant={
-                              user.role === "ADMIN" ? "default" : "outline"
-                            }
-                          >
-                            {user.role === "ADMIN" ? "Admin" : "User"}
-                          </Badge>
+                          {user.role === "ADMIN" ? "Admin" : "User"}
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="USER">User</SelectItem>
-                        <SelectItem value="ADMIN">Admin</SelectItem>
+                        <SelectItem value="USER" className="font-medium">
+                          User
+                        </SelectItem>
+                        <SelectItem value="ADMIN" className="font-medium">
+                          Admin
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon">
-                      <span className="sr-only">Chi tiết</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="h-4 w-4"
-                      >
-                        <path d="M12 13a1 1 0 1 0 0-2a1 1 0 0 0 0 2Z" />
-                        <path d="M19 13a1 1 0 1 0 0-2a1 1 0 0 0 0 2Z" />
-                        <path d="M5 13a1 1 0 1 0 0-2a1 1 0 0 0 0 2Z" />
-                      </svg>
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <span className="sr-only">Thao tác</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setIsDetailOpen(true);
+                          }}
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          <span>Xem chi tiết</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          <span>Chỉnh sửa</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setIsDeleteOpen(true);
+                          }}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Xóa</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))
@@ -325,6 +383,88 @@ export default function UsersPage() {
             </PaginationItem>
           </PaginationContent>
         </Pagination>
+      )}
+
+      {/* Dialog xem chi tiết người dùng */}
+      {selectedUser && (
+        <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Chi tiết người dùng</DialogTitle>
+              <DialogDescription>
+                Thông tin chi tiết về người dùng
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-3 items-center gap-4">
+                <span className="text-sm font-medium">ID:</span>
+                <span className="col-span-2 text-sm">{selectedUser.id}</span>
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <span className="text-sm font-medium">Email:</span>
+                <span className="col-span-2 text-sm">{selectedUser.email}</span>
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <span className="text-sm font-medium">Họ tên:</span>
+                <span className="col-span-2 text-sm">
+                  {selectedUser.firstName && selectedUser.lastName
+                    ? `${selectedUser.firstName} ${selectedUser.lastName}`
+                    : "Chưa cập nhật"}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <span className="text-sm font-medium">Quyền:</span>
+                <Badge
+                  variant={selectedUser.role === "ADMIN" ? "default" : "secondary"}
+                  className="col-span-2 w-fit"
+                >
+                  {selectedUser.role === "ADMIN" ? "Admin" : "User"}
+                </Badge>
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <span className="text-sm font-medium">CV đã tạo:</span>
+                <span className="col-span-2 text-sm">{selectedUser._count.resumes}</span>
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <span className="text-sm font-medium">Ngày tạo:</span>
+                <span className="col-span-2 text-sm">
+                  {format(new Date(selectedUser.createdAt), "dd/MM/yyyy HH:mm:ss")}
+                </span>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={() => setIsDetailOpen(false)}>Đóng</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Dialog xác nhận xóa người dùng */}
+      {selectedUser && (
+        <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+                Xác nhận xóa người dùng
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Bạn có chắc chắn muốn xóa người dùng <strong>{selectedUser.email}</strong>? 
+                Hành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu của người dùng này,
+                bao gồm tất cả CV đã tạo.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Hủy</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={handleDeleteUser}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Xóa
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );

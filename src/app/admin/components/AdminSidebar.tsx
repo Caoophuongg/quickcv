@@ -8,10 +8,11 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  FileText
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { useAuthContext } from "@/providers/AuthProvider";
 import {
   Tooltip,
@@ -19,6 +20,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+// Tạo context để thông báo trạng thái sidebar
+export const SidebarContext = createContext({
+  isCollapsed: false,
+  setIsCollapsed: (value: boolean) => {},
+});
+
+export const useSidebar = () => useContext(SidebarContext);
 
 const navItems = [
   {
@@ -31,6 +40,11 @@ const navItems = [
     href: "/admin/users",
     icon: Users,
   },
+  {
+    title: "Quản lý Blog",
+    href: "/admin/blogs",
+    icon: FileText,
+  },
 ];
 
 export default function AdminSidebar() {
@@ -38,6 +52,22 @@ export default function AdminSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { logout } = useAuthContext();
   const router = useRouter();
+
+  // Emit trạng thái sidebar ra bên ngoài thông qua localStorage
+  useEffect(() => {
+    localStorage.setItem('admin-sidebar-collapsed', String(isCollapsed));
+    // Trigger custom event để layout có thể lắng nghe
+    const event = new CustomEvent('sidebar-collapse-changed', { detail: { isCollapsed } });
+    document.dispatchEvent(event);
+  }, [isCollapsed]);
+
+  // Khôi phục trạng thái sidebar từ localStorage khi component mount
+  useEffect(() => {
+    const savedState = localStorage.getItem('admin-sidebar-collapsed');
+    if (savedState !== null) {
+      setIsCollapsed(savedState === 'true');
+    }
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -47,15 +77,18 @@ export default function AdminSidebar() {
   return (
     <div
       className={cn(
-        "relative flex h-screen flex-col border-r bg-background transition-all duration-300",
+        "fixed left-0 top-0 flex h-screen flex-col border-r bg-background transition-all duration-300 z-10",
         isCollapsed ? "w-[70px]" : "w-[250px]",
       )}
     >
-      <div className="flex h-16 items-center justify-center border-b p-2">
+      <div className="flex h-16 items-center justify-center border-b gap-2">
         {!isCollapsed && (
-          <Link href="/admin/dashboard" className="flex items-center gap-2">
-            <span className="text-lg font-semibold">Admin Panel</span>
-          </Link>
+          <>
+          
+            <Link href="/admin/dashboard" className="flex items-center gap-2">
+              <span className="text-lg font-semibold">Admin Panel</span>
+            </Link>
+          </>
         )}
       </div>
       <Button
