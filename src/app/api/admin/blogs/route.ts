@@ -159,9 +159,13 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
 // Hàm kiểm tra URL hợp lệ
 function isValidUrl(urlString: string) {
+  // Nếu là đường dẫn tương đối (bắt đầu bằng /)
+  if (urlString.startsWith("/")) {
+    return true;
+  }
+
   try {
     const url = new URL(urlString);
     return url.protocol === "http:" || url.protocol === "https:";

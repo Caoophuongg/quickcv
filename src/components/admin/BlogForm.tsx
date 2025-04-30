@@ -109,9 +109,22 @@ export default function BlogForm({ blogId }: BlogFormProps) {
     }
   };
 
+  // Xóa hình ảnh đã chọn
+  const handleRemoveThumbnail = () => {
+    if (thumbnail.startsWith("blob:")) {
+      URL.revokeObjectURL(thumbnail);
+    }
+    setThumbnail("");
+    setThumbnailFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    toast.success("Đã xóa hình ảnh");
+  };
+
   // Xử lý upload hình ảnh
   const handleUploadThumbnail = async () => {
-    if (!thumbnailFile) return;
+    if (!thumbnailFile) return null;
 
     try {
       setThumbnailLoading(true);
@@ -123,15 +136,18 @@ export default function BlogForm({ blogId }: BlogFormProps) {
         "/api/admin/upload-thumbnail",
         formData,
       );
-      setThumbnail(response.data.thumbnailUrl);
-      toast.success("Tải lên hình ảnh thành công");
+
+      const thumbnailUrl = response.data.thumbnailUrl;
+
+      // Revoke URL blob để tránh rò rỉ bộ nhớ
+      if (thumbnail.startsWith("blob:")) {
+        URL.revokeObjectURL(thumbnail);
+      }
+
+      return thumbnailUrl;
     } catch (error: unknown) {
       console.error("Error uploading thumbnail:", error);
-      toast.error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.error || "Lỗi khi tải lên hình ảnh"
-          : "Lỗi khi tải lên hình ảnh",
-      );
+      throw error;
     } finally {
       setThumbnailLoading(false);
       setThumbnailFile(null);
@@ -139,16 +155,6 @@ export default function BlogForm({ blogId }: BlogFormProps) {
         fileInputRef.current.value = "";
       }
     }
-  };
-
-  // Xóa hình ảnh đã chọn
-  const handleRemoveThumbnail = () => {
-    setThumbnail("");
-    setThumbnailFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-    toast.success("Đã xóa hình ảnh");
   };
 
   // Xử lý submit form
@@ -163,17 +169,33 @@ export default function BlogForm({ blogId }: BlogFormProps) {
     try {
       setLoading(true);
 
-      // Nếu có file hình ảnh nhưng chưa upload, thực hiện upload trước
+      let finalThumbnail = thumbnail;
+
+      // Xử lý upload hình ảnh nếu có file mới
       if (thumbnailFile) {
-        await handleUploadThumbnail();
-        // Sau khi upload, cần đợi một chút để đảm bảo URL đã được cập nhật
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        try {
+          const uploadedUrl = await handleUploadThumbnail();
+          if (uploadedUrl) {
+            finalThumbnail = uploadedUrl;
+            setThumbnail(uploadedUrl);
+          }
+        } catch (error) {
+          console.error("Lỗi upload:", error);
+          toast.error("Lỗi khi tải lên hình ảnh");
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Nếu vẫn là URL blob thì đặt null để tránh lỗi
+      if (finalThumbnail && finalThumbnail.startsWith("blob:")) {
+        finalThumbnail = "";
       }
 
       const blogData = {
         title: title.trim(),
         slug: slug.trim().replace(/\s+/g, "-").toLowerCase(),
-        thumbnail: thumbnail || null,
+        thumbnail: finalThumbnail || null,
         content,
         excerpt: excerpt ? excerpt.trim() : null,
         published,
@@ -416,21 +438,6 @@ export default function BlogForm({ blogId }: BlogFormProps) {
                   accept="image/*"
                   onChange={handleFileChange}
                 />
-                {thumbnailFile && (
-                  <Button
-                    type="button"
-                    onClick={handleUploadThumbnail}
-                    disabled={thumbnailLoading}
-                    className="w-full"
-                  >
-                    {thumbnailLoading ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Upload className="mr-2 h-4 w-4" />
-                    )}
-                    Tải lên
-                  </Button>
-                )}
               </div>
             </CardContent>
           </Card>

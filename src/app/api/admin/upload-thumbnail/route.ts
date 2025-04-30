@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
-import { put } from "@vercel/blob";
+import { uploadFile } from "@/lib/file-upload";
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,17 +37,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Upload thumbnail lên Vercel Blob Storage
-    const blob = await put(
-      `blog-thumbnails/${Date.now()}-${thumbnailFile.name}`,
+    // Upload thumbnail vào thư mục public
+    const uploadResult = await uploadFile(
+      "images/blog-thumbnails",
       thumbnailFile,
-      {
-        access: "public",
-      },
     );
 
     return NextResponse.json({
-      thumbnailUrl: blob.url,
+      thumbnailUrl: uploadResult.url,
       message: "Upload hình ảnh thành công",
     });
   } catch (error) {

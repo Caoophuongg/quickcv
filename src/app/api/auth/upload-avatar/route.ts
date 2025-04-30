@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
-import { del, put } from "@vercel/blob";
+import { deleteFile, uploadFile } from "@/lib/file-upload";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     // Xóa avatar cũ nếu có
     if (user.avatarUrl) {
-      await del(user.avatarUrl);
+      await deleteFile(user.avatarUrl);
     }
 
     // Xử lý form data để lấy file avatar
@@ -56,13 +56,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Upload avatar lên Vercel Blob Storage
-    const blob = await put(`avatars/${session.id}-${Date.now()}`, avatarFile, {
-      access: "public",
-    });
+    // Upload avatar vào thư mục public
+    const uploadResult = await uploadFile("images/avatars", avatarFile);
 
     return NextResponse.json({
-      avatarUrl: blob.url,
+      avatarUrl: uploadResult.url,
       message: "Upload avatar thành công",
     });
   } catch (error) {

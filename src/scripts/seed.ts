@@ -8,7 +8,7 @@ async function main() {
 
   // Tạo user admin mặc định
   const adminEmail = "admin@example.com";
-  const adminPassword = "admin123";
+  const adminPassword = "Caop1008@";
   const hashedPassword = await hashPassword(adminPassword);
 
   // Kiểm tra xem admin đã tồn tại chưa

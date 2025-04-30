@@ -11,6 +11,7 @@ import {
   FileText,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, createContext, useContext } from "react";
 import { useAuthContext } from "@/providers/AuthProvider";
@@ -88,9 +89,34 @@ export default function AdminSidebar() {
         {!isCollapsed && (
           <>
             <Link href="/admin/dashboard" className="flex items-center gap-2">
+              <div className="relative h-8 w-8">
+                <Image
+                  src="/logo.png"
+                  alt="Logo"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                />
+              </div>
               <span className="text-lg font-semibold">Admin Panel</span>
             </Link>
           </>
+        )}
+        {isCollapsed && (
+          <Link
+            href="/admin/dashboard"
+            className="flex items-center justify-center"
+          >
+            <div className="relative h-8 w-8">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
+            </div>
+          </Link>
         )}
       </div>
       <Button

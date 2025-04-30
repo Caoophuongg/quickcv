@@ -101,6 +101,14 @@ export async function PATCH(
 
     const updateData = validationResult.data;
 
+    // Kiểm tra URL hình ảnh nếu có thay đổi
+    if (updateData.thumbnail && !isValidUrl(updateData.thumbnail)) {
+      return NextResponse.json(
+        { error: "URL hình ảnh không hợp lệ" },
+        { status: 400 },
+      );
+    }
+
     // Kiểm tra xem slug đã tồn tại chưa (nếu có slug mới)
     if (updateData.slug && updateData.slug !== existingBlog.slug) {
       const slugExists = await prisma.blog.findUnique({
@@ -134,6 +142,22 @@ export async function PATCH(
       { error: "Internal Server Error" },
       { status: 500 },
     );
+  }
+}
+
+// Hàm kiểm tra URL hợp lệ
+function isValidUrl(urlString: string) {
+  // Nếu là đường dẫn tương đối (bắt đầu bằng /)
+  if (urlString.startsWith("/")) {
+    return true;
+  }
+
+  try {
+    const url = new URL(urlString);
+    return url.protocol === "http:" || url.protocol === "https:";
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_) {
+    return false;
   }
 }
 

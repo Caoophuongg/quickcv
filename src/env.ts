@@ -12,7 +12,6 @@ export const env = createEnv({
     POSTGRES_PASSWORD: z.string().min(1),
     POSTGRES_DATABASE: z.string().min(1),
     JWT_SECRET: z.string().min(32),
-    BLOB_READ_WRITE_TOKEN: z.string().min(1),
     GEMINI_API_KEY: z.string().min(1),
   },
   client: {

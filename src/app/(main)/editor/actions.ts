@@ -3,8 +3,7 @@
 import prisma from "@/lib/prisma";
 import { resumeSchema, ResumeValues } from "@/lib/validation";
 import { getAuthSession } from "@/lib/auth";
-import { del, put } from "@vercel/blob";
-import path from "path";
+import { deleteFile, uploadFile } from "@/lib/file-upload";
 
 export async function saveResume(values: ResumeValues) {
   const { id } = values;
@@ -32,17 +31,15 @@ export async function saveResume(values: ResumeValues) {
 
   if (photo instanceof File) {
     if (existingResume?.photoUrl) {
-      await del(existingResume.photoUrl);
+      await deleteFile(existingResume.photoUrl);
     }
 
-    const blob = await put(`resume_photos/${path.extname(photo.name)}`, photo, {
-      access: "public",
-    });
+    const uploadResult = await uploadFile("images/resume_photos", photo);
 
-    newPhotoUrl = blob.url;
+    newPhotoUrl = uploadResult.url;
   } else if (photo === null) {
     if (existingResume?.photoUrl) {
-      await del(existingResume.photoUrl);
+      await deleteFile(existingResume.photoUrl);
     }
     newPhotoUrl = null;
   }
