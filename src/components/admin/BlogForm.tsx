@@ -36,7 +36,6 @@ export default function BlogForm({ blogId }: BlogFormProps) {
   const [thumbnail, setThumbnail] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [content, setContent] = useState("");
-  const [excerpt, setExcerpt] = useState("");
   const [published, setPublished] = useState(false);
   const [loading, setLoading] = useState(false);
   const [thumbnailLoading, setThumbnailLoading] = useState(false);
@@ -54,7 +53,6 @@ export default function BlogForm({ blogId }: BlogFormProps) {
       setSlug(blog.slug);
       setThumbnail(blog.thumbnail || "");
       setContent(blog.content);
-      setExcerpt(blog.excerpt || "");
       setPublished(blog.published);
     } catch (error) {
       console.error("Error fetching blog:", error);
@@ -192,12 +190,17 @@ export default function BlogForm({ blogId }: BlogFormProps) {
         finalThumbnail = "";
       }
 
+      // Tạo mô tả ngắn tự động từ nội dung bài viết (2 dòng đầu tiên)
+      const autoExcerpt =
+        content.split("\n").slice(0, 2).join("\n").trim() +
+        (content.split("\n").length > 2 ? "..." : "");
+
       const blogData = {
         title: title.trim(),
         slug: slug.trim().replace(/\s+/g, "-").toLowerCase(),
         thumbnail: finalThumbnail || null,
         content,
-        excerpt: excerpt ? excerpt.trim() : null,
+        excerpt: autoExcerpt,
         published,
       };
 
@@ -333,25 +336,10 @@ export default function BlogForm({ blogId }: BlogFormProps) {
                   placeholder="Nhập nội dung bài viết..."
                   className="min-h-[300px]"
                 />
+                <p className="text-sm text-muted-foreground">
+                  Mô tả ngắn sẽ được tự động tạo từ 2 dòng đầu của nội dung.
+                </p>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Mô tả ngắn */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Mô tả ngắn</CardTitle>
-              <CardDescription>
-                Đoạn mô tả ngắn hiển thị ở trang danh sách bài viết
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
-                placeholder="Nhập mô tả ngắn..."
-                className="min-h-[100px]"
-              />
             </CardContent>
           </Card>
         </div>

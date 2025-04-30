@@ -130,7 +130,14 @@ export default function UsersPage() {
         params.append("search", search);
       }
 
-      const data = await api.get(`/api/admin/users?${params.toString()}`);
+      interface UsersResponse {
+        users: User[];
+        pagination: PaginationData;
+      }
+
+      const data = await api.get<UsersResponse>(
+        `/api/admin/users?${params.toString()}`,
+      );
       setUsers(data.users);
       setPagination(data.pagination);
     } catch (error) {
