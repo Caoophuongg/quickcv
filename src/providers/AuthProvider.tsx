@@ -48,6 +48,7 @@ interface AuthContextType {
     currentPassword: string,
     newPassword: string,
   ) => Promise<void>;
+  deleteAvatar: () => Promise<void>;
   isAdmin: boolean;
   isAuthenticated: boolean;
 }

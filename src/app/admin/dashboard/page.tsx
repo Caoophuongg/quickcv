@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -16,6 +17,7 @@ import {
   Calendar,
   ArrowUpRight,
   ArrowDownRight,
+  Loader2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -35,6 +37,7 @@ import {
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
+import { toast } from "sonner";
 
 interface DashboardData {
   totalUsers: number;
@@ -107,6 +110,7 @@ export default function DashboardPage() {
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
   const [templateUsage, setTemplateUsage] = useState<TemplateUsage[]>([]);
   const [error, setError] = useState("");
+  const [apiLoading, setApiLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {

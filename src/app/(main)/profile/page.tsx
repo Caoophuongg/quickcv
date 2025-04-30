@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, updateUserProfile } = useAuthContext();
+  const { user, updateUserProfile, deleteAvatar } = useAuthContext();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -59,11 +59,35 @@ export default function ProfilePage() {
     }
   };
 
-  const handleRemoveAvatar = () => {
-    setAvatar(null);
-    setAvatarPreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+  const handleRemoveAvatar = async () => {
+    if (!user?.avatarUrl) {
+      // Nếu chỉ đang xóa avatar trong preview
+      setAvatar(null);
+      setAvatarPreview(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      // Gọi API để xóa avatar
+      await deleteAvatar();
+      
+      // Xóa avatar cục bộ
+      setAvatar(null);
+      setAvatarPreview(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      
+      toast.success("Đã xóa ảnh đại diện");
+    } catch (error) {
+      toast.error("Không thể xóa ảnh đại diện");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

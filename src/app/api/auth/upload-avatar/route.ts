@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
-import { deleteFromBlob, uploadToBlob } from "@/lib/blob-upload";
+import { deleteFromBlobWithRetry, uploadToBlob } from "@/lib/blob-upload";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
@@ -26,7 +26,9 @@ export async function POST(req: NextRequest) {
 
     // Xóa avatar cũ nếu có
     if (user.avatarUrl) {
-      await deleteFromBlob(user.avatarUrl);
+      console.log(`Tìm thấy avatarUrl cũ cần xóa: ${user.avatarUrl}`);
+      const deleteResult = await deleteFromBlobWithRetry(user.avatarUrl, 5);
+      console.log(`Kết quả xóa avatarUrl cũ: ${deleteResult ? 'Thành công' : 'Thất bại'}`);
     }
 
     // Xử lý form data để lấy file avatar

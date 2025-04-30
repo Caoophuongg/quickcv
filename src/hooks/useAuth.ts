@@ -53,6 +53,7 @@ interface UseAuthReturn {
     currentPassword: string,
     newPassword: string,
   ) => Promise<void>;
+  deleteAvatar: () => Promise<void>;
   isAdmin: boolean;
   isAuthenticated: boolean;
 }
@@ -298,6 +299,41 @@ export function useAuth(): UseAuthReturn {
     }
   };
 
+  const deleteAvatar = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch("/api/auth/delete-avatar", {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError({ error: result.error, details: result.details });
+        return;
+      }
+
+      // Cập nhật thông tin người dùng trong state
+      if (user) {
+        const updatedUser = {
+          ...user,
+          avatarUrl: undefined
+        };
+        setUser(updatedUser);
+
+        // Cập nhật localStorage
+        storeData(STORAGE_KEYS.USER_PROFILE, updatedUser);
+      }
+    } catch (err) {
+      console.error("Lỗi khi xóa avatar:", err);
+      setError({ error: "Có lỗi xảy ra khi xóa avatar" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const isAdmin = user?.role === "ADMIN";
   const isAuthenticated = !!user;
 
@@ -310,6 +346,7 @@ export function useAuth(): UseAuthReturn {
     logout,
     updateUserProfile,
     changePassword,
+    deleteAvatar,
     isAdmin,
     isAuthenticated,
   };

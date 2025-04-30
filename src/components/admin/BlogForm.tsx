@@ -129,6 +129,11 @@ export default function BlogForm({ blogId }: BlogFormProps) {
 
       const formData = new FormData();
       formData.append("thumbnail", thumbnailFile);
+      
+      // Thêm blogId vào formData nếu đang ở chế độ sửa
+      if (blogId) {
+        formData.append("blogId", blogId);
+      }
 
       const response = await axios.post(
         "/api/admin/upload-thumbnail",

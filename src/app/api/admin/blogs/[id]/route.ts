@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { getAuthSession } from "@/lib/auth";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { deleteFromBlobWithRetry } from "@/lib/blob-upload";
 
 // Validate dữ liệu cập nhật blog
 const updateBlogSchema = z.object({
@@ -177,10 +178,22 @@ export async function DELETE(
     // Kiểm tra blog tồn tại
     const existingBlog = await prisma.blog.findUnique({
       where: { id },
+      select: { id: true, thumbnail: true },
     });
 
     if (!existingBlog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    }
+
+    // Xóa file thumbnail khỏi Vercel Blob nếu có
+    if (existingBlog.thumbnail) {
+      try {
+        console.log(`Xóa thumbnail khi xóa blog: ${existingBlog.thumbnail}`);
+        await deleteFromBlobWithRetry(existingBlog.thumbnail);
+      } catch (error) {
+        console.error("Lỗi khi xóa thumbnail:", error);
+        // Tiếp tục xóa blog ngay cả khi không xóa được thumbnail
+      }
     }
 
     // Xóa blog
