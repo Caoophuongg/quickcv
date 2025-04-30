@@ -188,7 +188,7 @@ export async function DELETE(
     // Xóa file thumbnail khỏi Vercel Blob nếu có
     if (existingBlog.thumbnail) {
       try {
-        console.log(`Xóa thumbnail khi xóa blog: ${existingBlog.thumbnail}`);
+        // console.log(`Xóa thumbnail khi xóa blog: ${existingBlog.thumbnail}`);
         await deleteFromBlobWithRetry(existingBlog.thumbnail);
       } catch (error) {
         console.error("Lỗi khi xóa thumbnail:", error);

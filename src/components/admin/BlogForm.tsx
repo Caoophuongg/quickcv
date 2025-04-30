@@ -209,7 +209,7 @@ export default function BlogForm({ blogId }: BlogFormProps) {
         published,
       };
 
-      console.log("Đang gửi dữ liệu blog:", blogData);
+      // console.log("Đang gửi dữ liệu blog:", blogData);
 
       let newBlogId: string | undefined;
 

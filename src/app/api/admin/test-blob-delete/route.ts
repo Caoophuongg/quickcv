@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log(`Test xóa Blob với URL: ${url}`);
+    // console.log(`Test xóa Blob với URL: ${url}`);
     
     // Thử xóa URL với nhiều lần retry
     const result = await deleteFromBlobWithRetry(url, 5);

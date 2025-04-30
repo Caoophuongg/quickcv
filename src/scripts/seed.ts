@@ -29,9 +29,9 @@ async function main() {
       },
     });
 
-    console.log(`Đã tạo user admin: ${admin.email}`);
+    // console.log(`Đã tạo user admin: ${admin.email}`);
   } else {
-    console.log("User admin đã tồn tại, bỏ qua bước tạo admin.");
+    // console.log("User admin đã tồn tại, bỏ qua bước tạo admin.");
   }
 
   // Tạo user thường để test
@@ -56,12 +56,12 @@ async function main() {
       },
     });
 
-    console.log(`Đã tạo user thường: ${user.email}`);
+    // console.log(`Đã tạo user thường: ${user.email}`);
   } else {
-    console.log("User thường đã tồn tại, bỏ qua bước tạo user.");
+    // console.log("User thường đã tồn tại, bỏ qua bước tạo user.");
   }
 
-  console.log("Seeding database hoàn tất!");
+  // console.log("Seeding database hoàn tất!");
 }
 
 main()

@@ -24,10 +24,10 @@ function isVercelBlobUrl(url: string): boolean {
  */
 export async function cleanupUnusedBlobs() {
   try {
-    console.log("Bắt đầu dọn dẹp Blob không sử dụng...");
+    // console.log("Bắt đầu dọn dẹp Blob không sử dụng...");
     
     // Lấy tất cả URL ảnh từ Vercel Blob (limit 1000 để tránh quá nhiều)
-    console.log("Đang lấy danh sách blob từ Vercel...");
+    // console.log("Đang lấy danh sách blob từ Vercel...");
     const { blobs } = await list({ limit: 1000 });
     
     // Lọc chỉ lấy các URL từ Vercel Blob có đuôi là hình ảnh
@@ -39,10 +39,10 @@ export async function cleanupUnusedBlobs() {
       })
       .map(blob => blob.url);
     
-    console.log(`Tìm thấy ${blobUrls.length} blob URLs cần kiểm tra...`);
+    // console.log(`Tìm thấy ${blobUrls.length} blob URLs cần kiểm tra...`);
     
     // Lấy tất cả URL ảnh đang được sử dụng từ database
-    console.log("Đang lấy danh sách URL đang được sử dụng từ database...");
+    // console.log("Đang lấy danh sách URL đang được sử dụng từ database...");
     
     const [usedAvatarUrls, usedThumbnailUrls, usedPhotoUrls] = await Promise.all([
       // Avatar URLs từ người dùng
@@ -90,11 +90,11 @@ export async function cleanupUnusedBlobs() {
       ].filter(Boolean) as string[])
     );
     
-    console.log(`Tìm thấy ${usedUrls.size} URLs đang được sử dụng trong database`);
+    // console.log(`Tìm thấy ${usedUrls.size} URLs đang được sử dụng trong database`);
     
     // Xác định các ảnh không được sử dụng
     const unusedUrls = blobUrls.filter(url => !usedUrls.has(url));
-    console.log(`Tìm thấy ${unusedUrls.length} URLs không còn được sử dụng, cần xóa`);
+    // console.log(`Tìm thấy ${unusedUrls.length} URLs không còn được sử dụng, cần xóa`);
     
     // Xóa các ảnh không được sử dụng
     let successCount = 0;
@@ -102,17 +102,17 @@ export async function cleanupUnusedBlobs() {
     
     for (const url of unusedUrls) {
       try {
-        console.log(`Đang xóa blob: ${url}`);
+        // console.log(`Đang xóa blob: ${url}`);
         await del(url);
         successCount++;
-        console.log(`Đã xóa thành công: ${url}`);
+        // console.log(`Đã xóa thành công: ${url}`);
       } catch (error) {
         failCount++;
         console.error(`Lỗi khi xóa ${url}:`, error);
       }
     }
     
-    console.log(`Quá trình dọn dẹp hoàn tất: ${successCount} thành công, ${failCount} thất bại`);
+    // console.log(`Quá trình dọn dẹp hoàn tất: ${successCount} thành công, ${failCount} thất bại`);
     
     return { 
       success: true, 

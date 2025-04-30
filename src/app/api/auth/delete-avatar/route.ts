@@ -26,9 +26,9 @@ export async function DELETE(req: NextRequest) {
 
     // Xóa avatar cũ nếu có
     if (user.avatarUrl) {
-      console.log(`Tìm thấy avatarUrl cần xóa: ${user.avatarUrl}`);
+      // console.log(`Tìm thấy avatarUrl cần xóa: ${user.avatarUrl}`);
       const deleteResult = await deleteFromBlobWithRetry(user.avatarUrl, 5);
-      console.log(`Kết quả xóa avatarUrl: ${deleteResult ? 'Thành công' : 'Thất bại'}`);
+      // console.log(`Kết quả xóa avatarUrl: ${deleteResult ? 'Thành công' : 'Thất bại'}`);
 
       // Cập nhật URL avatar trong database thành null
       await prisma.user.update({

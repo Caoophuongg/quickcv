@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         });
 
         if (existingBlog?.thumbnail) {
-          console.log(`Chuẩn bị xóa thumbnail cũ của blog ${blogId}: ${existingBlog.thumbnail}`);
+          // console.log(`Chuẩn bị xóa thumbnail cũ của blog ${blogId}: ${existingBlog.thumbnail}`);
           await deleteFromBlobWithRetry(existingBlog.thumbnail);
         }
       } catch (error) {

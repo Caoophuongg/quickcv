@@ -45,7 +45,7 @@ export async function uploadToBlob(
       access: 'public',
     });
 
-    console.log(`Đã upload thành công file "${fullPath}" lên Vercel Blob: ${blob.url}`);
+    // console.log(`Đã upload thành công file "${fullPath}" lên Vercel Blob: ${blob.url}`);
 
     return {
       url: blob.url,
@@ -66,19 +66,19 @@ export async function uploadToBlob(
 export async function deleteFromBlob(url: string): Promise<boolean> {
   try {
     if (!url) {
-      console.log("Bỏ qua xóa: URL ảnh trống");
+      // console.log("Bỏ qua xóa: URL ảnh trống");
       return false;
     }
 
     // Kiểm tra nếu URL thuộc Vercel Blob
     if (!isVercelBlobUrl(url)) {
-      console.log(`Bỏ qua xóa: URL không phải từ Vercel Blob: ${url}`);
+      // console.log(`Bỏ qua xóa: URL không phải từ Vercel Blob: ${url}`);
       return false;
     }
 
-    console.log(`Đang xóa file từ Vercel Blob: ${url}`);
+    // console.log(`Đang xóa file từ Vercel Blob: ${url}`);
     await del(url);
-    console.log(`Đã xóa thành công file từ Vercel Blob: ${url}`);
+    // console.log(`Đã xóa thành công file từ Vercel Blob: ${url}`);
     return true;
   } catch (error) {
     console.error(`Lỗi khi xóa file từ Vercel Blob (${url}):`, error);
@@ -96,19 +96,19 @@ export async function deleteFromBlobWithRetry(url: string, retries = 3): Promise
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       if (!url) {
-        console.log("Bỏ qua xóa: URL ảnh trống");
+        // console.log("Bỏ qua xóa: URL ảnh trống");
         return false;
       }
 
       // Kiểm tra nếu URL thuộc Vercel Blob
       if (!isVercelBlobUrl(url)) {
-        console.log(`Bỏ qua xóa: URL không phải từ Vercel Blob: ${url}`);
+        // console.log(`Bỏ qua xóa: URL không phải từ Vercel Blob: ${url}`);
         return false;
       }
 
-      console.log(`Đang xóa file từ Vercel Blob (lần thử ${attempt + 1}/${retries}): ${url}`);
+      // console.log(`Đang xóa file từ Vercel Blob (lần thử ${attempt + 1}/${retries}): ${url}`);
       await del(url);
-      console.log(`Đã xóa thành công file từ Vercel Blob: ${url}`);
+      // console.log(`Đã xóa thành công file từ Vercel Blob: ${url}`);
       return true;
     } catch (error) {
       console.error(`Lỗi lần ${attempt + 1}/${retries} khi xóa file từ Vercel Blob (${url}):`, error);
@@ -116,7 +116,7 @@ export async function deleteFromBlobWithRetry(url: string, retries = 3): Promise
       if (attempt < retries - 1) {
         // Chờ trước khi thử lại (1 giây, 2 giây, 3 giây...)
         const waitTime = (attempt + 1) * 1000;
-        console.log(`Chờ ${waitTime}ms trước khi thử lại...`);
+        // console.log(`Chờ ${waitTime}ms trước khi thử lại...`);
         await new Promise(resolve => setTimeout(resolve, waitTime));
       }
     }

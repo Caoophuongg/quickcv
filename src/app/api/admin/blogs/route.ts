@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
 
     // Lấy dữ liệu từ request
     const body = await req.json();
-    console.log("Blog data received:", body);
+    // console.log("Blog data received:", body);
 
     // Validate dữ liệu đầu vào
     const validationResult = blogSchema.safeParse(body);

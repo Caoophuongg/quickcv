@@ -26,9 +26,9 @@ export async function POST(req: NextRequest) {
 
     // Xóa avatar cũ nếu có
     if (user.avatarUrl) {
-      console.log(`Tìm thấy avatarUrl cũ cần xóa: ${user.avatarUrl}`);
+      // console.log(`Tìm thấy avatarUrl cũ cần xóa: ${user.avatarUrl}`);
       const deleteResult = await deleteFromBlobWithRetry(user.avatarUrl, 5);
-      console.log(`Kết quả xóa avatarUrl cũ: ${deleteResult ? 'Thành công' : 'Thất bại'}`);
+      // console.log(`Kết quả xóa avatarUrl cũ: ${deleteResult ? 'Thành công' : 'Thất bại'}`);
     }
 
     // Xử lý form data để lấy file avatar
