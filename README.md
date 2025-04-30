@@ -41,6 +41,30 @@ npm run db:studio
 npm run seed
 ```
 
+## Cấu hình Vercel Blob
+
+Dự án sử dụng Vercel Blob để lưu trữ hình ảnh. Để thiết lập:
+
+1. Cài đặt thư viện Vercel Blob:
+```bash
+npm install @vercel/blob
+```
+
+2. Cấu hình Vercel Blob trên dashboard Vercel:
+   - Truy cập dự án của bạn trên Vercel Dashboard
+   - Chọn tab "Storage"
+   - Chọn "Connect Database" và chọn "Blob"
+   - Tạo Blob store mới với tên "Images"
+   - Chọn các môi trường cần sử dụng token (thường là "Production", "Preview", "Development")
+   - Hoàn tất quá trình tạo
+
+3. Sau khi tạo Blob store, Vercel sẽ tự động thêm biến môi trường `BLOB_READ_WRITE_TOKEN` vào dự án
+
+4. Để sử dụng trong môi trường phát triển local, tải biến môi trường từ Vercel:
+```bash
+npx vercel env pull
+```
+
 ## Phát triển
 
 ```bash

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
-import { deleteFile, uploadFile } from "@/lib/file-upload";
+import { deleteFromBlob, uploadToBlob } from "@/lib/blob-upload";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     // Xóa avatar cũ nếu có
     if (user.avatarUrl) {
-      await deleteFile(user.avatarUrl);
+      await deleteFromBlob(user.avatarUrl);
     }
 
     // Xử lý form data để lấy file avatar
@@ -56,8 +56,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Upload avatar vào thư mục public
-    const uploadResult = await uploadFile("images/avatars", avatarFile);
+    // Upload avatar lên Vercel Blob
+    const uploadResult = await uploadToBlob("images/avatars", avatarFile);
+
+    // Cập nhật URL avatar trong database
+    await prisma.user.update({
+      where: { id: session.id },
+      data: { avatarUrl: uploadResult.url },
+    });
 
     return NextResponse.json({
       avatarUrl: uploadResult.url,

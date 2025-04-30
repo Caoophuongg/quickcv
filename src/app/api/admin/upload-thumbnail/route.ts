@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSession } from "@/lib/auth";
-import { uploadFile } from "@/lib/file-upload";
+import { uploadToBlob } from "@/lib/blob-upload";
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,8 +37,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Upload thumbnail vào thư mục public
-    const uploadResult = await uploadFile(
+    // Upload thumbnail lên Vercel Blob
+    const uploadResult = await uploadToBlob(
       "images/blog-thumbnails",
       thumbnailFile,
     );

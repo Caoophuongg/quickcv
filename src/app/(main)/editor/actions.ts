@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { resumeSchema, ResumeValues } from "@/lib/validation";
 import { getAuthSession } from "@/lib/auth";
-import { deleteFile, uploadFile } from "@/lib/file-upload";
+import { deleteFromBlob, uploadToBlob } from "@/lib/blob-upload";
 
 export async function saveResume(values: ResumeValues) {
   const { id } = values;
@@ -31,15 +31,15 @@ export async function saveResume(values: ResumeValues) {
 
   if (photo instanceof File) {
     if (existingResume?.photoUrl) {
-      await deleteFile(existingResume.photoUrl);
+      await deleteFromBlob(existingResume.photoUrl);
     }
 
-    const uploadResult = await uploadFile("images/resume_photos", photo);
+    const uploadResult = await uploadToBlob("images/resume_photos", photo);
 
     newPhotoUrl = uploadResult.url;
   } else if (photo === null) {
     if (existingResume?.photoUrl) {
-      await deleteFile(existingResume.photoUrl);
+      await deleteFromBlob(existingResume.photoUrl);
     }
     newPhotoUrl = null;
   }

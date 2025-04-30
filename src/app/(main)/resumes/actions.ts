@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { getAuthSession } from "@/lib/auth";
-import { deleteFile } from "@/lib/file-upload";
+import { deleteFromBlob } from "@/lib/blob-upload";
 import { revalidatePath } from "next/cache";
 
 export async function deleteResume(id: string) {
@@ -26,7 +26,7 @@ export async function deleteResume(id: string) {
   }
 
   if (resume.photoUrl) {
-    await deleteFile(resume.photoUrl);
+    await deleteFromBlob(resume.photoUrl);
   }
 
   await prisma.resume.delete({

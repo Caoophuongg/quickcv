@@ -63,7 +63,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-52">
+      <div className="w-full px-4 sm:px-6 md:px-8 lg:px-24 xl:px-52">
         <main>
           {/* banner */}
           <section className="flex flex-col-reverse items-center justify-between gap-8 py-16 md:flex-row md:gap-20 md:py-32">
@@ -71,7 +71,7 @@ export default function Home() {
               <p className="text-xl font-semibold uppercase text-prim">
                 Welcome to QuickCV
               </p>
-              <h1 className="scroll-m-20 text-3xl font-semibold !leading-tight tracking-tight md:text-4xl lg:text-6xl">
+              <h1 className="scroll-m-20 text-3xl font-semibold !leading-tight tracking-tight md:text-3xl lg:text-5xl">
                 <span className="inline-block text-prim">
                   Tạo một CV hấp dẫn
                 </span>{" "}

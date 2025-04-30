@@ -26,7 +26,7 @@ export default function Navbar() {
 
   return (
     <header className="border-b">
-      <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6 md:px-8 lg:px-12 xl:px-52">
+      <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6 md:px-8 lg:px-24 xl:px-52">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo.png"
