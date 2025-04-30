@@ -1,10 +1,10 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from "axios";
 
 // Tạo instance axios với cấu hình mặc định
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || '',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   timeout: 10000, // 10 giây
 });
@@ -17,7 +17,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Thêm interceptor xử lý response
@@ -30,22 +30,26 @@ api.interceptors.response.use(
     // Xử lý lỗi chung
     if (error.response) {
       // Lỗi từ server với status code
-      console.error('Response error:', error.response.status, error.response.data);
-      
+      console.error(
+        "Response error:",
+        error.response.status,
+        error.response.data,
+      );
+
       // Xử lý lỗi 401 Unauthorized
       if (error.response.status === 401) {
         // Có thể thêm logic đăng xuất hoặc refresh token ở đây
       }
     } else if (error.request) {
       // Không nhận được response
-      console.error('Request error:', error.request);
+      console.error("Request error:", error.request);
     } else {
       // Lỗi trong quá trình thiết lập request
-      console.error('Error:', error.message);
+      console.error("Error:", error.message);
     }
-    
+
     return Promise.reject(error);
-  }
+  },
 );
 
 // Định nghĩa các kiểu trả về của hàm api.get(), api.post(), ...
@@ -60,4 +64,4 @@ interface ApiRequestMethods {
 // Cast api instance để TypeScript hiểu được kiểu trả về
 const typedApi = api as ApiRequestMethods;
 
-export default typedApi; 
+export default typedApi;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { Prisma, Blog as BlogModel } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 // GET: Lấy danh sách tất cả các blog đã được công khai
 export async function GET(req: NextRequest) {
@@ -20,8 +20,15 @@ export async function GET(req: NextRequest) {
       ...(search
         ? {
             OR: [
-              { title: { contains: search, mode: "insensitive" } },
-              { content: { contains: search, mode: "insensitive" } },
+              {
+                title: { contains: search, mode: Prisma.QueryMode.insensitive },
+              },
+              {
+                content: {
+                  contains: search,
+                  mode: Prisma.QueryMode.insensitive,
+                },
+              },
             ],
           }
         : {}),
@@ -29,7 +36,7 @@ export async function GET(req: NextRequest) {
 
     // Lấy dữ liệu blog và tổng số bản ghi
     const [blogs, total] = await Promise.all([
-      prisma.Blog.findMany({
+      prisma.blog.findMany({
         where,
         orderBy: { publishedAt: "desc" },
         skip,
@@ -50,7 +57,7 @@ export async function GET(req: NextRequest) {
           },
         },
       }),
-      prisma.Blog.count({ where }),
+      prisma.blog.count({ where }),
     ]);
 
     return NextResponse.json({
@@ -66,7 +73,7 @@ export async function GET(req: NextRequest) {
     console.error("Error fetching public blogs:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}

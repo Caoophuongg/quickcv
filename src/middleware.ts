@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken, COOKIE_NAME } from "./lib/auth";
 
 // Các route công khai không cần xác thực
-const PUBLIC_ROUTES = ["/", "/login", "/register"];
+const PUBLIC_ROUTES = ["/", "/login", "/register", "/blog"];
+// API routes công khai
+const PUBLIC_API_ROUTES = ["/api/blogs"];
 // Các route chỉ dành cho admin
 const ADMIN_ROUTES = ["/admin", "/admin/users", "/admin/dashboard"];
 // Các route chỉ dành cho người dùng thường (không phải admin)
@@ -14,6 +16,9 @@ export default async function middleware(req: NextRequest) {
   // Kiểm tra nếu route là public thì không cần xác thực
   if (
     PUBLIC_ROUTES.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
+    ) ||
+    PUBLIC_API_ROUTES.some(
       (route) => pathname === route || pathname.startsWith(`${route}/`),
     )
   ) {
@@ -68,8 +73,8 @@ export default async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|api/auth|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes, except auth routes
-    "/(api(?!/auth))(.*)",
+    "/((?!_next|api/auth|api/blogs|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for API routes, except auth routes and public API routes
+    "/(api(?!/auth|/blogs))(.*)",
   ],
 };

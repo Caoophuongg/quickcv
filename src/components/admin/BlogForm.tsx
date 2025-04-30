@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import axios from "axios";
@@ -26,45 +26,24 @@ interface BlogFormProps {
   blogId?: string; // Nếu có ID, đây là form sửa blog
 }
 
-// Định nghĩa interface cho Blog
-interface Blog {
-  id: string;
-  title: string;
-  slug: string;
-  thumbnail: string | null;
-  content: string;
-  excerpt: string | null;
-  published: boolean;
-}
-
 export default function BlogForm({ blogId }: BlogFormProps) {
   const router = useRouter();
-  const isEditing = !!blogId;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isEditing = !!blogId;
 
-  // State cho form
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [thumbnailLoading, setThumbnailLoading] = useState(false);
   const [content, setContent] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [published, setPublished] = useState(false);
-
-  // State cho UI
   const [loading, setLoading] = useState(false);
+  const [thumbnailLoading, setThumbnailLoading] = useState(false);
   const [fetchingBlog, setFetchingBlog] = useState(isEditing);
 
-  // Nếu đang sửa, lấy thông tin blog
-  useEffect(() => {
-    if (isEditing) {
-      fetchBlogData();
-    }
-  }, [blogId, isEditing]);
-
   // Hàm lấy thông tin blog
-  const fetchBlogData = async () => {
+  const fetchBlogData = useCallback(async () => {
     try {
       setFetchingBlog(true);
       const response = await axios.get(`/api/admin/blogs/${blogId}`);
@@ -83,7 +62,13 @@ export default function BlogForm({ blogId }: BlogFormProps) {
     } finally {
       setFetchingBlog(false);
     }
-  };
+  }, [blogId]);
+
+  useEffect(() => {
+    if (isEditing) {
+      fetchBlogData();
+    }
+  }, [isEditing, fetchBlogData]);
 
   // Hàm tạo slug tự động từ tiêu đề
   const generateSlug = (text: string) => {
@@ -170,52 +155,79 @@ export default function BlogForm({ blogId }: BlogFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !slug || !content) {
-      toast.error("Vui lòng điền đầy đủ thông tin cần thiết");
+    if (!title || !slug) {
+      toast.error("Vui lòng điền tiêu đề và slug");
       return;
-    }
-
-    // Nếu có file hình ảnh nhưng chưa upload, thực hiện upload trước
-    if (thumbnailFile) {
-      await handleUploadThumbnail();
     }
 
     try {
       setLoading(true);
+
+      // Nếu có file hình ảnh nhưng chưa upload, thực hiện upload trước
+      if (thumbnailFile) {
+        await handleUploadThumbnail();
+        // Sau khi upload, cần đợi một chút để đảm bảo URL đã được cập nhật
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+
       const blogData = {
-        title,
-        slug,
+        title: title.trim(),
+        slug: slug.trim().replace(/\s+/g, "-").toLowerCase(),
         thumbnail: thumbnail || null,
         content,
-        excerpt: excerpt || null,
+        excerpt: excerpt ? excerpt.trim() : null,
         published,
       };
 
-      let response: { data: Blog };
+      console.log("Đang gửi dữ liệu blog:", blogData);
+
+      let newBlogId: string | undefined;
 
       if (isEditing) {
         // Cập nhật blog
-        response = await axios.patch(`/api/admin/blogs/${blogId}`, blogData);
+        await axios.patch(`/api/admin/blogs/${blogId}`, blogData);
         toast.success("Bài viết đã được cập nhật thành công");
       } else {
         // Tạo blog mới
-        response = await axios.post("/api/admin/blogs", blogData);
+        const response = await axios.post("/api/admin/blogs", blogData);
+        newBlogId = response.data.id;
         toast.success("Bài viết đã được tạo thành công");
 
         // Chuyển hướng đến trang sửa nếu tạo thành công
-        if (response.data.id) {
+        if (newBlogId) {
           setTimeout(() => {
-            router.push(`/admin/blogs/${response.data.id}`);
+            router.push(`/admin/blogs/${newBlogId}`);
           }, 1500);
         }
       }
     } catch (error: unknown) {
-      console.error("Error saving blog:", error);
-      toast.error(
-        axios.isAxiosError(error)
-          ? error.response?.data?.error || "Lỗi khi lưu bài viết"
-          : "Lỗi khi lưu bài viết",
-      );
+      console.error("Lỗi khi lưu bài viết:", error);
+
+      if (axios.isAxiosError(error)) {
+        // Hiển thị chi tiết lỗi từ API nếu có
+        const errorData = error.response?.data;
+        console.error("Chi tiết lỗi:", errorData);
+
+        if (errorData?.details) {
+          // Hiển thị lỗi validation cụ thể
+          let errorMessage = "Lỗi dữ liệu:";
+          if (errorData.details.title?._errors) {
+            errorMessage += ` Tiêu đề: ${errorData.details.title._errors.join(", ")}`;
+          }
+          if (errorData.details.slug?._errors) {
+            errorMessage += ` Slug: ${errorData.details.slug._errors.join(", ")}`;
+          }
+          toast.error(errorMessage);
+        } else if (errorData?.error === "Slug đã tồn tại") {
+          toast.error("Slug đã được sử dụng. Vui lòng chọn một slug khác.");
+        } else {
+          toast.error(
+            errorData?.error || "Lỗi khi lưu bài viết. Vui lòng thử lại sau.",
+          );
+        }
+      } else {
+        toast.error("Lỗi không xác định khi lưu bài viết");
+      }
     } finally {
       setLoading(false);
     }
@@ -289,6 +301,7 @@ export default function BlogForm({ blogId }: BlogFormProps) {
                 </p>
               </div>
 
+              {/* Nội dung bài viết */}
               <div className="space-y-2">
                 <Label htmlFor="content">Nội dung bài viết</Label>
                 <Textarea
@@ -296,7 +309,6 @@ export default function BlogForm({ blogId }: BlogFormProps) {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Nhập nội dung bài viết..."
-                  required
                   className="min-h-[300px]"
                 />
               </div>

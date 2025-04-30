@@ -55,9 +55,6 @@ export async function generateSummary(input: GenerateSummaryInput) {
       ${skills}
     `;
 
-  console.log("systemMessage", systemMessage);
-  console.log("userMessage", userMessage);
-
   const completion = await geminiModel.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
@@ -127,8 +124,6 @@ export async function generateWorkExperience(
   if (!aiResponse) {
     throw new Error("Failed to generate AI response");
   }
-
-  console.log("aiResponse", aiResponse);
 
   return {
     position: aiResponse.match(/Job title: (.*)/)?.[1] || "",

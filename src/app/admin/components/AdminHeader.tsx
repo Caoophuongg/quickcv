@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { LogOut, User, Settings, ChevronDown } from "lucide-react";
+import { LogOut, User, Settings } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,10 @@ interface AdminHeaderProps {
   loading?: boolean;
 }
 
-export default function AdminHeader({ user, loading = false }: AdminHeaderProps) {
+export default function AdminHeader({
+  user,
+  loading = false,
+}: AdminHeaderProps) {
   const { logout } = useAuthContext();
   const router = useRouter();
 
@@ -55,15 +58,12 @@ export default function AdminHeader({ user, loading = false }: AdminHeaderProps)
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-8 w-8 rounded-full p-0"
-                >
+                <Button variant="ghost" className="h-8 w-8 rounded-full p-0">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user.avatarUrl || ""} alt={user.email} />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                    <AvatarFallback className="bg-primary text-xs text-primary-foreground">
                       {user.firstName?.[0] || user.email[0].toUpperCase()}
-                      {user.lastName?.[0] || ''}
+                      {user.lastName?.[0] || ""}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -72,16 +72,18 @@ export default function AdminHeader({ user, loading = false }: AdminHeaderProps)
                 <DropdownMenuLabel>
                   <div className="flex flex-col gap-1">
                     <span className="font-medium">
-                      {user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.email.split('@')[0]}
+                      {user.firstName
+                        ? `${user.firstName} ${user.lastName || ""}`
+                        : user.email.split("@")[0]}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {user.email}
                     </span>
-                    <Badge 
-                      className="mt-1 w-fit text-[10px]" 
-                      variant={user.role === 'ADMIN' ? 'default' : 'secondary'}
+                    <Badge
+                      className="mt-1 w-fit text-[10px]"
+                      variant={user.role === "ADMIN" ? "default" : "secondary"}
                     >
-                      {user.role === 'ADMIN' ? 'Admin' : 'User'}
+                      {user.role === "ADMIN" ? "Admin" : "User"}
                     </Badge>
                   </div>
                 </DropdownMenuLabel>

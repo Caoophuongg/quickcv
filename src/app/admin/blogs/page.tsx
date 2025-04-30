@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Link from "next/link";
 
@@ -70,13 +70,8 @@ export default function BlogsPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState<Blog | null>(null);
 
-  // Load blogs khi component mount hoặc khi tham số thay đổi
-  useEffect(() => {
-    fetchBlogs();
-  }, [pagination.page, searchTerm]);
-
   // Hàm lấy danh sách blogs
-  const fetchBlogs = async () => {
+  const fetchBlogs = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get("/api/admin/blogs", {
@@ -94,7 +89,12 @@ export default function BlogsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, searchTerm]);
+
+  // Load blogs khi component mount hoặc khi tham số thay đổi
+  useEffect(() => {
+    fetchBlogs();
+  }, [fetchBlogs]);
 
   // Xử lý tìm kiếm
   const handleSearch = (e: React.FormEvent) => {

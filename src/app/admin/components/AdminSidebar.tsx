@@ -8,7 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
-  FileText
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -24,7 +24,8 @@ import {
 // Tạo context để thông báo trạng thái sidebar
 export const SidebarContext = createContext({
   isCollapsed: false,
-  setIsCollapsed: (value: boolean) => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setIsCollapsed: () => {},
 });
 
 export const useSidebar = () => useContext(SidebarContext);
@@ -55,17 +56,19 @@ export default function AdminSidebar() {
 
   // Emit trạng thái sidebar ra bên ngoài thông qua localStorage
   useEffect(() => {
-    localStorage.setItem('admin-sidebar-collapsed', String(isCollapsed));
+    localStorage.setItem("admin-sidebar-collapsed", String(isCollapsed));
     // Trigger custom event để layout có thể lắng nghe
-    const event = new CustomEvent('sidebar-collapse-changed', { detail: { isCollapsed } });
+    const event = new CustomEvent("sidebar-collapse-changed", {
+      detail: { isCollapsed },
+    });
     document.dispatchEvent(event);
   }, [isCollapsed]);
 
   // Khôi phục trạng thái sidebar từ localStorage khi component mount
   useEffect(() => {
-    const savedState = localStorage.getItem('admin-sidebar-collapsed');
+    const savedState = localStorage.getItem("admin-sidebar-collapsed");
     if (savedState !== null) {
-      setIsCollapsed(savedState === 'true');
+      setIsCollapsed(savedState === "true");
     }
   }, []);
 
@@ -77,14 +80,13 @@ export default function AdminSidebar() {
   return (
     <div
       className={cn(
-        "fixed left-0 top-0 flex h-screen flex-col border-r bg-background transition-all duration-300 z-10",
+        "fixed left-0 top-0 z-10 flex h-screen flex-col border-r bg-background transition-all duration-300",
         isCollapsed ? "w-[70px]" : "w-[250px]",
       )}
     >
-      <div className="flex h-16 items-center justify-center border-b gap-2">
+      <div className="flex h-16 items-center justify-center gap-2 border-b">
         {!isCollapsed && (
           <>
-          
             <Link href="/admin/dashboard" className="flex items-center gap-2">
               <span className="text-lg font-semibold">Admin Panel</span>
             </Link>

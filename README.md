@@ -18,3 +18,62 @@ Features:
 Watch the free **11-hour** tutorial on YouTube: https://www.youtube.com/watch?v=ySqesLjz6K0
 
 ![thumbnail](https://github.com/user-attachments/assets/f3eaef96-9674-4201-afeb-4deb3500ab6d)
+
+## Cấu hình cơ sở dữ liệu
+
+Dự án sử dụng Prisma ORM với PostgreSQL. Để thiết lập cơ sở dữ liệu:
+
+1. Tạo file `.env` từ `.env.example` và cập nhật thông tin kết nối cơ sở dữ liệu.
+
+2. Đồng bộ hóa Prisma schema với cơ sở dữ liệu:
+
+```bash
+# Đồng bộ hóa schema
+npm run db:push
+
+# Khởi chạy Prisma Studio để quản lý dữ liệu
+npm run db:studio
+```
+
+3. (Tùy chọn) Để seed dữ liệu mẫu:
+
+```bash
+npm run seed
+```
+
+## Phát triển
+
+```bash
+# Cài đặt dependencies
+npm install
+
+# Chạy môi trường phát triển
+npm run dev
+```
+
+Mở [http://localhost:3000](http://localhost:3000) để xem kết quả.
+
+## Deployment
+
+```bash
+# Build cho production
+npm run build:prod
+
+# Start server production
+npm run start
+```
+
+## Quản lý schema cơ sở dữ liệu
+
+Dự án sử dụng `prisma db push` thay vì migrations để đơn giản hóa quy trình làm việc với cơ sở dữ liệu.
+
+Khi cần thay đổi schema:
+
+1. Chỉnh sửa file `prisma/schema.prisma`
+2. Chạy lệnh `npm run db:push` để áp dụng thay đổi
+3. Nếu có cảnh báo về mất dữ liệu, hãy sao lưu trước khi chấp nhận thay đổi
+
+```bash
+# Cho các thay đổi có thể gây mất dữ liệu
+npx prisma db push --accept-data-loss
+```

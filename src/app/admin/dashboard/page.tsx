@@ -1,31 +1,37 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Users, 
-  FileText, 
-  BarChart3, 
-  TrendingUp, 
-  Calendar, 
+import {
+  Users,
+  FileText,
+  BarChart3,
+  TrendingUp,
+  Calendar,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart, 
-  Pie, 
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
   Cell,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
@@ -39,16 +45,50 @@ interface DashboardData {
   resumeGrowth: number;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+interface MonthlyData {
+  name: string;
+  users: number;
+  resumes: number;
+}
+
+interface TemplateUsage {
+  name: string;
+  value: number;
+}
+
+interface CustomizedLabelProps {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  percent: number;
+  index: number;
+}
+
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 const RADIAN = Math.PI / 180;
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }: any) => {
+const renderCustomizedLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+}: CustomizedLabelProps) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
   return (
-    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+    <text
+      x={x}
+      y={y}
+      fill="white"
+      textAnchor={x > cx ? "start" : "end"}
+      dominantBaseline="central"
+    >
       {`${(percent * 100).toFixed(0)}%`}
     </text>
   );
@@ -61,11 +101,11 @@ export default function DashboardPage() {
     regularUserCount: 0,
     totalResumes: 0,
     userGrowth: 0,
-    resumeGrowth: 0
+    resumeGrowth: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [monthlyData, setMonthlyData] = useState([] as any[]);
-  const [templateUsage, setTemplateUsage] = useState([] as any[]);
+  const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
+  const [templateUsage, setTemplateUsage] = useState<TemplateUsage[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -73,20 +113,21 @@ export default function DashboardPage() {
       setLoading(true);
       try {
         // Lấy dữ liệu tổng quan
-        const dashboardData = await api.get<DashboardData>('/api/admin/dashboard');
-        
+        const dashboardData = await api.get<DashboardData>(
+          "/api/admin/dashboard",
+        );
+
         // Lấy dữ liệu theo tháng và template
         const monthlyData = await api.get<{
-          monthlyData: any[];
-          templateUsage: any[];
-        }>('/api/admin/dashboard/monthly');
-        
+          monthlyData: MonthlyData[];
+          templateUsage: TemplateUsage[];
+        }>("/api/admin/dashboard/monthly");
+
         setData(dashboardData);
         setMonthlyData(monthlyData.monthlyData);
         setTemplateUsage(monthlyData.templateUsage);
-        
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error("Error fetching dashboard data:", error);
         setError("Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.");
       } finally {
         setLoading(false);
@@ -98,9 +139,9 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
+      <div className="flex min-h-[70vh] items-center justify-center">
         <div className="flex flex-col items-center gap-2">
-          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           <p className="text-sm text-muted-foreground">Đang tải dữ liệu...</p>
         </div>
       </div>
@@ -109,11 +150,11 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg max-w-md text-center">
-          <p className="text-red-600 dark:text-red-400 mb-2">{error}</p>
-          <Button 
-            variant="outline" 
+      <div className="flex min-h-[70vh] items-center justify-center">
+        <div className="max-w-md rounded-lg border border-red-200 bg-red-50 p-4 text-center dark:border-red-800 dark:bg-red-900/20">
+          <p className="mb-2 text-red-600 dark:text-red-400">{error}</p>
+          <Button
+            variant="outline"
             onClick={() => window.location.reload()}
             className="text-sm"
           >
@@ -124,24 +165,27 @@ export default function DashboardPage() {
     );
   }
 
-  const conversionRate = data.totalUsers > 0
-    ? Math.round((data.totalResumes / data.totalUsers) * 100)
-    : 0;
+  const conversionRate =
+    data.totalUsers > 0
+      ? Math.round((data.totalResumes / data.totalUsers) * 100)
+      : 0;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">Tổng quan về hệ thống Quick CV</p>
+          <p className="text-muted-foreground">
+            Tổng quan về hệ thống Quick CV
+          </p>
         </div>
         <div className="flex items-center space-x-2">
           <div className="text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4 inline mr-1" />
-            {new Date().toLocaleDateString('vi-VN', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
+            <Calendar className="mr-1 inline h-4 w-4" />
+            {new Date().toLocaleDateString("vi-VN", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
             })}
           </div>
         </div>
@@ -150,7 +194,7 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {/* Card tổng số người dùng */}
         <Card className="overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-muted/40">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 bg-muted/40 pb-2">
             <CardTitle className="text-sm font-medium">
               Tổng người dùng
             </CardTitle>
@@ -161,11 +205,15 @@ export default function DashboardPage() {
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">{data.totalUsers}</div>
             <div className="flex items-center pt-1">
-              <TrendingUp className="h-4 w-4 text-emerald-500 mr-1" />
-              <span className="text-xs text-emerald-500 font-medium">+{data.userGrowth}%</span>
-              <span className="text-xs text-muted-foreground ml-1">so với tháng trước</span>
+              <TrendingUp className="mr-1 h-4 w-4 text-emerald-500" />
+              <span className="text-xs font-medium text-emerald-500">
+                +{data.userGrowth}%
+              </span>
+              <span className="ml-1 text-xs text-muted-foreground">
+                so với tháng trước
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="mt-2 text-xs text-muted-foreground">
               {data.adminCount} admin, {data.regularUserCount} người dùng
             </p>
           </CardContent>
@@ -173,7 +221,7 @@ export default function DashboardPage() {
 
         {/* Card tổng số resume */}
         <Card className="overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-muted/40">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 bg-muted/40 pb-2">
             <CardTitle className="text-sm font-medium">
               Tổng CV đã tạo
             </CardTitle>
@@ -184,13 +232,19 @@ export default function DashboardPage() {
           <CardContent className="pt-4">
             <div className="text-2xl font-bold">{data.totalResumes}</div>
             <div className="flex items-center pt-1">
-              <TrendingUp className="h-4 w-4 text-emerald-500 mr-1" />
-              <span className="text-xs text-emerald-500 font-medium">+{data.resumeGrowth}%</span>
-              <span className="text-xs text-muted-foreground ml-1">so với tháng trước</span>
+              <TrendingUp className="mr-1 h-4 w-4 text-emerald-500" />
+              <span className="text-xs font-medium text-emerald-500">
+                +{data.resumeGrowth}%
+              </span>
+              <span className="ml-1 text-xs text-muted-foreground">
+                so với tháng trước
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="mt-2 text-xs text-muted-foreground">
               Trung bình{" "}
-              {data.totalUsers > 0 ? (data.totalResumes / data.totalUsers).toFixed(1) : 0}{" "}
+              {data.totalUsers > 0
+                ? (data.totalResumes / data.totalUsers).toFixed(1)
+                : 0}{" "}
               CV/người dùng
             </p>
           </CardContent>
@@ -198,7 +252,7 @@ export default function DashboardPage() {
 
         {/* Card tỉ lệ chuyển đổi */}
         <Card className="overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-muted/40">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 bg-muted/40 pb-2">
             <CardTitle className="text-sm font-medium">
               Tỉ lệ chuyển đổi
             </CardTitle>
@@ -207,15 +261,17 @@ export default function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">
-              {conversionRate}%
-            </div>
+            <div className="text-2xl font-bold">{conversionRate}%</div>
             <div className="flex items-center pt-1">
-              <ArrowUpRight className="h-4 w-4 text-emerald-500 mr-1" />
-              <span className="text-xs text-emerald-500 font-medium">+3.2%</span>
-              <span className="text-xs text-muted-foreground ml-1">so với tháng trước</span>
+              <ArrowUpRight className="mr-1 h-4 w-4 text-emerald-500" />
+              <span className="text-xs font-medium text-emerald-500">
+                +3.2%
+              </span>
+              <span className="ml-1 text-xs text-muted-foreground">
+                so với tháng trước
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="mt-2 text-xs text-muted-foreground">
               Tỉ lệ người dùng tạo CV
             </p>
           </CardContent>
@@ -223,7 +279,7 @@ export default function DashboardPage() {
 
         {/* Card mới */}
         <Card className="overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-muted/40">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 bg-muted/40 pb-2">
             <CardTitle className="text-sm font-medium">
               Tỉ lệ hoàn thành
             </CardTitle>
@@ -232,15 +288,15 @@ export default function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-2xl font-bold">
-              75%
-            </div>
+            <div className="text-2xl font-bold">75%</div>
             <div className="flex items-center pt-1">
-              <ArrowDownRight className="h-4 w-4 text-red-500 mr-1" />
-              <span className="text-xs text-red-500 font-medium">-1.5%</span>
-              <span className="text-xs text-muted-foreground ml-1">so với tháng trước</span>
+              <ArrowDownRight className="mr-1 h-4 w-4 text-red-500" />
+              <span className="text-xs font-medium text-red-500">-1.5%</span>
+              <span className="ml-1 text-xs text-muted-foreground">
+                so với tháng trước
+              </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="mt-2 text-xs text-muted-foreground">
               Tỉ lệ hoàn thành CV
             </p>
           </CardContent>
@@ -272,8 +328,20 @@ export default function DashboardPage() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Area type="monotone" dataKey="users" stackId="1" stroke="#8884d8" fill="#8884d8" />
-                    <Area type="monotone" dataKey="resumes" stackId="2" stroke="#82ca9d" fill="#82ca9d" />
+                    <Area
+                      type="monotone"
+                      dataKey="users"
+                      stackId="1"
+                      stroke="#8884d8"
+                      fill="#8884d8"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="resumes"
+                      stackId="2"
+                      stroke="#82ca9d"
+                      fill="#82ca9d"
+                    />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -292,10 +360,10 @@ export default function DashboardPage() {
                     width={500}
                     height={300}
                     data={[
-                      { name: 'Q1', users: 56, resumes: 87 },
-                      { name: 'Q2', users: 116, resumes: 193 },
-                      { name: 'Q3', users: 0, resumes: 0 },
-                      { name: 'Q4', users: 0, resumes: 0 },
+                      { name: "Q1", users: 56, resumes: 87 },
+                      { name: "Q2", users: 116, resumes: 193 },
+                      { name: "Q3", users: 0, resumes: 0 },
+                      { name: "Q4", users: 0, resumes: 0 },
                     ]}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                   >
@@ -304,8 +372,20 @@ export default function DashboardPage() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="users" name="Người dùng" stackId="a" fill="#8884d8" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="resumes" name="CV" stackId="b" fill="#82ca9d" radius={[4, 4, 0, 0]} />
+                    <Bar
+                      dataKey="users"
+                      name="Người dùng"
+                      stackId="a"
+                      fill="#8884d8"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar
+                      dataKey="resumes"
+                      name="CV"
+                      stackId="b"
+                      fill="#82ca9d"
+                      radius={[4, 4, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -317,9 +397,7 @@ export default function DashboardPage() {
             <Card className="col-span-1">
               <CardHeader>
                 <CardTitle>Sử dụng mẫu CV</CardTitle>
-                <CardDescription>
-                  Phân bố sử dụng các mẫu CV
-                </CardDescription>
+                <CardDescription>Phân bố sử dụng các mẫu CV</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -335,7 +413,10 @@ export default function DashboardPage() {
                       dataKey="value"
                     >
                       {templateUsage.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -348,9 +429,7 @@ export default function DashboardPage() {
             <Card className="col-span-1">
               <CardHeader>
                 <CardTitle>Chi tiết mẫu CV</CardTitle>
-                <CardDescription>
-                  Phân tích theo loại mẫu CV
-                </CardDescription>
+                <CardDescription>Phân tích theo loại mẫu CV</CardDescription>
               </CardHeader>
               <CardContent className="px-2">
                 <ResponsiveContainer width="100%" height={300}>
@@ -359,10 +438,10 @@ export default function DashboardPage() {
                     height={300}
                     layout="vertical"
                     data={[
-                      { name: 'Blank', value: 35 },
-                      { name: 'Professional', value: 40 },
-                      { name: 'Creative', value: 15 },
-                      { name: 'Minimal', value: 10 },
+                      { name: "Blank", value: 35 },
+                      { name: "Professional", value: 40 },
+                      { name: "Creative", value: 15 },
+                      { name: "Minimal", value: 10 },
                     ]}
                     margin={{ top: 20, right: 20, bottom: 5, left: 80 }}
                   >
@@ -371,7 +450,12 @@ export default function DashboardPage() {
                     <YAxis dataKey="name" type="category" />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="value" name="Số lượng sử dụng" fill="#82ca9d" radius={[0, 4, 4, 0]} />
+                    <Bar
+                      dataKey="value"
+                      name="Số lượng sử dụng"
+                      fill="#82ca9d"
+                      radius={[0, 4, 4, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>

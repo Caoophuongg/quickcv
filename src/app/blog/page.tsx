@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,19 +36,14 @@ export default function BlogPage() {
   const [pagination, setPagination] = useState<Pagination>({
     total: 0,
     page: 1,
-    limit: 6,
+    limit: 9,
     totalPages: 0,
   });
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Lấy danh sách blog đã xuất bản
-  useEffect(() => {
-    fetchBlogs();
-  }, [pagination.page, searchTerm]);
-
   // Hàm lấy danh sách blogs
-  const fetchBlogs = async () => {
+  const fetchBlogs = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get("/api/blogs", {
@@ -65,7 +60,12 @@ export default function BlogPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, searchTerm]);
+
+  // Lấy danh sách blog đã xuất bản
+  useEffect(() => {
+    fetchBlogs();
+  }, [fetchBlogs]);
 
   // Xử lý tìm kiếm
   const handleSearch = (e: React.FormEvent) => {

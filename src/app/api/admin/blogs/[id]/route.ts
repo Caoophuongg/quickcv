@@ -2,23 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getAuthSession } from "@/lib/auth";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 // Validate dữ liệu cập nhật blog
 const updateBlogSchema = z.object({
   title: z
     .string()
-    .min(3, { message: "Tiêu đề phải có ít nhất 3 ký tự" })
+    .min(1, { message: "Tiêu đề không được để trống" })
     .optional(),
-  content: z
-    .string()
-    .min(10, { message: "Nội dung phải có ít nhất 10 ký tự" })
-    .optional(),
+  content: z.string().optional(),
   excerpt: z.string().optional().nullish(),
   thumbnail: z.string().optional().nullish(),
-  slug: z
-    .string()
-    .min(3, { message: "Slug phải có ít nhất 3 ký tự" })
-    .optional(),
+  slug: z.string().min(1, { message: "Slug không được để trống" }).optional(),
   published: z.boolean().optional(),
 });
 
@@ -123,7 +118,7 @@ export async function PATCH(
       !existingBlog.published &&
       updateData.published
     ) {
-      (updateData as any).publishedAt = new Date();
+      (updateData as Prisma.BlogUpdateInput).publishedAt = new Date();
     }
 
     // Cập nhật blog
