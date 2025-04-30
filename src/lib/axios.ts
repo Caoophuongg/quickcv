@@ -2,7 +2,8 @@ import axios, { AxiosResponse } from "axios";
 
 // Tạo instance axios với cấu hình mặc định
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "",
+  // Khi không có baseURL, axios sẽ tự động sử dụng URL hiện tại của ứng dụng
+  // Điều này làm cho nó hoạt động chính xác trên cả môi trường dev và production
   headers: {
     "Content-Type": "application/json",
   },
