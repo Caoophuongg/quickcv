@@ -4,7 +4,10 @@ import { getAuthSession } from "@/lib/auth";
 import { z } from "zod";
 
 const updateUserSchema = z.object({
-  role: z.enum(["USER", "ADMIN"]),
+  role: z.enum(["USER", "ADMIN"]).optional(),
+  firstName: z.string().optional().nullable(),
+  lastName: z.string().optional().nullable(),
+  email: z.string().email().optional(),
 });
 
 export async function PATCH(
@@ -16,10 +19,7 @@ export async function PATCH(
 
     // Kiểm tra quyền admin
     if (!session || session.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Đảm bảo params được await trước khi sử dụng
@@ -29,7 +29,7 @@ export async function PATCH(
     if (!userId) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function PATCH(
       );
     }
 
-    const { role } = result.data;
+    const { role, firstName, lastName, email } = result.data;
 
     // Kiểm tra người dùng tồn tại
     const existingUser = await prisma.user.findUnique({
@@ -59,8 +59,27 @@ export async function PATCH(
       );
     }
 
+    // Kiểm tra email đã tồn tại chưa (nếu có thay đổi email)
+    if (email && email !== existingUser.email) {
+      const emailExists = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (emailExists) {
+        return NextResponse.json(
+          { error: "Email đã được sử dụng" },
+          { status: 400 },
+        );
+      }
+    }
+
     // Ngăn chặn việc tự hạ cấp quyền của chính mình
-    if (session.id === userId && role !== "ADMIN") {
+    if (
+      session.id === userId &&
+      role &&
+      role !== "ADMIN" &&
+      existingUser.role === "ADMIN"
+    ) {
       return NextResponse.json(
         { error: "Không thể thay đổi quyền của chính mình" },
         { status: 400 },
@@ -68,7 +87,7 @@ export async function PATCH(
     }
 
     // Không cho phép admin cuối cùng bị downgrade
-    if (role === "USER") {
+    if (role === "USER" && existingUser.role === "ADMIN") {
       const adminCount = await prisma.user.count({
         where: {
           role: "ADMIN",
@@ -76,61 +95,60 @@ export async function PATCH(
       });
 
       if (adminCount <= 1) {
-        const isLastAdmin = await prisma.user.findUnique({
-          where: {
-            id: userId,
-            role: "ADMIN",
-          },
-        });
-
-        if (isLastAdmin) {
-          return NextResponse.json(
-            { error: "Cannot downgrade the last admin" },
-            { status: 400 }
-          );
-        }
+        return NextResponse.json(
+          { error: "Không thể hạ cấp admin cuối cùng" },
+          { status: 400 },
+        );
       }
     }
 
     // Cập nhật thông tin người dùng
+    const updateData: any = {};
+    if (role) updateData.role = role;
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    if (email) updateData.email = email;
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: { role },
+      data: updateData,
       select: {
         id: true,
         email: true,
         firstName: true,
         lastName: true,
         role: true,
+        createdAt: true,
+        _count: {
+          select: {
+            resumes: true,
+          },
+        },
       },
     });
 
     return NextResponse.json({
-      id: updatedUser.id,
-      email: updatedUser.email,
-      role: updatedUser.role,
+      message: "Cập nhật người dùng thành công",
+      user: updatedUser,
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật người dùng:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+      { error: "Có lỗi xảy ra khi cập nhật người dùng" },
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await getAuthSession();
 
     if (!session || session.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Đảm bảo params được await trước khi sử dụng
@@ -139,7 +157,7 @@ export async function DELETE(
     if (!userId) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -147,7 +165,7 @@ export async function DELETE(
     if (userId === session.id) {
       return NextResponse.json(
         { error: "Cannot delete yourself" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -169,7 +187,7 @@ export async function DELETE(
       if (adminCount <= 1) {
         return NextResponse.json(
           { error: "Cannot delete the last admin" },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -191,7 +209,7 @@ export async function DELETE(
     console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

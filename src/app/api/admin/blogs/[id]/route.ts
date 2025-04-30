@@ -5,18 +5,27 @@ import { z } from "zod";
 
 // Validate dữ liệu cập nhật blog
 const updateBlogSchema = z.object({
-  title: z.string().min(3, { message: "Tiêu đề phải có ít nhất 3 ký tự" }).optional(),
-  content: z.string().min(10, { message: "Nội dung phải có ít nhất 10 ký tự" }).optional(),
+  title: z
+    .string()
+    .min(3, { message: "Tiêu đề phải có ít nhất 3 ký tự" })
+    .optional(),
+  content: z
+    .string()
+    .min(10, { message: "Nội dung phải có ít nhất 10 ký tự" })
+    .optional(),
   excerpt: z.string().optional().nullish(),
   thumbnail: z.string().optional().nullish(),
-  slug: z.string().min(3, { message: "Slug phải có ít nhất 3 ký tự" }).optional(),
+  slug: z
+    .string()
+    .min(3, { message: "Slug phải có ít nhất 3 ký tự" })
+    .optional(),
   published: z.boolean().optional(),
 });
 
 // GET: Lấy chi tiết một blog
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) {
   try {
     const { params } = await context;
@@ -24,10 +33,7 @@ export async function GET(
 
     // Kiểm tra quyền admin
     if (!session || session.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const id = params.id;
@@ -48,10 +54,7 @@ export async function GET(
     });
 
     if (!blog) {
-      return NextResponse.json(
-        { error: "Blog not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
     return NextResponse.json(blog);
@@ -59,7 +62,7 @@ export async function GET(
     console.error("Error fetching blog:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -67,7 +70,7 @@ export async function GET(
 // PATCH: Cập nhật blog
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) {
   try {
     const { params } = await context;
@@ -75,10 +78,7 @@ export async function PATCH(
 
     // Kiểm tra quyền admin
     if (!session || session.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const id = params.id;
@@ -89,10 +89,7 @@ export async function PATCH(
     });
 
     if (!existingBlog) {
-      return NextResponse.json(
-        { error: "Blog not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
     // Lấy dữ liệu từ request
@@ -103,7 +100,7 @@ export async function PATCH(
     if (!validationResult.success) {
       return NextResponse.json(
         { error: "Invalid data", details: validationResult.error.format() },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -116,15 +113,16 @@ export async function PATCH(
       });
 
       if (slugExists) {
-        return NextResponse.json(
-          { error: "Slug đã tồn tại" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Slug đã tồn tại" }, { status: 400 });
       }
     }
 
     // Cập nhật thời gian xuất bản nếu trạng thái published thay đổi
-    if (updateData.published !== undefined && !existingBlog.published && updateData.published) {
+    if (
+      updateData.published !== undefined &&
+      !existingBlog.published &&
+      updateData.published
+    ) {
       (updateData as any).publishedAt = new Date();
     }
 
@@ -139,7 +137,7 @@ export async function PATCH(
     console.error("Error updating blog:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -147,7 +145,7 @@ export async function PATCH(
 // DELETE: Xóa blog
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: { id: string } },
 ) {
   try {
     const { params } = await context;
@@ -155,10 +153,7 @@ export async function DELETE(
 
     // Kiểm tra quyền admin
     if (!session || session.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const id = params.id;
@@ -169,10 +164,7 @@ export async function DELETE(
     });
 
     if (!existingBlog) {
-      return NextResponse.json(
-        { error: "Blog not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
     // Xóa blog
@@ -182,13 +174,13 @@ export async function DELETE(
 
     return NextResponse.json(
       { success: true, message: "Blog deleted successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error deleting blog:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}

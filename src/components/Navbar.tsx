@@ -26,7 +26,7 @@ export default function Navbar() {
 
   return (
     <header className="border-b">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-2 py-4 md:px-4 lg:px-6">
+      <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6 md:px-8 lg:px-12 xl:px-52">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo.png"
@@ -35,11 +35,13 @@ export default function Navbar() {
             height={50}
             className="rounded-full"
           />
-          <span className="text-2xl font-bold text-[#7129be] tracking-tight">Quick CV</span>
+          <span className="text-2xl font-bold tracking-tight text-[#7129be]">
+            Quick CV
+          </span>
         </Link>
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          
+
           {loading ? (
             // Skeleton loader for avatar when loading
             <Skeleton className="h-10 w-10 rounded-full" />
@@ -51,7 +53,11 @@ export default function Navbar() {
                   className="relative h-10 w-10 rounded-full p-0"
                 >
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.avatarUrl || ""} alt={user.email} className="object-cover" />
+                    <AvatarImage
+                      src={user.avatarUrl || ""}
+                      alt={user.email}
+                      className="object-cover"
+                    />
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {user.firstName?.[0] || user.email[0].toUpperCase()}
                     </AvatarFallback>
@@ -92,13 +98,13 @@ export default function Navbar() {
             <div className="flex gap-3">
               <Link
                 href="/login"
-                className="rounded-lg border px-4 py-2 text-[#7129be] shadow-lg font-medium"
+                className="rounded-lg border px-4 py-2 font-medium text-[#7129be] shadow-lg"
               >
                 Đăng nhập
               </Link>
               <Link
                 href="/register"
-                className="rounded-lg bg-[#7129be] px-4 py-2 text-white shadow-lg hover:bg-[#5f21a5] font-medium"
+                className="rounded-lg bg-[#7129be] px-4 py-2 font-medium text-white shadow-lg hover:bg-[#5f21a5]"
               >
                 Đăng ký
               </Link>
@@ -108,4 +114,4 @@ export default function Navbar() {
       </div>
     </header>
   );
-} 
+}

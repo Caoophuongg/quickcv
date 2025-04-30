@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -22,16 +23,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { 
-  PlusCircle, 
-  Search, 
-  Edit, 
-  Trash, 
-  Eye, 
-  ExternalLink, 
+import {
+  PlusCircle,
+  Search,
+  Edit,
+  Trash,
+  ExternalLink,
   Loader2,
   Check,
-  X
+  X,
 } from "lucide-react";
 
 // Khai báo interface
@@ -58,7 +58,6 @@ interface Pagination {
 }
 
 export default function BlogsPage() {
-  const router = useRouter();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [pagination, setPagination] = useState<Pagination>({
     total: 0,
@@ -91,6 +90,7 @@ export default function BlogsPage() {
       setPagination(response.data.pagination);
     } catch (error) {
       console.error("Error fetching blogs:", error);
+      toast.error("Không thể tải danh sách bài viết");
     } finally {
       setLoading(false);
     }
@@ -124,8 +124,10 @@ export default function BlogsPage() {
       // Cập nhật danh sách blogs sau khi xóa
       setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id));
       setDeleteDialogOpen(false);
+      toast.success("Đã xóa bài viết thành công");
     } catch (error) {
       console.error("Error deleting blog:", error);
+      toast.error("Không thể xóa bài viết");
     }
   };
 
@@ -137,12 +139,19 @@ export default function BlogsPage() {
       });
       // Cập nhật danh sách blogs
       setBlogs(
-        blogs.map((b) => 
-          b.id === blog.id ? { ...b, published: !b.published } : b
-        )
+        blogs.map((b) =>
+          b.id === blog.id ? { ...b, published: !b.published } : b,
+        ),
+      );
+
+      toast.success(
+        blog.published
+          ? "Đã chuyển trạng thái bài viết thành chưa xuất bản"
+          : "Đã xuất bản bài viết thành công",
       );
     } catch (error) {
       console.error("Error updating blog status:", error);
+      toast.error("Không thể cập nhật trạng thái bài viết");
     }
   };
 
@@ -158,7 +167,7 @@ export default function BlogsPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="container mx-auto space-y-6 p-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Quản lý Blog</h1>
         <Button asChild>
@@ -179,7 +188,7 @@ export default function BlogsPage() {
           className="max-w-sm"
         />
         <Button type="submit">
-          <Search className="h-4 w-4 mr-2" />
+          <Search className="mr-2 h-4 w-4" />
           Tìm kiếm
         </Button>
       </form>
@@ -199,14 +208,14 @@ export default function BlogsPage() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+                <TableCell colSpan={5} className="py-8 text-center">
+                  <Loader2 className="mx-auto h-8 w-8 animate-spin" />
                   <p className="mt-2">Đang tải dữ liệu...</p>
                 </TableCell>
               </TableRow>
             ) : blogs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8">
+                <TableCell colSpan={5} className="py-8 text-center">
                   <p className="text-muted-foreground">Không có bài viết nào</p>
                 </TableCell>
               </TableRow>
@@ -223,12 +232,12 @@ export default function BlogsPage() {
                     >
                       {blog.published ? (
                         <>
-                          <Check className="h-4 w-4 mr-1" />
+                          <Check className="mr-1 h-4 w-4" />
                           Đã xuất bản
                         </>
                       ) : (
                         <>
-                          <X className="h-4 w-4 mr-1" />
+                          <X className="mr-1 h-4 w-4" />
                           Chưa xuất bản
                         </>
                       )}
@@ -242,9 +251,9 @@ export default function BlogsPage() {
                           <Edit className="h-4 w-4" />
                         </Link>
                       </Button>
-                      <Button 
-                        size="icon" 
-                        variant="outline" 
+                      <Button
+                        size="icon"
+                        variant="outline"
                         onClick={() => handleDeleteClick(blog)}
                       >
                         <Trash className="h-4 w-4" />
@@ -267,7 +276,7 @@ export default function BlogsPage() {
 
       {/* Phân trang */}
       {pagination.totalPages > 1 && (
-        <div className="flex justify-center mt-4">
+        <div className="mt-4 flex justify-center">
           <div className="flex space-x-2">
             <Button
               variant="outline"
@@ -285,7 +294,7 @@ export default function BlogsPage() {
                 >
                   {page}
                 </Button>
-              )
+              ),
             )}
             <Button
               variant="outline"
@@ -304,7 +313,8 @@ export default function BlogsPage() {
           <DialogHeader>
             <DialogTitle>Xác nhận xóa</DialogTitle>
             <DialogDescription>
-              Bạn có chắc chắn muốn xóa blog "{blogToDelete?.title}"? Hành động này không thể hoàn tác.
+              Bạn có chắc chắn muốn xóa blog {blogToDelete?.title}? Hành động
+              này không thể hoàn tác.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -322,4 +332,4 @@ export default function BlogsPage() {
       </Dialog>
     </div>
   );
-} 
+}

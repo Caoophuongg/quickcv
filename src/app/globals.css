@@ -180,7 +180,7 @@ body {
   margin: 1.5em 0;
 }
 
-.blog-content th, 
+.blog-content th,
 .blog-content td {
   border: 1px solid hsl(var(--border));
   padding: 0.5em;

@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import {
   Pagination,
   PaginationContent,
@@ -27,15 +26,15 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { 
-  Search, 
-  UserPlus, 
-  Loader2, 
-  MoreHorizontal, 
+import {
+  Search,
+  UserPlus,
+  Loader2,
+  MoreHorizontal,
   Eye,
   Pencil,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
@@ -68,6 +67,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Label } from "@/components/ui/label";
 
 interface User {
   id: string;
@@ -101,6 +101,21 @@ export default function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isAddAdminOpen, setIsAddAdminOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [newAdmin, setNewAdmin] = useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+  });
+  const [isCreatingAdmin, setIsCreatingAdmin] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
 
   // Fetch users
   const fetchUsers = async (page = 1, search = searchTerm) => {
@@ -148,10 +163,12 @@ export default function UsersPage() {
   // Xử lý xóa người dùng
   const handleDeleteUser = async () => {
     if (!selectedUser) return;
-    
+
     try {
       await api.delete(`/api/admin/users/${selectedUser.id}`);
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== selectedUser.id));
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== selectedUser.id),
+      );
       toast.success("Xóa người dùng thành công");
       setIsDeleteOpen(false);
     } catch (error) {
@@ -171,6 +188,106 @@ export default function UsersPage() {
     fetchUsers(newPage, searchTerm);
   };
 
+  // Thêm xử lý tạo admin mới
+  const handleAddAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newAdmin.email || !newAdmin.password) {
+      toast.error("Email và mật khẩu là bắt buộc");
+      return;
+    }
+
+    try {
+      setIsCreatingAdmin(true);
+      await api.post("/api/admin/users", {
+        ...newAdmin,
+        role: "ADMIN",
+      });
+
+      // Reset form và đóng dialog
+      setNewAdmin({
+        email: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+      });
+      setIsAddAdminOpen(false);
+
+      // Tải lại danh sách người dùng từ server thay vì cập nhật state trực tiếp
+      fetchUsers(1);
+
+      toast.success("Tạo tài khoản admin thành công");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Có lỗi xảy ra khi tạo tài khoản admin";
+
+      toast.error(errorMessage);
+      console.error(error);
+    } finally {
+      setIsCreatingAdmin(false);
+    }
+  };
+
+  // Xử lý chỉnh sửa thông tin người dùng
+  const handleEditUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedUser) return;
+
+    try {
+      setIsEditing(true);
+      await api.patch(`/api/admin/users/${selectedUser.id}`, editFormData);
+
+      // Cập nhật danh sách người dùng
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === selectedUser.id
+            ? {
+                ...user,
+                firstName: editFormData.firstName,
+                lastName: editFormData.lastName,
+                email: editFormData.email,
+              }
+            : user,
+        ),
+      );
+
+      setIsEditOpen(false);
+      toast.success("Cập nhật thông tin người dùng thành công");
+    } catch (error: unknown) {
+      const errorMessage =
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response &&
+        error.response.data &&
+        typeof error.response.data === "object" &&
+        "error" in error.response.data
+          ? String(error.response.data.error)
+          : "Có lỗi xảy ra khi cập nhật thông tin";
+
+      toast.error(errorMessage);
+      console.error(error);
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
+  // Khởi tạo form chỉnh sửa với dữ liệu người dùng hiện tại
+  const initEditForm = (user: User) => {
+    setEditFormData({
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      email: user.email,
+    });
+    setSelectedUser(user);
+    setIsEditOpen(true);
+  };
+
   useEffect(() => {
     fetchUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -182,9 +299,13 @@ export default function UsersPage() {
         <h1 className="text-3xl font-bold tracking-tight">
           Quản lý người dùng
         </h1>
-        <Button size="sm" className="gap-1">
+        <Button
+          size="sm"
+          className="gap-1"
+          onClick={() => setIsAddAdminOpen(true)}
+        >
           <UserPlus className="h-4 w-4" />
-          <span>Thêm người dùng</span>
+          <span>Thêm tài khoản admin</span>
         </Button>
       </div>
 
@@ -256,12 +377,12 @@ export default function UsersPage() {
                         handleRoleChange(user.id, value as UserRole)
                       }
                     >
-                      <SelectTrigger 
+                      <SelectTrigger
                         className={cn(
                           "w-28 justify-center font-medium",
-                          user.role === "ADMIN" 
-                            ? "bg-primary text-primary-foreground hover:bg-primary/90" 
-                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                          user.role === "ADMIN"
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                            : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
                         )}
                       >
                         <SelectValue>
@@ -296,12 +417,12 @@ export default function UsersPage() {
                           <Eye className="mr-2 h-4 w-4" />
                           <span>Xem chi tiết</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => initEditForm(user)}>
                           <Pencil className="mr-2 h-4 w-4" />
                           <span>Chỉnh sửa</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           className="text-destructive focus:text-destructive"
                           onClick={() => {
                             setSelectedUser(user);
@@ -414,21 +535,23 @@ export default function UsersPage() {
               </div>
               <div className="grid grid-cols-3 items-center gap-4">
                 <span className="text-sm font-medium">Quyền:</span>
-                <Badge
-                  variant={selectedUser.role === "ADMIN" ? "default" : "secondary"}
-                  className="col-span-2 w-fit"
-                >
+                <span className="col-span-2 text-sm">
                   {selectedUser.role === "ADMIN" ? "Admin" : "User"}
-                </Badge>
+                </span>
               </div>
               <div className="grid grid-cols-3 items-center gap-4">
                 <span className="text-sm font-medium">CV đã tạo:</span>
-                <span className="col-span-2 text-sm">{selectedUser._count.resumes}</span>
+                <span className="col-span-2 text-sm">
+                  {selectedUser._count.resumes}
+                </span>
               </div>
               <div className="grid grid-cols-3 items-center gap-4">
                 <span className="text-sm font-medium">Ngày tạo:</span>
                 <span className="col-span-2 text-sm">
-                  {format(new Date(selectedUser.createdAt), "dd/MM/yyyy HH:mm:ss")}
+                  {format(
+                    new Date(selectedUser.createdAt),
+                    "dd/MM/yyyy HH:mm:ss",
+                  )}
                 </span>
               </div>
             </div>
@@ -449,14 +572,15 @@ export default function UsersPage() {
                 Xác nhận xóa người dùng
               </AlertDialogTitle>
               <AlertDialogDescription>
-                Bạn có chắc chắn muốn xóa người dùng <strong>{selectedUser.email}</strong>? 
-                Hành động này không thể hoàn tác và sẽ xóa tất cả dữ liệu của người dùng này,
-                bao gồm tất cả CV đã tạo.
+                Bạn có chắc chắn muốn xóa người dùng{" "}
+                <strong>{selectedUser.email}</strong>? Hành động này không thể
+                hoàn tác và sẽ xóa tất cả dữ liệu của người dùng này, bao gồm
+                tất cả CV đã tạo.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Hủy</AlertDialogCancel>
-              <AlertDialogAction 
+              <AlertDialogAction
                 onClick={handleDeleteUser}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
@@ -465,6 +589,181 @@ export default function UsersPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+      )}
+
+      {/* Dialog thêm admin mới */}
+      <Dialog open={isAddAdminOpen} onOpenChange={setIsAddAdminOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Thêm tài khoản admin mới</DialogTitle>
+            <DialogDescription>
+              Điền thông tin để tạo tài khoản admin mới
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAddAdmin} className="space-y-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="admin@example.com"
+                className="col-span-3"
+                value={newAdmin.email}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, email: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="password" className="text-right">
+                Mật khẩu <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                className="col-span-3"
+                value={newAdmin.password}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, password: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="firstName" className="text-right">
+                Họ
+              </Label>
+              <Input
+                id="firstName"
+                placeholder="Nguyễn"
+                className="col-span-3"
+                value={newAdmin.firstName}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, firstName: e.target.value })
+                }
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="lastName" className="text-right">
+                Tên
+              </Label>
+              <Input
+                id="lastName"
+                placeholder="Văn A"
+                className="col-span-3"
+                value={newAdmin.lastName}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, lastName: e.target.value })
+                }
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAddAdminOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button type="submit" disabled={isCreatingAdmin}>
+                {isCreatingAdmin ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Đang tạo...
+                  </>
+                ) : (
+                  "Tạo tài khoản admin"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog chỉnh sửa thông tin người dùng */}
+      {selectedUser && (
+        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Chỉnh sửa thông tin người dùng</DialogTitle>
+              <DialogDescription>
+                Cập nhật thông tin cho người dùng {selectedUser.email}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleEditUser} className="space-y-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-email" className="text-right">
+                  Email
+                </Label>
+                <Input
+                  id="edit-email"
+                  type="email"
+                  className="col-span-3"
+                  value={editFormData.email}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, email: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-firstName" className="text-right">
+                  Họ
+                </Label>
+                <Input
+                  id="edit-firstName"
+                  className="col-span-3"
+                  value={editFormData.firstName}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      firstName: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-lastName" className="text-right">
+                  Tên
+                </Label>
+                <Input
+                  id="edit-lastName"
+                  className="col-span-3"
+                  value={editFormData.lastName}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      lastName: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditOpen(false)}
+                >
+                  Hủy
+                </Button>
+                <Button type="submit" disabled={isEditing}>
+                  {isEditing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Đang cập nhật...
+                    </>
+                  ) : (
+                    "Lưu thay đổi"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

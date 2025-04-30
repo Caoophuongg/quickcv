@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/Navbar";
-import { Search, Loader2 } from "lucide-react";
+import { Search } from "lucide-react";
 
 // Định nghĩa interface cho blog
 interface BlogPost {
@@ -81,20 +81,23 @@ export default function BlogPage() {
   };
 
   // Format tên tác giả
-  const formatAuthorName = (author: { firstName: string | null; lastName: string | null }) => {
+  const formatAuthorName = (author: {
+    firstName: string | null;
+    lastName: string | null;
+  }) => {
     if (author.firstName || author.lastName) {
-      return `${author.firstName || ''} ${author.lastName || ''}`.trim();
+      return `${author.firstName || ""} ${author.lastName || ""}`.trim();
     }
-    return 'Admin';
+    return "Admin";
   };
 
   // Format ngày
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   };
 
@@ -104,13 +107,16 @@ export default function BlogPage() {
       <div className="mx-auto w-full max-w-7xl px-3 md:px-4 lg:px-6">
         <main className="py-10">
           <div className="space-y-6">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <h1 className="text-3xl md:text-4xl font-bold text-prim">
+            <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+              <h1 className="text-3xl font-bold text-prim md:text-4xl">
                 Tin tức & Hướng dẫn
               </h1>
-              
+
               {/* Thanh tìm kiếm */}
-              <form onSubmit={handleSearch} className="flex w-full md:w-auto gap-2">
+              <form
+                onSubmit={handleSearch}
+                className="flex w-full gap-2 md:w-auto"
+              >
                 <Input
                   type="search"
                   placeholder="Tìm kiếm bài viết..."
@@ -119,7 +125,7 @@ export default function BlogPage() {
                   className="w-full md:w-64"
                 />
                 <Button type="submit">
-                  <Search className="h-4 w-4 mr-2" />
+                  <Search className="mr-2 h-4 w-4" />
                   Tìm
                 </Button>
               </form>
@@ -127,28 +133,34 @@ export default function BlogPage() {
 
             {/* Danh sách bài viết */}
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array(6).fill(0).map((_, index) => (
-                  <div key={index} className="relative flex-1 rounded-xl shadow-xl overflow-hidden">
-                    <Skeleton className="h-[200px] w-full" />
-                    <div className="space-y-3 p-5">
-                      <div className="flex items-center gap-2">
-                        <Skeleton className="h-4 w-20" />
-                        <Skeleton className="h-4 w-4 rounded-full" />
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {Array(6)
+                  .fill(0)
+                  .map((_, index) => (
+                    <div
+                      key={index}
+                      className="relative flex-1 overflow-hidden rounded-xl shadow-xl"
+                    >
+                      <Skeleton className="h-[250px] w-full" />
+                      <div className="space-y-3 p-5">
+                        <div className="flex items-center gap-2">
+                          <Skeleton className="h-4 w-20" />
+                          <Skeleton className="h-4 w-4 rounded-full" />
+                          <Skeleton className="h-4 w-20" />
+                        </div>
+                        <Skeleton className="h-6 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-2/3" />
                         <Skeleton className="h-4 w-20" />
                       </div>
-                      <Skeleton className="h-6 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-2/3" />
-                      <Skeleton className="h-4 w-20" />
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : blogs.length === 0 ? (
-              <div className="text-center py-16">
+              <div className="py-16 text-center">
                 <p className="text-xl text-muted-foreground">
-                  Không tìm thấy bài viết nào{searchTerm ? ` phù hợp với "${searchTerm}"` : ""}.
+                  Không tìm thấy bài viết nào
+                  {searchTerm ? ` phù hợp với "${searchTerm}"` : ""}.
                 </p>
                 {searchTerm && (
                   <Button
@@ -162,31 +174,36 @@ export default function BlogPage() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {blogs.map((blog) => (
                     <Link
                       key={blog.id}
                       href={`/blog/${blog.slug}`}
-                      className="relative flex-1 rounded-xl shadow-xl duration-200 hover:shadow-2xl hover:-translate-y-1 transition-all"
+                      className="relative flex-1 rounded-xl shadow-xl transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl"
                     >
                       <Image
                         src={blog.thumbnail || "/placeholder-blog.jpg"}
                         alt={blog.title}
                         width={400}
                         height={250}
-                        className="w-full rounded-t-xl object-cover h-[200px]"
+                        className="h-[250px] w-full rounded-t-xl object-cover"
                       />
                       <div className="space-y-3 p-5">
                         <div className="flex items-center gap-2 text-base">
                           <p>
-                            by <span className="text-prim">{formatAuthorName(blog.author)}</span>
+                            by{" "}
+                            <span className="text-prim">
+                              {formatAuthorName(blog.author)}
+                            </span>
                           </p>
                           |<p>{formatDate(blog.publishedAt)}</p>
                         </div>
                         <p className="text-xl font-semibold !leading-7 text-prim">
                           {blog.title}
                         </p>
-                        <p className="line-clamp-2 text-gray-600">{blog.excerpt}</p>
+                        <p className="line-clamp-2 text-gray-600">
+                          {blog.excerpt}
+                        </p>
                         <div className="text-prim underline underline-offset-4">
                           Đọc thêm
                         </div>
@@ -197,7 +214,7 @@ export default function BlogPage() {
 
                 {/* Phân trang */}
                 {pagination.totalPages > 1 && (
-                  <div className="flex justify-center mt-10">
+                  <div className="mt-10 flex justify-center">
                     <div className="flex space-x-2">
                       <Button
                         variant="outline"
@@ -206,17 +223,20 @@ export default function BlogPage() {
                       >
                         Trước
                       </Button>
-                      {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
-                        (page) => (
-                          <Button
-                            key={page}
-                            variant={page === pagination.page ? "default" : "outline"}
-                            onClick={() => handlePageChange(page)}
-                          >
-                            {page}
-                          </Button>
-                        )
-                      )}
+                      {Array.from(
+                        { length: pagination.totalPages },
+                        (_, i) => i + 1,
+                      ).map((page) => (
+                        <Button
+                          key={page}
+                          variant={
+                            page === pagination.page ? "default" : "outline"
+                          }
+                          onClick={() => handlePageChange(page)}
+                        >
+                          {page}
+                        </Button>
+                      ))}
                       <Button
                         variant="outline"
                         onClick={() => handlePageChange(pagination.page + 1)}
@@ -234,4 +254,4 @@ export default function BlogPage() {
       </div>
     </div>
   );
-} 
+}

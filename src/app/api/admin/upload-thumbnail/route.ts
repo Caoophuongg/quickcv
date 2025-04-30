@@ -38,9 +38,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Upload thumbnail lên Vercel Blob Storage
-    const blob = await put(`blog-thumbnails/${Date.now()}-${thumbnailFile.name}`, thumbnailFile, {
-      access: "public",
-    });
+    const blob = await put(
+      `blog-thumbnails/${Date.now()}-${thumbnailFile.name}`,
+      thumbnailFile,
+      {
+        access: "public",
+      },
+    );
 
     return NextResponse.json({
       thumbnailUrl: blob.url,
@@ -53,4 +57,4 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
-} 
+}

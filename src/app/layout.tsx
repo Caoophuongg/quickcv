@@ -1,4 +1,4 @@
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "sonner";
 import { Providers } from "@/providers";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           {children}
-          <Toaster />
+          <Toaster richColors closeButton position="top-right" />
         </Providers>
       </body>
     </html>

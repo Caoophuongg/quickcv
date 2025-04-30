@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { UserRole } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { STORAGE_KEYS, getStoredData, storeData, safeLocalStorage, isDataStale } from "@/lib/localStorage";
+import {
+  STORAGE_KEYS,
+  getStoredData,
+  storeData,
+  safeLocalStorage,
+  isDataStale,
+} from "@/lib/localStorage";
 
 interface User {
   id: string;
@@ -64,7 +70,7 @@ export function useAuth(): UseAuthReturn {
 
       // Check localStorage for cached user data first
       const cachedUser = getStoredData<User>(STORAGE_KEYS.USER_PROFILE);
-      
+
       // Use cached data if it exists and is not stale (30 minutes)
       if (cachedUser && !isDataStale(cachedUser.timestamp)) {
         setUser(cachedUser.data);
@@ -77,7 +83,7 @@ export function useAuth(): UseAuthReturn {
       if (response.ok) {
         const data = await response.json();
         setUser(data.user);
-        
+
         // Store user data in localStorage with timestamp
         storeData(STORAGE_KEYS.USER_PROFILE, data.user);
       } else {
@@ -148,9 +154,14 @@ export function useAuth(): UseAuthReturn {
       }
 
       setUser(result.user);
-      
+
       // Store user data in localStorage after successful login
       storeData(STORAGE_KEYS.USER_PROFILE, result.user);
+
+      // Kiểm tra nếu user là admin thì chuyển hướng đến trang dashboard admin
+      if (result.user.role === UserRole.ADMIN) {
+        router.push("/admin/dashboard");
+      }
 
       // Tải lại trang để middleware kiểm tra cookies
       router.refresh();
@@ -172,7 +183,7 @@ export function useAuth(): UseAuthReturn {
       });
 
       setUser(null);
-      
+
       // Remove user data from localStorage on logout
       safeLocalStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
 
@@ -239,12 +250,12 @@ export function useAuth(): UseAuthReturn {
       // Cập nhật thông tin người dùng trong state và localStorage
       setUser((prevUser) => {
         const updatedUser = prevUser ? { ...prevUser, ...result.user } : null;
-        
+
         // Update localStorage if user data was successfully updated
         if (updatedUser) {
           storeData(STORAGE_KEYS.USER_PROFILE, updatedUser);
         }
-        
+
         return updatedUser;
       });
     } catch (err) {
