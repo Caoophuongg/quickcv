@@ -414,15 +414,26 @@ export default function BlogForm({ blogId }: BlogFormProps) {
                     size="icon"
                     className="absolute right-2 top-2 h-8 w-8 rounded-full bg-red-500/80 hover:bg-red-500"
                     onClick={handleRemoveThumbnail}
+                    disabled={thumbnailLoading}
                   >
-                    <X className="h-4 w-4" />
+                    {thumbnailLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <X className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               ) : (
                 <div className="flex h-40 flex-col items-center justify-center rounded-md border border-dashed p-4 text-center">
-                  <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
+                  {thumbnailLoading ? (
+                    <Loader2 className="mb-2 h-8 w-8 animate-spin" />
+                  ) : (
+                    <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
+                  )}
                   <p className="text-sm text-muted-foreground">
-                    Chưa có ảnh đại diện
+                    {thumbnailLoading
+                      ? "Đang tải lên..."
+                      : "Chưa có ảnh đại diện"}
                   </p>
                 </div>
               )}
@@ -437,6 +448,7 @@ export default function BlogForm({ blogId }: BlogFormProps) {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
+                  disabled={thumbnailLoading}
                 />
               </div>
             </CardContent>

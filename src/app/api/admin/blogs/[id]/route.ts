@@ -20,10 +20,9 @@ const updateBlogSchema = z.object({
 // GET: Lấy chi tiết một blog
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } },
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { params } = await context;
     const session = await getAuthSession();
 
     // Kiểm tra quyền admin
@@ -65,10 +64,9 @@ export async function GET(
 // PATCH: Cập nhật blog
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } },
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { params } = await context;
     const session = await getAuthSession();
 
     // Kiểm tra quyền admin
@@ -164,10 +162,9 @@ function isValidUrl(urlString: string) {
 // DELETE: Xóa blog
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: string } },
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { params } = await context;
     const session = await getAuthSession();
 
     // Kiểm tra quyền admin

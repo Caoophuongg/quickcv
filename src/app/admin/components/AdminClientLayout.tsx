@@ -4,9 +4,18 @@ import { useEffect, useState } from "react";
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
 
+interface User {
+  id: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  role: string;
+  avatarUrl?: string | null;
+}
+
 interface AdminClientLayoutProps {
   children: React.ReactNode;
-  user: any; // Thay any bằng interface phù hợp cho user
+  user: User;
 }
 
 export default function AdminClientLayout({ children, user }: AdminClientLayoutProps) {

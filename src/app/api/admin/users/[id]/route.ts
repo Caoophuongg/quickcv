@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getAuthSession } from "@/lib/auth";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 const updateUserSchema = z.object({
   role: z.enum(["USER", "ADMIN"]).optional(),
@@ -103,7 +104,7 @@ export async function PATCH(
     }
 
     // Cập nhật thông tin người dùng
-    const updateData: any = {};
+    const updateData: Prisma.UserUpdateInput = {};
     if (role) updateData.role = role;
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
