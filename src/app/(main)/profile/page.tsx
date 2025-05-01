@@ -10,18 +10,60 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { CheckCircle2, XCircle } from "lucide-react";
+
+// Kiểm tra mật khẩu mạnh
+const checkPasswordStrength = (password: string) => {
+  const minLength = password.length >= 6;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumbers = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+  return {
+    minLength,
+    hasUpperCase,
+    hasLowerCase,
+    hasNumbers,
+    hasSpecialChar,
+    isStrong: minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar
+  };
+};
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, updateUserProfile, deleteAvatar } = useAuthContext();
+  const { user, updateUserProfile, deleteAvatar, changePassword } = useAuthContext();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    
+  });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordStrength, setPasswordStrength] = useState({
+    minLength: false,
+    hasUpperCase: false,
+    hasLowerCase: false,
+    hasNumbers: false,
+    hasSpecialChar: false,
+    isStrong: false
   });
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -33,9 +75,30 @@ export default function ProfilePage() {
     }
   }, [user]);
 
+  // Kiểm tra độ mạnh của mật khẩu khi người dùng nhập
+  useEffect(() => {
+    if (passwordData.newPassword) {
+      setPasswordStrength(checkPasswordStrength(passwordData.newPassword));
+    } else {
+      setPasswordStrength({
+        minLength: false,
+        hasUpperCase: false,
+        hasLowerCase: false,
+        hasNumbers: false,
+        hasSpecialChar: false,
+        isStrong: false
+      });
+    }
+  }, [passwordData.newPassword]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,6 +173,56 @@ export default function ProfilePage() {
       setIsLoading(false);
     }
   };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Kiểm tra mật khẩu mới có đủ mạnh không
+    if (!passwordStrength.isStrong) {
+      toast.error("Mật khẩu mới không đáp ứng yêu cầu bảo mật");
+      return;
+    }
+    
+    // Kiểm tra mật khẩu xác nhận
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error("Mật khẩu xác nhận không khớp");
+      return;
+    }
+
+    try {
+      setIsChangingPassword(true);
+      await changePassword(passwordData.currentPassword, passwordData.newPassword);
+      toast.success("Đổi mật khẩu thành công");
+      setPasswordDialogOpen(false);
+      
+      // Reset form
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error) {
+      toast.error("Không thể đổi mật khẩu. Vui lòng kiểm tra mật khẩu hiện tại của bạn.");
+      console.error(error);
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  // Component hiển thị trạng thái yêu cầu mật khẩu
+  const PasswordRequirement = ({ met, text }: { met: boolean; text: string }) => (
+    <div className="flex items-center gap-2">
+      {met ? (
+        <CheckCircle2 className="h-4 w-4 text-green-500" />
+      ) : (
+        <XCircle className="h-4 w-4 text-red-500" />
+      )}
+      <span className={met ? "text-green-700" : "text-muted-foreground"}>
+        {text}
+      </span>
+    </div>
+  );
 
   return (
     <div className="flex min-h-[calc(100vh-60px)] items-center justify-center">
@@ -197,6 +310,102 @@ export default function ProfilePage() {
               </div>
               
               <div className="flex justify-center gap-4 pt-2">
+                <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      className="w-full max-w-[150px]"
+                    >
+                      Đổi mật khẩu
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Đổi mật khẩu</DialogTitle>
+                      <DialogDescription>
+                        Nhập mật khẩu hiện tại và mật khẩu mới của bạn.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handlePasswordSubmit} className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="currentPassword">Mật khẩu hiện tại</Label>
+                        <Input
+                          id="currentPassword"
+                          name="currentPassword"
+                          type="password"
+                          value={passwordData.currentPassword}
+                          onChange={handlePasswordChange}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="newPassword">Mật khẩu mới</Label>
+                        <Input
+                          id="newPassword"
+                          name="newPassword"
+                          type="password"
+                          value={passwordData.newPassword}
+                          onChange={handlePasswordChange}
+                          required
+                        />
+                        
+                        <div className="mt-3 space-y-2 rounded-md border p-3">
+                          <p className="text-sm font-medium">Mật khẩu phải:</p>
+                          <div className="space-y-1 text-xs">
+                            <PasswordRequirement 
+                              met={passwordStrength.minLength} 
+                              text="Có ít nhất 6 ký tự" 
+                            />
+                            <PasswordRequirement 
+                              met={passwordStrength.hasLowerCase} 
+                              text="Có ít nhất 1 chữ cái thường (a-z)" 
+                            />
+                            <PasswordRequirement 
+                              met={passwordStrength.hasUpperCase} 
+                              text="Có ít nhất 1 chữ cái hoa (A-Z)" 
+                            />
+                            <PasswordRequirement 
+                              met={passwordStrength.hasNumbers} 
+                              text="Có ít nhất 1 số (0-9)" 
+                            />
+                            <PasswordRequirement 
+                              met={passwordStrength.hasSpecialChar} 
+                              text="Có ít nhất 1 ký tự đặc biệt (!@#$...)" 
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirmPassword">Xác nhận mật khẩu mới</Label>
+                        <Input
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          type="password"
+                          value={passwordData.confirmPassword}
+                          onChange={handlePasswordChange}
+                          required
+                        />
+                      </div>
+                      <DialogFooter className="pt-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setPasswordDialogOpen(false)}
+                        >
+                          Hủy
+                        </Button>
+                        <Button
+                          type="submit"
+                          disabled={isChangingPassword || !passwordStrength.isStrong || 
+                                    passwordData.newPassword !== passwordData.confirmPassword}
+                        >
+                          {isChangingPassword ? "Đang xử lý..." : "Lưu thay đổi"}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
                 <Button
                   type="button"
                   variant="outline"

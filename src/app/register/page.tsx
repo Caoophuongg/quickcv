@@ -20,20 +20,44 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Key, User, Loader2 } from "lucide-react";
+import { Mail, Key, User, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 
+// Hàm kiểm tra yêu cầu mật khẩu mạnh
+const passwordRequirements = {
+  minLength: (value: string) => value.length >= 6,
+  hasUpperCase: (value: string) => /[A-Z]/.test(value),
+  hasLowerCase: (value: string) => /[a-z]/.test(value),
+  hasNumbers: (value: string) => /[0-9]/.test(value),
+  hasSpecialChar: (value: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value),
+};
+
+// Schema mới với yêu cầu mật khẩu mạnh hơn
 const registerSchema = z
   .object({
     firstName: z.string().min(1, "Tên không được để trống"),
     lastName: z.string().min(1, "Họ không được để trống"),
     email: z.string().email("Email không hợp lệ"),
-    password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+    password: z
+      .string()
+      .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
+      .refine(passwordRequirements.hasUpperCase, {
+        message: "Mật khẩu phải có ít nhất 1 chữ cái hoa (A-Z)",
+      })
+      .refine(passwordRequirements.hasLowerCase, {
+        message: "Mật khẩu phải có ít nhất 1 chữ cái thường (a-z)",
+      })
+      .refine(passwordRequirements.hasNumbers, {
+        message: "Mật khẩu phải có ít nhất 1 số (0-9)",
+      })
+      .refine(passwordRequirements.hasSpecialChar, {
+        message: "Mật khẩu phải có ít nhất 1 ký tự đặc biệt",
+      }),
     confirmPassword: z.string().min(1, "Xác nhận mật khẩu không được để trống"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -46,6 +70,7 @@ type RegisterValues = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const { register, error, loading, isAuthenticated } = useAuthContext();
   const router = useRouter();
+  const [passwordInput, setPasswordInput] = useState("");
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -74,6 +99,20 @@ export default function RegisterPage() {
     const { confirmPassword, ...registerData } = values;
     await register(registerData);
   };
+
+  // Component hiển thị trạng thái yêu cầu mật khẩu
+  const PasswordRequirement = ({ met, text }: { met: boolean; text: string }) => (
+    <div className="flex items-center gap-2">
+      {met ? (
+        <CheckCircle2 className="h-4 w-4 text-green-500" />
+      ) : (
+        <XCircle className="h-4 w-4 text-red-500" />
+      )}
+      <span className={met ? "text-green-700" : "text-muted-foreground"}>
+        {text}
+      </span>
+    </div>
+  );
 
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
@@ -163,9 +202,38 @@ export default function RegisterPage() {
                           placeholder="******"
                           className="border-0 focus-visible:ring-0"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setPasswordInput(e.target.value);
+                          }}
                         />
                       </div>
                     </FormControl>
+                    <div className="mt-3 space-y-2 rounded-md border p-3">
+                      <p className="text-sm font-medium">Mật khẩu phải:</p>
+                      <div className="space-y-1 text-xs">
+                        <PasswordRequirement 
+                          met={passwordRequirements.minLength(passwordInput)} 
+                          text="Có ít nhất 6 ký tự" 
+                        />
+                        <PasswordRequirement 
+                          met={passwordRequirements.hasLowerCase(passwordInput)} 
+                          text="Có ít nhất 1 chữ cái thường (a-z)" 
+                        />
+                        <PasswordRequirement 
+                          met={passwordRequirements.hasUpperCase(passwordInput)} 
+                          text="Có ít nhất 1 chữ cái hoa (A-Z)" 
+                        />
+                        <PasswordRequirement 
+                          met={passwordRequirements.hasNumbers(passwordInput)} 
+                          text="Có ít nhất 1 số (0-9)" 
+                        />
+                        <PasswordRequirement 
+                          met={passwordRequirements.hasSpecialChar(passwordInput)} 
+                          text="Có ít nhất 1 ký tự đặc biệt (!@#$...)" 
+                        />
+                      </div>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}

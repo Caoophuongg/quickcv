@@ -11,7 +11,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "build:prod": "prisma generate && next build",
-    "postinstall": "prisma generate && prisma migrate deploy",
+    "postinstall": "prisma generate",
     "seed": "npx tsx src/scripts/seed.ts"
   },
   "dependencies": {
@@ -45,6 +45,7 @@
     "lucide-react": "^0.455.0",
     "next": "15.0.3",
     "next-themes": "^0.4.6",
+    "nodemailer": "^6.10.1",
     "prisma": "^5.22.0",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
@@ -55,11 +56,13 @@
     "sonner": "^2.0.3",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.19.4",
     "zod": "^3.24.3",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.13.8",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "^18.2.66",
     "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18.2.22",

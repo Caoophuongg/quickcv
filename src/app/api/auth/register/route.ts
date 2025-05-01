@@ -3,9 +3,32 @@ import prisma from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
 import { z } from "zod";
 
+// Quy tắc kiểm tra mật khẩu mạnh
+const passwordRequirements = {
+  minLength: (value: string) => value.length >= 6,
+  hasUpperCase: (value: string) => /[A-Z]/.test(value),
+  hasLowerCase: (value: string) => /[a-z]/.test(value),
+  hasNumbers: (value: string) => /[0-9]/.test(value),
+  hasSpecialChar: (value: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value),
+};
+
 const registerSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
-  password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+  password: z
+    .string()
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
+    .refine(passwordRequirements.hasUpperCase, {
+      message: "Mật khẩu phải có ít nhất 1 chữ cái hoa (A-Z)",
+    })
+    .refine(passwordRequirements.hasLowerCase, {
+      message: "Mật khẩu phải có ít nhất 1 chữ cái thường (a-z)",
+    })
+    .refine(passwordRequirements.hasNumbers, {
+      message: "Mật khẩu phải có ít nhất 1 số (0-9)",
+    })
+    .refine(passwordRequirements.hasSpecialChar, {
+      message: "Mật khẩu phải có ít nhất 1 ký tự đặc biệt",
+    }),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
 });
