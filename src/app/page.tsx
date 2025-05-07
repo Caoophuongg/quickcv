@@ -117,7 +117,7 @@ export default function Home() {
                 <h3 className="mb-2 text-xl font-semibold md:text-2xl">
                   Tạo CV dễ dàng
                 </h3>
-                <p className="text-base text-card-foreground/80 md:text-lg">
+                <p className="text-base text-card-foreground/80">
                   Dù bạn là người mới bắt đầu hay đã có kinh nghiệm, bạn có thể
                   nhanh chóng tạo một sơ yếu lý lịch hoàn chỉnh chỉ trong vài
                   phút.
@@ -129,7 +129,7 @@ export default function Home() {
                 <h3 className="mb-2 text-xl font-semibold md:text-2xl">
                   Tự động lưu và chia sẻ dễ dàng
                 </h3>
-                <p className="text-base text-card-foreground/80 md:text-lg">
+                <p className="text-base text-card-foreground/80">
                   Sơ yếu lý lịch của bạn sẽ được lưu tự động. Bạn có thể tải
                   xuống dưới dạng PDF hoặc chia sẻ chỉ với một cú nhấp chuột.
                 </p>
@@ -140,7 +140,7 @@ export default function Home() {
                 <h3 className="mb-2 text-xl font-semibold md:text-2xl">
                   Gợi ý nội dung thông minh
                 </h3>
-                <p className="text-base text-card-foreground/80 md:text-lg">
+                <p className="text-base text-card-foreground/80">
                   Nếu bạn không biết nên viết gì, hãy để hệ thống gợi ý giúp bạn
                   tạo ra nội dung hoàn chỉnh cho sơ yếu lý lịch.
                 </p>
@@ -214,15 +214,15 @@ export default function Home() {
                           )}
                         </p>
                       </div>
-                      <p className="text-lg font-semibold !leading-7 text-prim md:text-xl">
+                      <p className="font-semibold !leading-7 line-clamp-2 text-prim text-md">
                         {blog.title}
                       </p>
-                      <p className="line-clamp-2 text-card-foreground/80">
+                      <p className="line-clamp-2 text-card-foreground/80 text-sm text-gray-700">
                         {blog.excerpt}
                       </p>
                       <Link
                         href={`/blog/${blog.slug}`}
-                        className="inline-block text-prim underline underline-offset-4"
+                        className="inline-block text-prim underline underline-offset-4 text-sm"
                       >
                         Chi tiết
                       </Link>
