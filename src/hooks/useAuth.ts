@@ -226,12 +226,24 @@ export function useAuth(): UseAuthReturn {
       }
 
       // Tạo body cập nhật profile
-      const updateData = {
+      const updateData: {
+        firstName?: string;
+        lastName?: string;
+        avatarUrl?: string | null;
+      } = {
         firstName: data.firstName,
         lastName: data.lastName,
-        ...(avatarUrl && { avatarUrl }),
-        ...(data.avatar === null && { avatarUrl: null }),
       };
+      
+      // Chỉ thêm avatarUrl vào updateData khi:
+      // 1. Đã upload ảnh mới (avatar là File)
+      // 2. Hoặc muốn xóa ảnh (avatar là null)
+      if (data.avatar instanceof File && avatarUrl) {
+        updateData.avatarUrl = avatarUrl;
+      } else if (data.avatar === null) {
+        updateData.avatarUrl = null;
+      }
+      // Nếu không chỉnh sửa avatar (data.avatar là undefined), không gửi trường avatarUrl
 
       const response = await fetch("/api/auth/update-profile", {
         method: "PUT",

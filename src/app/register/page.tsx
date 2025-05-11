@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Key, User, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Mail, Key, User, Loader2, CheckCircle2, XCircle, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -71,6 +71,8 @@ export default function RegisterPage() {
   const { register, error, loading, isAuthenticated } = useAuthContext();
   const router = useRouter();
   const [passwordInput, setPasswordInput] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -98,6 +100,14 @@ export default function RegisterPage() {
   const onSubmit = async (values: RegisterValues) => {
     const { confirmPassword, ...registerData } = values;
     await register(registerData);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   // Component hiển thị trạng thái yêu cầu mật khẩu
@@ -198,7 +208,7 @@ export default function RegisterPage() {
                       <div className="flex items-center rounded-md border border-input ring-offset-background focus-within:ring-2 focus-within:ring-ring">
                         <Key className="ml-3 h-4 w-4 text-muted-foreground" />
                         <Input
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           placeholder="******"
                           className="border-0 focus-visible:ring-0"
                           {...field}
@@ -207,6 +217,18 @@ export default function RegisterPage() {
                             setPasswordInput(e.target.value);
                           }}
                         />
+                        <button
+                          type="button"
+                          onClick={togglePasswordVisibility}
+                          className="mr-3 hover:text-primary"
+                          aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </button>
                       </div>
                     </FormControl>
                     <div className="mt-3 space-y-2 rounded-md border p-3">
@@ -248,11 +270,23 @@ export default function RegisterPage() {
                       <div className="flex items-center rounded-md border border-input ring-offset-background focus-within:ring-2 focus-within:ring-ring">
                         <Key className="ml-3 h-4 w-4 text-muted-foreground" />
                         <Input
-                          type="password"
+                          type={showConfirmPassword ? "text" : "password"}
                           placeholder="******"
                           className="border-0 focus-visible:ring-0"
                           {...field}
                         />
+                        <button
+                          type="button"
+                          onClick={toggleConfirmPasswordVisibility}
+                          className="mr-3 hover:text-primary"
+                          aria-label={showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </button>
                       </div>
                     </FormControl>
                     <FormMessage />

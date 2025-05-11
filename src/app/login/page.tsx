@@ -20,10 +20,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Key, Loader2 } from "lucide-react";
+import { Mail, Key, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -40,6 +40,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/resumes";
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -67,6 +68,10 @@ export default function LoginPage() {
 
   const onSubmit = async (values: LoginValues) => {
     await login(values);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -111,11 +116,23 @@ export default function LoginPage() {
                       <div className="flex items-center rounded-md border border-input ring-offset-background focus-within:ring-2 focus-within:ring-ring">
                         <Key className="ml-3 h-4 w-4 text-muted-foreground" />
                         <Input
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           placeholder="******"
                           className="border-0 focus-visible:ring-0"
                           {...field}
                         />
+                        <button
+                          type="button"
+                          onClick={togglePasswordVisibility}
+                          className="mr-3 hover:text-primary"
+                          aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </button>
                       </div>
                     </FormControl>
                     <FormMessage />

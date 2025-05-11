@@ -102,6 +102,7 @@ export async function getUserById(id: string) {
       firstName: true,
       lastName: true,
       role: true,
+      avatarUrl: true,
       createdAt: true,
       updatedAt: true,
     },
