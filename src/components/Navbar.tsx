@@ -2,7 +2,7 @@
 
 import ThemeToggle from "@/components/ThemeToggle";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,12 +16,32 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { user, logout, isAdmin, loading } = useAuthContext();
+  const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
+
+  // Preload user avatar as soon as user data is available
+  useEffect(() => {
+    if (user?.avatarUrl) {
+      const img = new window.Image();
+      img.src = user.avatarUrl;
+      img.onload = () => setAvatarSrc(user.avatarUrl || null);
+    } else {
+      setAvatarSrc(null);
+    }
+  }, [user?.avatarUrl]);
 
   const handleLogout = async () => {
     await logout();
+  };
+
+  // Tạo fallback text từ username
+  const getFallbackText = () => {
+    if (!user) return "";
+    if (user.firstName) return user.firstName[0].toUpperCase();
+    return user.email[0].toUpperCase();
   };
 
   return (
@@ -34,6 +54,7 @@ export default function Navbar() {
             width={50}
             height={50}
             className="rounded-full"
+            priority
           />
           <span className="text-2xl font-bold tracking-tight text-[#7129be]">
             Quick CV
@@ -53,14 +74,20 @@ export default function Navbar() {
                   className="relative h-10 w-10 rounded-full p-0"
                 >
                   <Avatar className="h-10 w-10">
-                    <AvatarImage
-                      src={user.avatarUrl || ""}
-                      alt={user.email}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {user.firstName?.[0] || user.email[0].toUpperCase()}
-                    </AvatarFallback>
+                    {avatarSrc ? (
+                      <Image
+                        src={avatarSrc}
+                        alt={user.email}
+                        fill
+                        sizes="40px"
+                        className="object-cover"
+                        priority
+                      />
+                    ) : (
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {getFallbackText()}
+                      </AvatarFallback>
+                    )}
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>

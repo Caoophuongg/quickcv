@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,6 +17,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface AdminHeaderProps {
   user: {
@@ -36,10 +38,29 @@ export default function AdminHeader({
 }: AdminHeaderProps) {
   const { logout } = useAuthContext();
   const router = useRouter();
+  const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
+
+  // Preload user avatar as soon as user data is available
+  useEffect(() => {
+    if (user?.avatarUrl) {
+      const img = new window.Image();
+      img.src = user.avatarUrl;
+      img.onload = () => setAvatarSrc(user.avatarUrl || null);
+    } else {
+      setAvatarSrc(null);
+    }
+  }, [user?.avatarUrl]);
 
   const handleLogout = async () => {
     await logout();
     router.push("/login");
+  };
+
+  // Tạo fallback text từ username
+  const getFallbackText = () => {
+    const firstInitial = user.firstName?.[0] || user.email[0].toUpperCase();
+    const lastInitial = user.lastName?.[0] || "";
+    return `${firstInitial}${lastInitial}`;
   };
 
   return (
@@ -60,11 +81,20 @@ export default function AdminHeader({
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 rounded-full p-0">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.avatarUrl || ""} alt={user.email} />
-                    <AvatarFallback className="bg-primary text-xs text-primary-foreground">
-                      {user.firstName?.[0] || user.email[0].toUpperCase()}
-                      {user.lastName?.[0] || ""}
-                    </AvatarFallback>
+                    {avatarSrc ? (
+                      <Image
+                        src={avatarSrc}
+                        alt={user.email}
+                        fill
+                        sizes="32px"
+                        className="object-cover"
+                        priority
+                      />
+                    ) : (
+                      <AvatarFallback className="bg-primary text-xs text-primary-foreground">
+                        {getFallbackText()}
+                      </AvatarFallback>
+                    )}
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>

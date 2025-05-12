@@ -79,7 +79,13 @@ export function useAuth(): UseAuthReturn {
         return;
       }
 
-      const response = await fetch("/api/auth/me");
+      // Thêm Cache-Control vào header để cải thiện hiệu suất
+      const response = await fetch("/api/auth/me", {
+        cache: "force-cache", // Sử dụng cơ chế cache của Next.js 
+        headers: {
+          "Cache-Control": "max-age=60", // Cache trong 60 giây
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
