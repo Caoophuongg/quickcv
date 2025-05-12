@@ -1,6 +1,6 @@
 "use server";
 
-import geminiModel from "@/lib/gemini";
+import geminiModel, { detectLanguage } from "@/lib/gemini";
 import {
   GenerateSummaryInput,
   generateSummarySchema,
@@ -19,6 +19,9 @@ export async function generateSummary(input: GenerateSummaryInput) {
 
   const { jobTitle, workExperiences, educations, skills } =
     generateSummarySchema.parse(input);
+
+  let inputText = `${jobTitle || ""} ${workExperiences?.map(exp => `${exp.position || ""} ${exp.company || ""} ${exp.description || ""}`).join(" ")} ${skills || ""}`;
+  const detectedLanguage = await detectLanguage(inputText);
 
   const systemMessage = `
     You are a job resume generator AI. Your task is to write a professional introduction summary for a resume given the user's provided data.
@@ -67,6 +70,7 @@ export async function generateSummary(input: GenerateSummaryInput) {
         content: userMessage,
       },
     ],
+    language: detectedLanguage,
   });
 
   const aiResponse = completion.choices[0].message.content;
@@ -88,6 +92,8 @@ export async function generateWorkExperience(
   }
 
   const { description } = generateWorkExperienceSchema.parse(input);
+  
+  const detectedLanguage = await detectLanguage(description);
 
   const systemMessage = `
   You are a job resume generator AI. Your task is to generate a single work experience entry based on the user input.
@@ -117,6 +123,7 @@ export async function generateWorkExperience(
         content: userMessage,
       },
     ],
+    language: detectedLanguage,
   });
 
   const aiResponse = completion.choices[0].message.content;

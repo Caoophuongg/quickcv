@@ -115,7 +115,7 @@ function InputDialog({
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder={`E.g. "from nov 2019 to dec 2020 I worked at google as a software engineer, my tasks were: ..."`}
+                      placeholder={`Ví dụ: "Từ tháng 11/2019 đến 12/2020, tôi làm việc tại Google với vị trí kỹ sư phần mềm, công việc của tôi bao gồm: ..."`}
                       autoFocus
                     />
                   </FormControl>
