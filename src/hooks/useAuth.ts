@@ -151,6 +151,7 @@ export function useAuth(): UseAuthReturn {
 
       if (!response.ok) {
         setError({ error: result.error, details: result.details });
+        setLoading(false);
         return;
       }
 
@@ -162,6 +163,8 @@ export function useAuth(): UseAuthReturn {
       // Kiểm tra nếu user là admin thì chuyển hướng đến trang dashboard admin
       if (result.user.role === UserRole.ADMIN) {
         router.push("/admin/dashboard");
+      } else {
+        router.push("/resumes");
       }
 
       // Tải lại trang để middleware kiểm tra cookies
@@ -169,7 +172,6 @@ export function useAuth(): UseAuthReturn {
     } catch (err) {
       console.error("Lỗi khi đăng nhập:", err);
       setError({ error: "Có lỗi xảy ra khi đăng nhập" });
-    } finally {
       setLoading(false);
     }
   };
