@@ -20,9 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Key, User, Loader2, CheckCircle2, XCircle, Eye, EyeOff } from "lucide-react";
+import { Mail, Key, User as UserIcon, Loader2, CheckCircle2, XCircle, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,28 +36,25 @@ const passwordRequirements = {
   hasSpecialChar: (value: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value),
 };
 
-// Schema mới với yêu cầu mật khẩu mạnh hơn
+// Schema validation cho form đăng ký
 const registerSchema = z
   .object({
-    firstName: z.string().min(1, "Tên không được để trống"),
-    lastName: z.string().min(1, "Họ không được để trống"),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
     email: z.string().email("Email không hợp lệ"),
     password: z
       .string()
       .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
       .refine(passwordRequirements.hasUpperCase, {
-        message: "Mật khẩu phải có ít nhất 1 chữ cái hoa (A-Z)",
+        message: "Mật khẩu phải có ít nhất 1 ký tự viết hoa",
       })
       .refine(passwordRequirements.hasLowerCase, {
-        message: "Mật khẩu phải có ít nhất 1 chữ cái thường (a-z)",
+        message: "Mật khẩu phải có ít nhất 1 ký tự viết thường",
       })
       .refine(passwordRequirements.hasNumbers, {
-        message: "Mật khẩu phải có ít nhất 1 số (0-9)",
-      })
-      .refine(passwordRequirements.hasSpecialChar, {
-        message: "Mật khẩu phải có ít nhất 1 ký tự đặc biệt",
+        message: "Mật khẩu phải có ít nhất 1 số",
       }),
-    confirmPassword: z.string().min(1, "Xác nhận mật khẩu không được để trống"),
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Mật khẩu xác nhận không khớp",
@@ -68,8 +64,7 @@ const registerSchema = z
 type RegisterValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
-  const { register, error, loading, isAuthenticated } = useAuthContext();
-  const router = useRouter();
+  const { register, error, loading } = useAuthContext();
   const [passwordInput, setPasswordInput] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -84,12 +79,6 @@ export default function RegisterPage() {
       confirmPassword: "",
     },
   });
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/resumes");
-    }
-  }, [isAuthenticated, router]);
 
   useEffect(() => {
     if (error) {
@@ -128,28 +117,29 @@ export default function RegisterPage() {
     <main className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-2xl">Đăng ký</CardTitle>
+          <CardTitle className="text-2xl">Đăng ký tài khoản</CardTitle>
           <CardDescription>
-            Tạo tài khoản mới để sử dụng dịch vụ
+            Tạo tài khoản mới để sử dụng dịch vụ của chúng tôi
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row">
                 <FormField
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tên</FormLabel>
+                    <FormItem className="flex-1">
+                      <FormLabel>Họ</FormLabel>
                       <FormControl>
                         <div className="flex items-center rounded-md border border-input ring-offset-background focus-within:ring-2 focus-within:ring-ring">
-                          <User className="ml-3 h-4 w-4 text-muted-foreground" />
+                          <UserIcon className="ml-3 h-4 w-4 text-muted-foreground" />
                           <Input
-                            placeholder="Văn A"
+                            placeholder="Nguyễn"
                             className="border-0 focus-visible:ring-0"
                             {...field}
+                            disabled={loading}
                           />
                         </div>
                       </FormControl>
@@ -161,15 +151,16 @@ export default function RegisterPage() {
                   control={form.control}
                   name="lastName"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Họ</FormLabel>
+                    <FormItem className="flex-1">
+                      <FormLabel>Tên</FormLabel>
                       <FormControl>
                         <div className="flex items-center rounded-md border border-input ring-offset-background focus-within:ring-2 focus-within:ring-ring">
-                          <User className="ml-3 h-4 w-4 text-muted-foreground" />
+                          <UserIcon className="ml-3 h-4 w-4 text-muted-foreground" />
                           <Input
-                            placeholder="Nguyễn"
+                            placeholder="Văn A"
                             className="border-0 focus-visible:ring-0"
                             {...field}
+                            disabled={loading}
                           />
                         </div>
                       </FormControl>
@@ -191,6 +182,8 @@ export default function RegisterPage() {
                           placeholder="email@example.com"
                           className="border-0 focus-visible:ring-0"
                           {...field}
+                          disabled={loading}
+                          autoComplete="email"
                         />
                       </div>
                     </FormControl>
@@ -216,12 +209,15 @@ export default function RegisterPage() {
                             field.onChange(e);
                             setPasswordInput(e.target.value);
                           }}
+                          disabled={loading}
+                          autoComplete="new-password"
                         />
                         <button
                           type="button"
                           onClick={togglePasswordVisibility}
                           className="mr-3 hover:text-primary"
                           aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                          disabled={loading}
                         >
                           {showPassword ? (
                             <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -231,30 +227,23 @@ export default function RegisterPage() {
                         </button>
                       </div>
                     </FormControl>
-                    <div className="mt-3 space-y-2 rounded-md border p-3">
-                      <p className="text-sm font-medium">Mật khẩu phải:</p>
-                      <div className="space-y-1 text-xs">
-                        <PasswordRequirement 
-                          met={passwordRequirements.minLength(passwordInput)} 
-                          text="Có ít nhất 6 ký tự" 
-                        />
-                        <PasswordRequirement 
-                          met={passwordRequirements.hasLowerCase(passwordInput)} 
-                          text="Có ít nhất 1 chữ cái thường (a-z)" 
-                        />
-                        <PasswordRequirement 
-                          met={passwordRequirements.hasUpperCase(passwordInput)} 
-                          text="Có ít nhất 1 chữ cái hoa (A-Z)" 
-                        />
-                        <PasswordRequirement 
-                          met={passwordRequirements.hasNumbers(passwordInput)} 
-                          text="Có ít nhất 1 số (0-9)" 
-                        />
-                        <PasswordRequirement 
-                          met={passwordRequirements.hasSpecialChar(passwordInput)} 
-                          text="Có ít nhất 1 ký tự đặc biệt (!@#$...)" 
-                        />
-                      </div>
+                    <div className="mt-2 space-y-2 rounded-md border border-border bg-muted/40 p-2 text-xs">
+                      <PasswordRequirement
+                        met={passwordRequirements.minLength(passwordInput)}
+                        text="Ít nhất 6 ký tự"
+                      />
+                      <PasswordRequirement
+                        met={passwordRequirements.hasUpperCase(passwordInput)}
+                        text="Ít nhất 1 ký tự viết hoa"
+                      />
+                      <PasswordRequirement
+                        met={passwordRequirements.hasLowerCase(passwordInput)}
+                        text="Ít nhất 1 ký tự viết thường"
+                      />
+                      <PasswordRequirement
+                        met={passwordRequirements.hasNumbers(passwordInput)}
+                        text="Ít nhất 1 số"
+                      />
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -274,12 +263,15 @@ export default function RegisterPage() {
                           placeholder="******"
                           className="border-0 focus-visible:ring-0"
                           {...field}
+                          disabled={loading}
+                          autoComplete="new-password"
                         />
                         <button
                           type="button"
                           onClick={toggleConfirmPasswordVisibility}
                           className="mr-3 hover:text-primary"
                           aria-label={showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                          disabled={loading}
                         >
                           {showConfirmPassword ? (
                             <EyeOff className="h-4 w-4 text-muted-foreground" />

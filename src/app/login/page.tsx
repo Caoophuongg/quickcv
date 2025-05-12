@@ -22,7 +22,7 @@ import { useAuthContext } from "@/providers/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Key, Loader2, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -60,10 +60,8 @@ const LOGIN_ERROR_MESSAGES = {
 };
 
 export default function LoginPage() {
-  const { login, error, loading, isAuthenticated, isAdmin } = useAuthContext();
-  const router = useRouter();
+  const { login, error, loading } = useAuthContext();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/resumes";
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginValues>({
@@ -73,16 +71,6 @@ export default function LoginPage() {
       password: "",
     },
   });
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      if (isAdmin) {
-        router.push("/admin/dashboard");
-      } else {
-        router.push(redirect);
-      }
-    }
-  }, [isAuthenticated, isAdmin, router, redirect]);
 
   useEffect(() => {
     if (error) {

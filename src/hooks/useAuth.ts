@@ -160,15 +160,46 @@ export function useAuth(): UseAuthReturn {
 
       if (!response.ok) {
         setError({ error: result.error, details: result.details });
+        setLoading(false);
         return;
       }
 
-      // Sau khi đăng ký thành công, tiến hành đăng nhập
-      await login({ email: data.email, password: data.password });
+      // Thay vì gọi login, ta sẽ trực tiếp đăng nhập với dữ liệu đã đăng ký
+      // qua API login và xử lý chuyển trang
+      const loginResponse = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      const loginResult = await loginResponse.json();
+
+      if (!loginResponse.ok) {
+        setError({ 
+          error: loginResult.error, 
+          message: loginResult.message,
+          details: loginResult.details 
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Cập nhật state và localStorage
+      setUser(loginResult.user);
+      storeData(STORAGE_KEYS.USER_PROFILE, loginResult.user);
+
+      // Chuyển trang sau khi đăng ký và đăng nhập thành công
+      setTimeout(() => {
+        window.location.href = "/resumes";
+      }, 100);
     } catch (err) {
       console.error("Lỗi khi đăng ký:", err);
       setError({ error: "Có lỗi xảy ra khi đăng ký" });
-    } finally {
       setLoading(false);
     }
   };
@@ -198,19 +229,19 @@ export function useAuth(): UseAuthReturn {
         return;
       }
 
+      // Lưu thông tin user vào state
       setUser(result.user);
 
-      // Store user data in localStorage after successful login
+      // Lưu thông tin user vào localStorage
       storeData(STORAGE_KEYS.USER_PROFILE, result.user);
 
-      // Preload avatar image if available to ensure it's cached for all pages
+      // Preload avatar image nếu có
       if (result.user?.avatarUrl) {
         try {
-          // Cache the avatar URL for immediate access
           const cachedAvatarKey = `avatar_cache_${result.user.id}`;
           safeLocalStorage.setItem(cachedAvatarKey, result.user.avatarUrl);
           
-          // Preload the avatar image to browser cache
+          // Preload image
           const img = new window.Image();
           img.src = result.user.avatarUrl;
         } catch (err) {
@@ -218,15 +249,21 @@ export function useAuth(): UseAuthReturn {
         }
       }
 
-      // Kiểm tra nếu user là admin thì chuyển hướng đến trang dashboard admin
-      if (result.user.role === UserRole.ADMIN) {
-        router.push("/admin/dashboard");
-      } else {
-        router.push("/resumes");
-      }
-
-      // Tải lại trang để middleware kiểm tra cookies
-      router.refresh();
+      // Lấy redirect URL từ query param nếu có
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get('redirect');
+      
+      // Chọn URL đích dựa trên redirect param hoặc vai trò người dùng
+      const targetUrl = redirectUrl || 
+        (result.user.role === UserRole.ADMIN ? "/admin/dashboard" : "/resumes");
+      
+      // Đợi một khoảng thời gian ngắn để đảm bảo dữ liệu đã được lưu trữ
+      // và giao diện đã được cập nhật trước khi chuyển trang
+      setTimeout(() => {
+        // Chuyển trang bằng window.location.href
+        window.location.href = targetUrl;
+      }, 100);
+      
     } catch (err) {
       console.error("Lỗi khi đăng nhập:", err);
       setError({ error: "Có lỗi xảy ra khi đăng nhập" });
