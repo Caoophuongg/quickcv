@@ -32,6 +32,7 @@ interface LoginData {
 
 interface AuthError {
   error: string;
+  message?: string;
   details?: Record<string, unknown>;
 }
 
@@ -75,15 +76,33 @@ export function useAuth(): UseAuthReturn {
       // Use cached data if it exists and is not stale (30 minutes)
       if (cachedUser && !isDataStale(cachedUser.timestamp)) {
         setUser(cachedUser.data);
+        
+        // Preload avatar if available from cache for faster rendering
+        if (cachedUser.data?.avatarUrl) {
+          const cachedAvatarKey = `avatar_cache_${cachedUser.data.id}`;
+          try {
+            // Save avatar URL in dedicated avatar cache
+            safeLocalStorage.setItem(cachedAvatarKey, cachedUser.data.avatarUrl);
+            
+            // Preload avatar image to browser cache
+            const img = new window.Image();
+            img.src = cachedUser.data.avatarUrl;
+          } catch (err) {
+            console.error("Error preloading cached avatar:", err);
+          }
+        }
+        
         setLoading(false);
         return;
       }
 
       // Thêm Cache-Control vào header để cải thiện hiệu suất
       const response = await fetch("/api/auth/me", {
+        next: { revalidate: 300 }, // Revalidate every 5 minutes
         cache: "force-cache", // Sử dụng cơ chế cache của Next.js 
         headers: {
-          "Cache-Control": "max-age=60", // Cache trong 60 giây
+          "Cache-Control": "max-age=300", // Cache trong 5 phút
+          "Content-Type": "application/json",
         },
       });
 
@@ -93,6 +112,20 @@ export function useAuth(): UseAuthReturn {
 
         // Store user data in localStorage with timestamp
         storeData(STORAGE_KEYS.USER_PROFILE, data.user);
+        
+        // Preload and cache avatar if available
+        if (data.user?.avatarUrl) {
+          const cachedAvatarKey = `avatar_cache_${data.user.id}`;
+          try {
+            safeLocalStorage.setItem(cachedAvatarKey, data.user.avatarUrl);
+            
+            // Preload avatar image to browser cache
+            const img = new window.Image();
+            img.src = data.user.avatarUrl;
+          } catch (err) {
+            console.error("Error preloading avatar:", err);
+          }
+        }
       } else {
         setUser(null);
         // Clear stored data if no user is authenticated
@@ -156,7 +189,11 @@ export function useAuth(): UseAuthReturn {
       const result = await response.json();
 
       if (!response.ok) {
-        setError({ error: result.error, details: result.details });
+        setError({ 
+          error: result.error, 
+          message: result.message,
+          details: result.details 
+        });
         setLoading(false);
         return;
       }
@@ -165,6 +202,21 @@ export function useAuth(): UseAuthReturn {
 
       // Store user data in localStorage after successful login
       storeData(STORAGE_KEYS.USER_PROFILE, result.user);
+
+      // Preload avatar image if available to ensure it's cached for all pages
+      if (result.user?.avatarUrl) {
+        try {
+          // Cache the avatar URL for immediate access
+          const cachedAvatarKey = `avatar_cache_${result.user.id}`;
+          safeLocalStorage.setItem(cachedAvatarKey, result.user.avatarUrl);
+          
+          // Preload the avatar image to browser cache
+          const img = new window.Image();
+          img.src = result.user.avatarUrl;
+        } catch (err) {
+          console.error("Error preloading avatar:", err);
+        }
+      }
 
       // Kiểm tra nếu user là admin thì chuyển hướng đến trang dashboard admin
       if (result.user.role === UserRole.ADMIN) {

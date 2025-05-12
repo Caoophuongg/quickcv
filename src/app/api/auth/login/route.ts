@@ -16,7 +16,11 @@ export async function POST(req: NextRequest) {
     const result = loginSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { error: "Dữ liệu không hợp lệ", details: result.error.format() },
+        { 
+          error: "Dữ liệu không hợp lệ", 
+          details: result.error.format(),
+          message: "Thông tin đăng nhập không hợp lệ. Vui lòng kiểm tra lại email và mật khẩu."
+        },
         { status: 400 },
       );
     }
@@ -31,7 +35,10 @@ export async function POST(req: NextRequest) {
     // Kiểm tra xem người dùng có tồn tại không
     if (!user) {
       return NextResponse.json(
-        { error: "Email hoặc mật khẩu không đúng" },
+        { 
+          error: "Tài khoản không tồn tại", 
+          message: "Email này chưa được đăng ký trong hệ thống. Vui lòng kiểm tra lại hoặc đăng ký tài khoản mới."
+        },
         { status: 400 },
       );
     }
@@ -40,7 +47,10 @@ export async function POST(req: NextRequest) {
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
-        { error: "Email hoặc mật khẩu không đúng" },
+        { 
+          error: "Email hoặc mật khẩu không đúng",
+          message: "Mật khẩu không chính xác. Vui lòng kiểm tra lại thông tin đăng nhập của bạn."
+        },
         { status: 400 },
       );
     }
@@ -62,6 +72,7 @@ export async function POST(req: NextRequest) {
         role: user.role,
         avatarUrl: user.avatarUrl,
       },
+      message: "Đăng nhập thành công"
     });
 
     // Lưu token vào cookie
@@ -71,7 +82,10 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Lỗi đăng nhập:", error);
     return NextResponse.json(
-      { error: "Có lỗi xảy ra khi đăng nhập" },
+      { 
+        error: "Có lỗi xảy ra khi đăng nhập", 
+        message: "Có lỗi xảy ra trong quá trình đăng nhập. Vui lòng thử lại sau hoặc liên hệ hỗ trợ."
+      },
       { status: 500 },
     );
   }

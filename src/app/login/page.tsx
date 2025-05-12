@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Key, Loader2, Eye, EyeOff } from "lucide-react";
+import { Mail, Key, Loader2, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -34,6 +34,30 @@ const loginSchema = z.object({
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
+
+// Các loại lỗi đăng nhập thường gặp và thông báo hữu ích cho người dùng
+const LOGIN_ERROR_MESSAGES = {
+  "Email hoặc mật khẩu không đúng": {
+    title: "Đăng nhập thất bại",
+    description: "Email hoặc mật khẩu không chính xác. Vui lòng kiểm tra lại thông tin đăng nhập.",
+    icon: <AlertTriangle className="h-5 w-5 text-destructive" />,
+  },
+  "Tài khoản không tồn tại": {
+    title: "Tài khoản không tồn tại",
+    description: "Email này chưa được đăng ký. Vui lòng kiểm tra lại hoặc tạo tài khoản mới.",
+    icon: <AlertTriangle className="h-5 w-5 text-destructive" />,
+  },
+  "Có lỗi xảy ra khi đăng nhập": {
+    title: "Lỗi hệ thống",
+    description: "Có lỗi xảy ra trong quá trình đăng nhập. Vui lòng thử lại sau.",
+    icon: <AlertTriangle className="h-5 w-5 text-destructive" />,
+  },
+  "default": {
+    title: "Đăng nhập thất bại",
+    description: "Không thể đăng nhập vào hệ thống. Vui lòng thử lại sau.",
+    icon: <AlertTriangle className="h-5 w-5 text-destructive" />,
+  }
+};
 
 export default function LoginPage() {
   const { login, error, loading, isAuthenticated, isAdmin } = useAuthContext();
@@ -62,9 +86,25 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (error) {
-      toast.error(error.error);
+      // Tìm thông báo lỗi phù hợp dựa trên mã lỗi
+      const errorMessage = LOGIN_ERROR_MESSAGES[error.error as keyof typeof LOGIN_ERROR_MESSAGES] || 
+                          LOGIN_ERROR_MESSAGES.default;
+      
+      // Sử dụng message từ API nếu có
+      const description = error.message || errorMessage.description;
+      
+      // Hiển thị thông báo lỗi chi tiết với Sonner
+      toast.error(errorMessage.title, {
+        description: description,
+        icon: errorMessage.icon,
+        duration: 5000, // Hiển thị lâu hơn để người dùng có thể đọc
+        position: "top-center",
+      });
+      
+      // Tự động focus vào trường email để người dùng có thể nhập lại
+      form.setFocus("email");
     }
-  }, [error]);
+  }, [error, form]);
 
   const onSubmit = async (values: LoginValues) => {
     await login(values);
@@ -99,6 +139,8 @@ export default function LoginPage() {
                           placeholder="email@example.com"
                           className="border-0 focus-visible:ring-0"
                           {...field}
+                          disabled={loading}
+                          autoComplete="email"
                         />
                       </div>
                     </FormControl>
@@ -120,12 +162,15 @@ export default function LoginPage() {
                           placeholder="******"
                           className="border-0 focus-visible:ring-0"
                           {...field}
+                          disabled={loading}
+                          autoComplete="current-password"
                         />
                         <button
                           type="button"
                           onClick={togglePasswordVisibility}
                           className="mr-3 hover:text-primary"
                           aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                          disabled={loading}
                         >
                           {showPassword ? (
                             <EyeOff className="h-4 w-4 text-muted-foreground" />

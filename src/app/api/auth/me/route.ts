@@ -7,7 +7,14 @@ export async function GET() {
     const session = await getAuthSession();
 
     if (!session) {
-      return NextResponse.json({ error: "Chưa đăng nhập" }, { status: 401 });
+      return NextResponse.json({ error: "Chưa đăng nhập" }, { 
+        status: 401,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET',
+        }
+      });
     }
 
     // Lấy thông tin người dùng từ database
@@ -16,16 +23,39 @@ export async function GET() {
     if (!user) {
       return NextResponse.json(
         { error: "Không tìm thấy người dùng" },
-        { status: 404 },
+        { 
+          status: 404,
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET',
+          }
+        },
       );
     }
 
-    return NextResponse.json({ user });
+    // Return response with caching headers
+    return NextResponse.json({ user }, {
+      headers: {
+        // Cache for 5 minutes to reduce database load
+        'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=600',
+        // Allow cross-origin requests (useful for avatar loading)
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+      }
+    });
   } catch (error) {
     console.error("Lỗi khi lấy thông tin người dùng:", error);
     return NextResponse.json(
       { error: "Có lỗi xảy ra khi lấy thông tin người dùng" },
-      { status: 500 },
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET',
+        }
+      },
     );
   }
 }

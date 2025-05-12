@@ -17,21 +17,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
+import { STORAGE_KEYS, safeLocalStorage } from "@/lib/localStorage";
+import { useAvatar } from "@/hooks/useAvatar";
 
 export default function Navbar() {
   const { user, logout, isAdmin, loading } = useAuthContext();
-  const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
-
-  // Preload user avatar as soon as user data is available
-  useEffect(() => {
-    if (user?.avatarUrl) {
-      const img = new window.Image();
-      img.src = user.avatarUrl;
-      img.onload = () => setAvatarSrc(user.avatarUrl || null);
-    } else {
-      setAvatarSrc(null);
-    }
-  }, [user?.avatarUrl]);
+  // Use the new useAvatar hook for optimal avatar loading
+  const { avatarSrc, isLoading: isAvatarLoading } = useAvatar(
+    user?.id, 
+    user?.avatarUrl,
+    { priority: true }
+  );
 
   const handleLogout = async () => {
     await logout();
@@ -74,7 +70,7 @@ export default function Navbar() {
                   className="relative h-10 w-10 rounded-full p-0"
                 >
                   <Avatar className="h-10 w-10">
-                    {avatarSrc ? (
+                    {avatarSrc && !isAvatarLoading ? (
                       <Image
                         src={avatarSrc}
                         alt={user.email}
@@ -82,6 +78,7 @@ export default function Navbar() {
                         sizes="40px"
                         className="object-cover"
                         priority
+                        loading="eager"
                       />
                     ) : (
                       <AvatarFallback className="bg-primary text-primary-foreground">
