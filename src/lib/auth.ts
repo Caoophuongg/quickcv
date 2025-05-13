@@ -101,6 +101,7 @@ export async function getUserById(id: string) {
       email: true,
       firstName: true,
       lastName: true,
+      phoneNumber: true,
       role: true,
       avatarUrl: true,
       createdAt: true,
