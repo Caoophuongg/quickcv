@@ -8,7 +8,7 @@ import { deleteFromBlob, uploadToBlob } from "@/lib/blob-upload";
 export async function saveResume(values: ResumeValues) {
   const { id } = values;
 
-  const { photo, workExperiences, educations, templateType, ...resumeValues } =
+  const { photo, workExperiences, educations, projects, hobbies, templateType, ...resumeValues } =
     resumeSchema.parse(values);
 
   const session = await getAuthSession();
@@ -67,6 +67,21 @@ export async function saveResume(values: ResumeValues) {
             endDate: edu.endDate ? new Date(edu.endDate) : undefined,
           })),
         },
+        projects: {
+          deleteMany: {},
+          create: projects?.map((proj) => ({
+            ...proj,
+            startDate: proj.startDate ? new Date(proj.startDate) : undefined,
+            endDate: proj.endDate ? new Date(proj.endDate) : undefined,
+            techStack: proj.techStack || [],
+          })),
+        },
+        hobbies: {
+          deleteMany: {},
+          create: hobbies?.map((hobby) => ({
+            ...hobby,
+          })),
+        },
         updatedAt: new Date(),
       },
     });
@@ -89,6 +104,19 @@ export async function saveResume(values: ResumeValues) {
             ...edu,
             startDate: edu.startDate ? new Date(edu.startDate) : undefined,
             endDate: edu.endDate ? new Date(edu.endDate) : undefined,
+          })),
+        },
+        projects: {
+          create: projects?.map((proj) => ({
+            ...proj,
+            startDate: proj.startDate ? new Date(proj.startDate) : undefined,
+            endDate: proj.endDate ? new Date(proj.endDate) : undefined,
+            techStack: proj.techStack || [],
+          })),
+        },
+        hobbies: {
+          create: hobbies?.map((hobby) => ({
+            ...hobby,
           })),
         },
       },

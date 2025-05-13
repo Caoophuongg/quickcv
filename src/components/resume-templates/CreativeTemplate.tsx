@@ -53,15 +53,17 @@ export default function CreativeTemplate({
           {/* Summary - Trải rộng 12 cột */}
           <SummarySection resumeData={resumeData} />
 
-          {/* Work experience - 7 cột */}
-          <div className="col-span-7">
+          {/* Cột trái - 7 cột */}
+          <div className="col-span-7 space-y-6">
+            <EducationSection resumeData={resumeData} />
             <WorkExperienceSection resumeData={resumeData} />
+            <ProjectsSection resumeData={resumeData} />
           </div>
 
-          {/* Education & Skills - 5 cột */}
+          {/* Cột phải - 5 cột */}
           <div className="col-span-5 space-y-6">
-            <EducationSection resumeData={resumeData} />
             <SkillsSection resumeData={resumeData} />
+            <HobbiesSection resumeData={resumeData} />
           </div>
         </div>
       </div>
@@ -199,7 +201,7 @@ function SummarySection({ resumeData }: SectionProps) {
         style={{ borderColor: colorHex }}
       >
         <h2 className="mb-2 text-xl font-bold" style={{ color: colorHex }}>
-          Tóm tắt năng lực
+          Mục tiêu nghề nghiệp
         </h2>
         <p className="text-sm italic leading-relaxed">{summary}</p>
       </div>
@@ -331,6 +333,107 @@ function SkillsSection({ resumeData }: SectionProps) {
             {skill}
           </span>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function ProjectsSection({ resumeData }: SectionProps) {
+  const { projects, colorHex } = resumeData;
+
+  const projectsArray = projects || [];
+  const projectsNotEmpty = projectsArray.filter(
+    (proj) => Object.values(proj).filter(Boolean).length > 0
+  );
+
+  if (!projectsNotEmpty.length) return null;
+
+  return (
+    <div>
+      <h2
+        className="mb-3 text-lg font-bold uppercase tracking-wider"
+        style={{ color: colorHex }}
+      >
+        Dự án
+      </h2>
+      <div className="space-y-4">
+        {projectsNotEmpty.map((proj, i) => (
+          <div
+            key={i}
+            className="space-y-1 rounded-md bg-white p-3 shadow-sm"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="font-medium">{proj.name}</h3>
+              {proj.startDate && (
+                <div
+                  className="rounded-full px-2 py-0.5 text-xs font-medium"
+                  style={{
+                    backgroundColor: `${colorHex}30`,
+                    color: colorHex,
+                  }}
+                >
+                  {formatDate(new Date(proj.startDate), "MM/yyyy")} -{" "}
+                  {proj.endDate
+                    ? formatDate(new Date(proj.endDate), "MM/yyyy")
+                    : "Hiện tại"}
+                </div>
+              )}
+            </div>
+            <p className="text-xs font-medium text-gray-600">{proj.role}</p>
+            <p className="text-xs text-gray-600">{proj.description}</p>
+            {proj.techStack && proj.techStack.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {proj.techStack.map((tech, idx) => (
+                  <span
+                    key={idx}
+                    className="rounded-full bg-gray-100 px-2 py-0.5 text-xs"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HobbiesSection({ resumeData }: SectionProps) {
+  const { hobbies, colorHex } = resumeData;
+
+  const hobbiesArray = hobbies || [];
+  const hobbiesNotEmpty = hobbiesArray.filter(
+    (hobby) => Object.values(hobby).filter(Boolean).length > 0
+  );
+
+  if (!hobbiesNotEmpty.length) return null;
+
+  return (
+    <div>
+      <h2
+        className="mb-3 text-lg font-bold uppercase tracking-wider"
+        style={{ color: colorHex }}
+      >
+        Sở thích
+      </h2>
+      <div
+        className="rounded-md bg-white p-4 shadow-sm"
+        style={{ borderTop: `2px solid ${colorHex}` }}
+      >
+        <div className="space-y-3">
+          {hobbiesNotEmpty.map((hobby, i) => (
+            <div key={i} className="space-y-1">
+              {hobby.name && (
+                <h3 className="text-sm font-medium">{hobby.name}</h3>
+              )}
+              {hobby.description && (
+                <p className="text-xs text-gray-600">{hobby.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

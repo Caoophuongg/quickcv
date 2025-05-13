@@ -73,17 +73,17 @@ export default function Navbar() {
                     {avatarSrc && !isAvatarLoading ? (
                       <Image
                         src={avatarSrc}
-                        alt={user.email}
+                      alt={user.email}
                         fill
                         sizes="40px"
-                        className="object-cover"
+                      className="object-cover"
                         priority
                         loading="eager"
-                      />
+                    />
                     ) : (
-                      <AvatarFallback className="bg-primary text-primary-foreground">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
                         {getFallbackText()}
-                      </AvatarFallback>
+                    </AvatarFallback>
                     )}
                   </Avatar>
                 </Button>

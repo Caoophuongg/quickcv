@@ -158,15 +158,23 @@ function SidebarContent({ resumeData }: SectionProps) {
 }
 
 function MainContent({ resumeData }: SectionProps) {
-  const { summary, workExperiences, educations, colorHex } = resumeData;
+  const { summary, workExperiences, educations, skills, projects, hobbies, colorHex } = resumeData;
 
   const workExperiencesNotEmpty = workExperiences?.filter(
     (exp) => Object.values(exp).filter(Boolean).length > 0,
-  );
+  ) || [];
 
   const educationsNotEmpty = educations?.filter(
     (edu) => Object.values(edu).filter(Boolean).length > 0,
-  );
+  ) || [];
+
+  const projectsNotEmpty = projects?.filter(
+    (proj) => Object.values(proj).filter(Boolean).length > 0,
+  ) || [];
+
+  const hobbiesNotEmpty = hobbies?.filter(
+    (hobby) => Object.values(hobby).filter(Boolean).length > 0,
+  ) || [];
 
   return (
     <div className="space-y-6">
@@ -177,15 +185,46 @@ function MainContent({ resumeData }: SectionProps) {
             className="text-xl font-bold uppercase tracking-wide"
             style={{ color: colorHex }}
           >
-            Tóm tắt chuyên môn
+            Mục tiêu nghề nghiệp
           </h2>
           <div className="h-1 w-20" style={{ backgroundColor: colorHex }}></div>
           <p className="text-sm leading-relaxed">{summary}</p>
         </div>
       )}
 
+      {/* Education Section */}
+      {educationsNotEmpty.length > 0 && (
+        <div className="space-y-3">
+          <h2
+            className="text-xl font-bold uppercase tracking-wide"
+            style={{ color: colorHex }}
+          >
+            Trình độ học vấn
+          </h2>
+          <div className="h-1 w-20" style={{ backgroundColor: colorHex }}></div>
+          <div className="space-y-3">
+            {educationsNotEmpty.map((edu, index) => (
+              <div key={index} className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold">{edu.degree}</h3>
+                  {edu.startDate && (
+                    <p className="text-sm text-gray-600">
+                      {formatDate(new Date(edu.startDate), "MM/yyyy")} -{" "}
+                      {edu.endDate
+                        ? formatDate(new Date(edu.endDate), "MM/yyyy")
+                        : "Hiện tại"}
+                    </p>
+                  )}
+                </div>
+                <p className="text-sm">{edu.school}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Work Experience */}
-      {workExperiencesNotEmpty?.length ? (
+      {workExperiencesNotEmpty.length > 0 && (
         <div className="space-y-3">
           <h2
             className="text-xl font-bold uppercase tracking-wide"
@@ -196,23 +235,25 @@ function MainContent({ resumeData }: SectionProps) {
           <div className="h-1 w-20" style={{ backgroundColor: colorHex }}></div>
           <div className="space-y-4">
             {workExperiencesNotEmpty.map((exp, index) => (
-              <div key={index} className="break-inside-avoid">
-                <div className="mb-1 flex items-center justify-between">
-                  <h3 className="text-base font-bold">{exp.position}</h3>
+              <div
+                key={index}
+                className="break-inside-avoid space-y-1 rounded border-l-4 pl-3"
+                style={{ borderColor: colorHex }}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-semibold">{exp.position}</h3>
                   {exp.startDate && (
-                    <span className="text-xs text-gray-600">
+                    <p className="text-sm text-gray-600">
                       {formatDate(new Date(exp.startDate), "MM/yyyy")} -{" "}
                       {exp.endDate
                         ? formatDate(new Date(exp.endDate), "MM/yyyy")
                         : "Hiện tại"}
-                    </span>
+                    </p>
                   )}
                 </div>
-                <p className="text-sm font-medium" style={{ color: colorHex }}>
-                  {exp.company}
-                </p>
+                <p className="text-sm font-medium">{exp.company}</p>
                 {exp.description && (
-                  <p className="mt-1 text-xs leading-relaxed">
+                  <p className="whitespace-pre-line pt-1 text-sm text-gray-700">
                     {exp.description}
                   </p>
                 )}
@@ -220,40 +261,115 @@ function MainContent({ resumeData }: SectionProps) {
             ))}
           </div>
         </div>
-      ) : null}
+      )}
 
-      {/* Education */}
-      {educationsNotEmpty?.length ? (
+      {/* Skills Section */}
+      {skills && skills.length > 0 && (
         <div className="space-y-3">
           <h2
             className="text-xl font-bold uppercase tracking-wide"
             style={{ color: colorHex }}
           >
-            Học vấn
+            Kỹ năng
+          </h2>
+          <div className="h-1 w-20" style={{ backgroundColor: colorHex }}></div>
+          <div className="flex flex-wrap gap-2">
+            {skills.map((skill, index) => (
+              <span
+                key={index}
+                className="rounded-full px-3 py-1 text-sm"
+                style={{
+                  backgroundColor: `${colorHex}20`,
+                  color: colorHex,
+                }}
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Projects Section */}
+      {projectsNotEmpty.length > 0 && (
+        <div className="space-y-3">
+          <h2
+            className="text-xl font-bold uppercase tracking-wide"
+            style={{ color: colorHex }}
+          >
+            Dự án
           </h2>
           <div className="h-1 w-20" style={{ backgroundColor: colorHex }}></div>
           <div className="space-y-4">
-            {educationsNotEmpty.map((edu, index) => (
-              <div key={index} className="break-inside-avoid">
-                <div className="mb-1 flex items-center justify-between">
-                  <h3 className="text-base font-bold">{edu.degree}</h3>
-                  {edu.startDate && (
-                    <span className="text-xs text-gray-600">
-                      {formatDate(new Date(edu.startDate), "MM/yyyy")} -{" "}
-                      {edu.endDate
-                        ? formatDate(new Date(edu.endDate), "MM/yyyy")
+            {projectsNotEmpty.map((proj, index) => (
+              <div
+                key={index}
+                className="break-inside-avoid space-y-1 rounded border-l-4 pl-3"
+                style={{ borderColor: colorHex }}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-semibold">{proj.name}</h3>
+                  {proj.startDate && (
+                    <p className="text-sm text-gray-600">
+                      {formatDate(new Date(proj.startDate), "MM/yyyy")} -{" "}
+                      {proj.endDate
+                        ? formatDate(new Date(proj.endDate), "MM/yyyy")
                         : "Hiện tại"}
-                    </span>
+                    </p>
                   )}
                 </div>
-                <p className="text-sm font-medium" style={{ color: colorHex }}>
-                  {edu.school}
-                </p>
+                <p className="text-sm font-medium">{proj.role}</p>
+                {proj.description && (
+                  <p className="whitespace-pre-line pt-1 text-sm text-gray-700">
+                    {proj.description}
+                  </p>
+                )}
+                {proj.techStack && proj.techStack.length > 0 && (
+                  <div className="flex flex-wrap gap-1 pt-1">
+                    {proj.techStack.map((tech, i) => (
+                      <span
+                        key={i}
+                        className="rounded-full px-2 py-0.5 text-xs"
+                        style={{
+                          backgroundColor: `${colorHex}20`,
+                          color: colorHex,
+                        }}
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
-      ) : null}
+      )}
+
+      {/* Hobbies Section */}
+      {hobbiesNotEmpty.length > 0 && (
+        <div className="space-y-3">
+          <h2
+            className="text-xl font-bold uppercase tracking-wide"
+            style={{ color: colorHex }}
+          >
+            Sở thích
+          </h2>
+          <div className="h-1 w-20" style={{ backgroundColor: colorHex }}></div>
+          <div className="space-y-2">
+            {hobbiesNotEmpty.map((hobby, index) => (
+              <div key={index} className="break-inside-avoid pb-2">
+                {hobby.name && (
+                  <p className="text-sm font-medium">{hobby.name}</p>
+                )}
+                {hobby.description && (
+                  <p className="text-sm text-gray-600">{hobby.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

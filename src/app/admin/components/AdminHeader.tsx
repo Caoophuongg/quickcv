@@ -91,9 +91,9 @@ export default function AdminHeader({
                         priority
                       />
                     ) : (
-                      <AvatarFallback className="bg-primary text-xs text-primary-foreground">
+                    <AvatarFallback className="bg-primary text-xs text-primary-foreground">
                         {getFallbackText()}
-                      </AvatarFallback>
+                    </AvatarFallback>
                     )}
                   </Avatar>
                 </Button>

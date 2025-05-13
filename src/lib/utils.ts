@@ -45,6 +45,18 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
       startDate: edu.startDate?.toISOString().split("T")[0],
       endDate: edu.endDate?.toISOString().split("T")[0],
     })),
+    projects: data.projects?.map((proj) => ({
+      name: proj.name || undefined,
+      role: proj.role || undefined,
+      startDate: proj.startDate?.toISOString().split("T")[0],
+      endDate: proj.endDate?.toISOString().split("T")[0],
+      description: proj.description || undefined,
+      techStack: proj.techStack || [],
+    })) || [],
+    hobbies: data.hobbies?.map((hobby) => ({
+      name: hobby.name || undefined,
+      description: hobby.description || undefined,
+    })) || [],
     skills: data.skills,
     borderStyle: data.borderStyle as BorderStyle,
     colorHex: data.colorHex,

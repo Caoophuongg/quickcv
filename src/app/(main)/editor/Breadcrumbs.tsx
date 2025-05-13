@@ -19,27 +19,34 @@ export default function Breadcrumbs({
   setCurrentStep,
 }: BreadcrumbsProps) {
   return (
-    <div className="flex justify-center">
-      <Breadcrumb>
-        <BreadcrumbList>
-          {steps.map((step) => (
-            <React.Fragment key={step.key}>
-              <BreadcrumbItem>
-                {step.key === currentStep ? (
-                  <BreadcrumbPage>{step.title}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink asChild>
-                    <button onClick={() => setCurrentStep(step.key)}>
+    <div className="w-full overflow-x-auto px-1 py-2">
+      <div className="flex justify-center min-w-max">
+        <Breadcrumb className="mb-2">
+          <BreadcrumbList className="flex-wrap md:flex-nowrap">
+            {steps.map((step) => (
+              <React.Fragment key={step.key}>
+                <BreadcrumbItem>
+                  {step.key === currentStep ? (
+                    <BreadcrumbPage className="text-prim font-medium">
                       {step.title}
-                    </button>
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="last:hidden" />
-            </React.Fragment>
-          ))}
-        </BreadcrumbList>
-      </Breadcrumb>
+                    </BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink asChild>
+                      <button 
+                        onClick={() => setCurrentStep(step.key)}
+                        className="hover:text-prim transition-colors"
+                      >
+                        {step.title}
+                      </button>
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="last:hidden" />
+              </React.Fragment>
+            ))}
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
     </div>
   );
 }

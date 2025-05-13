@@ -60,6 +60,8 @@ model Resume {
   workExperiences WorkExperience[]
   educations      Education[]
   skills          String[]
+  projects        Project[]
+  hobbies         Hobby[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -100,6 +102,40 @@ model Education {
   updatedAt DateTime @updatedAt
 
   @@map("educations")
+}
+
+model Project {
+  id String @id @default(cuid())
+
+  name        String?
+  role        String?
+  startDate   DateTime?
+  endDate     DateTime?
+  description String?
+  techStack   String[]
+
+  resumeId String
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("projects")
+}
+
+model Hobby {
+  id String @id @default(cuid())
+
+  name        String?
+  description String?
+
+  resumeId String
+  resume   Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("hobbies")
 }
 
 model Blog {

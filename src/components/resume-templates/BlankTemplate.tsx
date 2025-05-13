@@ -37,9 +37,11 @@ export default function BlankTemplate({
       >
         <PersonalInfoHeader resumeData={resumeData} />
         <SummarySection resumeData={resumeData} />
-        <WorkExperienceSection resumeData={resumeData} />
         <EducationSection resumeData={resumeData} />
+        <WorkExperienceSection resumeData={resumeData} />
         <SkillsSection resumeData={resumeData} />
+        <ProjectsSection resumeData={resumeData} />
+        <HobbiesSection resumeData={resumeData} />
       </div>
     </div>
   );
@@ -138,7 +140,7 @@ function SummarySection({ resumeData }: SectionProps) {
             color: colorHex,
           }}
         >
-          Tóm tắt chuyên môn
+          Mục tiêu nghề nghiệp
         </p>
         <div className="whitespace-pre-line text-sm">{summary}</div>
       </div>
@@ -304,6 +306,122 @@ function SkillsSection({ resumeData }: SectionProps) {
             >
               {skill}
             </span>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function ProjectsSection({ resumeData }: SectionProps) {
+  const { projects, colorHex } = resumeData;
+
+  const projectsArray = projects || [];
+
+  const projectsNotEmpty = projectsArray.filter(
+    (proj) => Object.values(proj).filter(Boolean).length > 0
+  );
+
+  if (!projectsNotEmpty.length) return null;
+
+  return (
+    <>
+      <hr
+        className="border-2"
+        style={{
+          borderColor: colorHex,
+        }}
+      />
+      <div className="space-y-3">
+        <p
+          className="text-lg font-semibold"
+          style={{
+            color: colorHex,
+          }}
+        >
+          Dự án
+        </p>
+        {projectsNotEmpty.map((proj, index) => (
+          <div key={index} className="break-inside-avoid space-y-1">
+            <div
+              className="flex items-center justify-between text-sm font-semibold"
+              style={{
+                color: colorHex,
+              }}
+            >
+              <span>{proj.name}</span>
+              {proj.startDate && (
+                <span>
+                  {formatDate(new Date(proj.startDate), "MM/yyyy")} -{" "}
+                  {proj.endDate
+                    ? formatDate(new Date(proj.endDate), "MM/yyyy")
+                    : "Hiện tại"}
+                </span>
+              )}
+            </div>
+            <p className="text-xs font-semibold">{proj.role}</p>
+            <div className="whitespace-pre-line text-xs">{proj.description}</div>
+            {proj.techStack && proj.techStack.length > 0 && (
+              <div className="flex flex-wrap gap-1 pt-1">
+                {proj.techStack.map((tech, i) => (
+                  <span
+                    key={i}
+                    className="rounded-full px-2 py-0.5 text-xs"
+                    style={{
+                      backgroundColor: `${colorHex}20`,
+                      color: colorHex,
+                    }}
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function HobbiesSection({ resumeData }: SectionProps) {
+  const { hobbies, colorHex } = resumeData;
+
+  const hobbiesArray = hobbies || [];
+
+  const hobbiesNotEmpty = hobbiesArray.filter(
+    (hobby) => Object.values(hobby).filter(Boolean).length > 0
+  );
+
+  if (!hobbiesNotEmpty.length) return null;
+
+  return (
+    <>
+      <hr
+        className="border-2"
+        style={{
+          borderColor: colorHex,
+        }}
+      />
+      <div className="space-y-3">
+        <p
+          className="text-lg font-semibold"
+          style={{
+            color: colorHex,
+          }}
+        >
+          Sở thích
+        </p>
+        <div className="space-y-2">
+          {hobbiesNotEmpty.map((hobby, index) => (
+            <div key={index} className="break-inside-avoid">
+              {hobby.name && (
+                <p className="text-sm font-medium">{hobby.name}</p>
+              )}
+              {hobby.description && (
+                <p className="text-xs text-gray-600">{hobby.description}</p>
+              )}
+            </div>
           ))}
         </div>
       </div>

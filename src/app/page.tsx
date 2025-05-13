@@ -71,13 +71,13 @@ export default function Home() {
               <p className="text-xl font-semibold uppercase text-prim">
                 Welcome to QuickCV
               </p>
-              <h1 className="scroll-m-20 text-3xl font-semibold !leading-tight tracking-tight md:text-3xl lg:text-5xl">
+              <h1 className="scroll-m-20 text-xl font-semibold !leading-tight tracking-tight md:text-2xl lg:text-4xl">
                 <span className="inline-block text-prim">
                   Tạo một CV hấp dẫn
                 </span>{" "}
                 với sự hỗ trợ của AI trong vài phút.
               </h1>
-              <div className="text-lg text-foreground/90 md:text-xl">
+              <div className="text-md text-foreground/90 md:text-base">
                 <p>Tạo CV trực tuyến với sự hỗ trợ của AI</p>
                 <p>
                   <span className="text-prim">Tạo một hồ sơ chuyên nghiệp</span>{" "}
@@ -91,7 +91,7 @@ export default function Home() {
               >
                 <Link
                   href="/resumes"
-                  className="px-6 py-5 text-lg md:px-8 md:py-6 md:text-xl"
+                  className="px-6 py-5 text-md md:px-8 md:py-6 md:text-lg"
                 >
                   Bắt đầu ngay
                 </Link>

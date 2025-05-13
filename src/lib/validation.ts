@@ -69,10 +69,40 @@ export const educationSchema = z.object({
 export type EducationValues = z.infer<typeof educationSchema>;
 
 export const skillsSchema = z.object({
-  skills: z.array(z.string().trim()).optional(),
+  skills: z.array(z.string()).default([]),
 });
 
 export type SkillsValues = z.infer<typeof skillsSchema>;
+
+export const projectSchema = z.object({
+  projects: z
+    .array(
+      z.object({
+        name: optionalString,
+        role: optionalString,
+        startDate: optionalString,
+        endDate: optionalString,
+        description: optionalString,
+        techStack: z.array(z.string()).default([]),
+      })
+    )
+    .default([]),
+});
+
+export type ProjectValues = z.infer<typeof projectSchema>;
+
+export const hobbySchema = z.object({
+  hobbies: z
+    .array(
+      z.object({
+        name: optionalString,
+        description: optionalString,
+      })
+    )
+    .default([]),
+});
+
+export type HobbyValues = z.infer<typeof hobbySchema>;
 
 export const summarySchema = z.object({
   summary: optionalString,
@@ -114,6 +144,26 @@ export const resumeSchema = z.object({
     )
     .optional(),
   skills: z.array(z.string()).default([]),
+  projects: z
+    .array(
+      z.object({
+        name: optionalString,
+        role: optionalString,
+        startDate: optionalString,
+        endDate: optionalString,
+        description: optionalString,
+        techStack: z.array(z.string()).default([]),
+      }),
+    )
+    .optional(),
+  hobbies: z
+    .array(
+      z.object({
+        name: optionalString,
+        description: optionalString,
+      }),
+    )
+    .optional(),
   colorHex: optionalString,
   borderStyle: z.custom<BorderStyle>().optional(),
   templateType: optionalString,
@@ -142,6 +192,7 @@ export const generateSummarySchema = z.object({
   ...workExperienceSchema.shape,
   ...educationSchema.shape,
   ...skillsSchema.shape,
+  ...projectSchema.shape,
 });
 
 export type GenerateSummaryInput = z.infer<typeof generateSummarySchema>;
