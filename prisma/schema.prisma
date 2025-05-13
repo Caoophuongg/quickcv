@@ -15,15 +15,16 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  firstName String?
-  lastName  String?
-  avatarUrl String?
-  role      UserRole @default(USER)
-  resumes   Resume[]
-  blogs     Blog[]
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  firstName   String?
+  lastName    String?
+  phoneNumber String?
+  avatarUrl   String?
+  role        UserRole @default(USER)
+  resumes     Resume[]
+  blogs       Blog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

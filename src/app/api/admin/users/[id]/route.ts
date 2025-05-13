@@ -8,6 +8,7 @@ const updateUserSchema = z.object({
   role: z.enum(["USER", "ADMIN"]).optional(),
   firstName: z.string().optional().nullable(),
   lastName: z.string().optional().nullable(),
+  phoneNumber: z.string().optional().nullable(),
   email: z.string().email().optional(),
 });
 
@@ -46,7 +47,7 @@ export async function PATCH(
       );
     }
 
-    const { role, firstName, lastName, email } = result.data;
+    const { role, firstName, lastName, phoneNumber, email } = result.data;
 
     // Kiểm tra người dùng tồn tại
     const existingUser = await prisma.user.findUnique({
@@ -108,6 +109,7 @@ export async function PATCH(
     if (role) updateData.role = role;
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
+    if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber;
     if (email) updateData.email = email;
 
     const updatedUser = await prisma.user.update({
@@ -118,6 +120,7 @@ export async function PATCH(
         email: true,
         firstName: true,
         lastName: true,
+        phoneNumber: true,
         role: true,
         createdAt: true,
         _count: {

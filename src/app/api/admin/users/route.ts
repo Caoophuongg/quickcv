@@ -53,6 +53,7 @@ export async function GET(req: NextRequest) {
         email: true,
         firstName: true,
         lastName: true,
+        phoneNumber: true,
         role: true,
         createdAt: true,
         _count: {
@@ -141,6 +142,7 @@ export async function POST(req: NextRequest) {
         email: true,
         firstName: true,
         lastName: true,
+        phoneNumber: true,
         role: true,
         createdAt: true,
         _count: {

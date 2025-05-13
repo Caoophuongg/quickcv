@@ -74,6 +74,7 @@ interface User {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  phoneNumber: string | null;
   role: UserRole;
   createdAt: string;
   _count: {
@@ -115,6 +116,7 @@ export default function UsersPage() {
     firstName: "",
     lastName: "",
     email: "",
+    phoneNumber: "",
   });
 
   // Fetch users
@@ -256,6 +258,7 @@ export default function UsersPage() {
                 firstName: editFormData.firstName,
                 lastName: editFormData.lastName,
                 email: editFormData.email,
+                phoneNumber: editFormData.phoneNumber,
               }
             : user,
         ),
@@ -290,6 +293,7 @@ export default function UsersPage() {
       firstName: user.firstName || "",
       lastName: user.lastName || "",
       email: user.email,
+      phoneNumber: user.phoneNumber || "",
     });
     setSelectedUser(user);
     setIsEditOpen(true);
@@ -541,6 +545,12 @@ export default function UsersPage() {
                 </span>
               </div>
               <div className="grid grid-cols-3 items-center gap-4">
+                <span className="text-sm font-medium">Số điện thoại:</span>
+                <span className="col-span-2 text-sm">
+                  {selectedUser.phoneNumber || "Chưa cập nhật"}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
                 <span className="text-sm font-medium">Quyền:</span>
                 <span className="col-span-2 text-sm">
                   {selectedUser.role === "ADMIN" ? "Admin" : "User"}
@@ -745,6 +755,23 @@ export default function UsersPage() {
                     setEditFormData({
                       ...editFormData,
                       lastName: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="edit-phoneNumber" className="text-right">
+                  Số điện thoại
+                </Label>
+                <Input
+                  id="edit-phoneNumber"
+                  type="tel"
+                  className="col-span-3"
+                  value={editFormData.phoneNumber}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      phoneNumber: e.target.value,
                     })
                   }
                 />

@@ -6,6 +6,7 @@ import { z } from "zod";
 const updateProfileSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  phoneNumber: z.string().optional(),
   avatarUrl: z.string().nullable().optional(),
 });
 
@@ -27,16 +28,18 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const { firstName, lastName, avatarUrl } = result.data;
+    const { firstName, lastName, phoneNumber, avatarUrl } = result.data;
 
     // Tạo object data chỉ với các trường được cung cấp
     const updateData: {
       firstName?: string;
       lastName?: string;
+      phoneNumber?: string;
       avatarUrl?: string | null;
     } = {};
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
+    if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber;
     if (avatarUrl !== undefined) updateData.avatarUrl = avatarUrl;
 
     // Cập nhật thông tin người dùng
@@ -48,6 +51,7 @@ export async function PUT(req: NextRequest) {
         email: true,
         firstName: true,
         lastName: true,
+        phoneNumber: true,
         role: true,
         avatarUrl: true,
       },

@@ -45,6 +45,7 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
+    phoneNumber: "",
   });
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -71,6 +72,7 @@ export default function ProfilePage() {
       setFormData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
+        phoneNumber: user.phoneNumber || "",
       });
     }
   }, [user]);
@@ -160,11 +162,26 @@ export default function ProfilePage() {
 
     try {
       setIsLoading(true);
-      await updateUserProfile({
+      // Chỉ gửi avatar khi có thực sự thay đổi avatar
+      // Nếu avatarPreview tồn tại và avatarPreview khác với user.avatarUrl, hoặc người dùng xóa avatar
+      const updateData: {
+        firstName: string;
+        lastName: string;
+        phoneNumber: string;
+        avatar?: File | null;
+      } = {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        avatar: avatar,
-      });
+        phoneNumber: formData.phoneNumber,
+      };
+
+      // Chỉ thêm avatar vào dữ liệu cập nhật khi có thay đổi thực sự
+      if (avatar !== null) {
+        // Có thay đổi avatar (upload mới hoặc xóa)
+        updateData.avatar = avatar;
+      }
+
+      await updateUserProfile(updateData);
       toast.success("Hồ sơ đã được cập nhật thành công");
     } catch (error) {
       toast.error("Không thể cập nhật hồ sơ");
@@ -304,6 +321,17 @@ export default function ProfilePage() {
                     id="lastName"
                     name="lastName"
                     value={formData.lastName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Số điện thoại</Label>
+                  <Input
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    type="tel"
+                    placeholder="Nhập số điện thoại của bạn"
+                    value={formData.phoneNumber}
                     onChange={handleChange}
                   />
                 </div>

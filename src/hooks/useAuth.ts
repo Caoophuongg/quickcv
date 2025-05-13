@@ -14,6 +14,7 @@ interface User {
   email: string;
   firstName?: string;
   lastName?: string;
+  phoneNumber?: string;
   role: UserRole;
   avatarUrl?: string;
 }
@@ -39,6 +40,7 @@ interface AuthError {
 interface UpdateProfileData {
   firstName?: string;
   lastName?: string;
+  phoneNumber?: string;
   avatar?: File | null;
 }
 
@@ -326,21 +328,24 @@ export function useAuth(): UseAuthReturn {
       const updateData: {
         firstName?: string;
         lastName?: string;
+        phoneNumber?: string;
         avatarUrl?: string | null;
-      } = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-      };
+      } = {};
+      
+      // Chỉ thêm các trường có giá trị đã được cung cấp
+      if (data.firstName !== undefined) updateData.firstName = data.firstName;
+      if (data.lastName !== undefined) updateData.lastName = data.lastName;
+      if (data.phoneNumber !== undefined) updateData.phoneNumber = data.phoneNumber;
       
       // Chỉ thêm avatarUrl vào updateData khi:
       // 1. Đã upload ảnh mới (avatar là File)
-      // 2. Hoặc muốn xóa ảnh (avatar là null)
+      // 2. Hoặc người dùng đã chủ động xóa ảnh (avatar là null)
       if (data.avatar instanceof File && avatarUrl) {
         updateData.avatarUrl = avatarUrl;
       } else if (data.avatar === null) {
         updateData.avatarUrl = null;
       }
-      // Nếu không chỉnh sửa avatar (data.avatar là undefined), không gửi trường avatarUrl
+      // Nếu data.avatar là undefined, không thêm trường avatarUrl vào updateData, giữ nguyên avatar cũ
 
       const response = await fetch("/api/auth/update-profile", {
         method: "PUT",

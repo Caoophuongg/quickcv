@@ -9,6 +9,7 @@ interface User {
   email: string;
   firstName?: string;
   lastName?: string;
+  phoneNumber?: string;
   role: UserRole;
   avatarUrl?: string;
 }
@@ -34,6 +35,7 @@ interface AuthError {
 interface UpdateProfileData {
   firstName?: string;
   lastName?: string;
+  phoneNumber?: string;
   avatar?: File | null;
 }
 
