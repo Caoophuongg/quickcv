@@ -39,7 +39,7 @@ export default function SummaryForm({
       <div className="space-y-1.5 text-center">
         <h2 className="text-2xl font-semibold">Tóm tắt chuyên môn</h2>
         <p className="text-sm text-muted-foreground">
-          Viết một đoạn giới thiệu ngắn cho sơ yếu lý lịch của bạn hoặc để AI
+          Viết một đoạn giới thiệu ngắn cho CV của bạn hoặc để AI
           tạo một đoạn từ dữ liệu bạn nhập vào.
         </p>
       </div>
@@ -53,8 +53,9 @@ export default function SummaryForm({
                 <FormLabel className="sr-only">Tóm tắt chuyên môn</FormLabel>
                 <FormControl>
                   <Textarea
+                    className="h-28"
                     {...field}
-                    placeholder="A brief, engaging text about yourself"
+                    placeholder="Một đoạn giới thiệu ngắn gọn về bản thân bạn"
                   />
                 </FormControl>
                 <FormMessage />

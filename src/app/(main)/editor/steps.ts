@@ -16,7 +16,7 @@ export const steps: {
   { title: "Thông tin chung", component: GeneralInfoForm, key: "general-info" },
   { title: "Thông tin cá nhân", component: PersonalInfoForm, key: "personal-info" },
   {
-    title: "Mục tiêu nghề nghiệp",
+    title: "Tóm tắt chuyên môn",
     component: SummaryForm,
     key: "career-goals",
   },

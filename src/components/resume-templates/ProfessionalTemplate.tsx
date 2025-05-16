@@ -185,7 +185,7 @@ function MainContent({ resumeData }: SectionProps) {
             className="text-xl font-bold uppercase tracking-wide"
             style={{ color: colorHex }}
           >
-            Mục tiêu nghề nghiệp
+            Giới thiệu
           </h2>
           <div className="h-1 w-20" style={{ backgroundColor: colorHex }}></div>
           <p className="text-sm leading-relaxed">{summary}</p>

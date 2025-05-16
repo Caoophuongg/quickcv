@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import axios from "axios";
 import { toast } from "sonner";
+import { Editor as TinyMCEEditor, IAllProps } from "@tinymce/tinymce-react";
+import type { Editor } from 'tinymce';
 import {
   Card,
   CardHeader,
@@ -15,11 +17,13 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, Save, Upload, X, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
+// API key của TinyMCE - đăng ký miễn phí tại https://www.tiny.cloud/
+const TINYMCE_API_KEY = "gnsm320tqg5uj69ne0qfzy5i01auyom8s0azsuhlzkrg14vo";
 
 // Định nghĩa props
 interface BlogFormProps {
@@ -29,6 +33,7 @@ interface BlogFormProps {
 export default function BlogForm({ blogId }: BlogFormProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<Editor | null>(null);
   const isEditing = !!blogId;
 
   const [title, setTitle] = useState("");
@@ -40,6 +45,7 @@ export default function BlogForm({ blogId }: BlogFormProps) {
   const [loading, setLoading] = useState(false);
   const [thumbnailLoading, setThumbnailLoading] = useState(false);
   const [fetchingBlog, setFetchingBlog] = useState(isEditing);
+  const [editorLoading, setEditorLoading] = useState(true);
 
   // Hàm lấy thông tin blog
   const fetchBlogData = useCallback(async () => {
@@ -94,6 +100,21 @@ export default function BlogForm({ blogId }: BlogFormProps) {
     if (slug === "" || slug === generateSlug(title)) {
       setSlug(generateSlug(newTitle));
     }
+  };
+
+  // Hàm tạo mô tả từ nội dung HTML
+  const createExcerptFromHtml = (html: string) => {
+    // Tạo một div tạm thời để phân tích HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // Lấy text từ HTML
+    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+    
+    // Giới hạn độ dài và thêm dấu "..." nếu cần
+    const maxLength = 200;
+    if (textContent.length <= maxLength) return textContent;
+    return textContent.substring(0, maxLength) + '...';
   };
 
   // Xử lý khi chọn file hình ảnh
@@ -160,6 +181,11 @@ export default function BlogForm({ blogId }: BlogFormProps) {
     }
   };
 
+  // Xử lý thay đổi nội dung editor
+  const handleEditorChange = (content: string) => {
+    setContent(content);
+  };
+
   // Xử lý submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,6 +194,9 @@ export default function BlogForm({ blogId }: BlogFormProps) {
       toast.error("Vui lòng điền tiêu đề và slug");
       return;
     }
+
+    // Lấy nội dung từ editor
+    const editorContent = editorRef.current?.getContent() || content;
 
     try {
       setLoading(true);
@@ -195,21 +224,17 @@ export default function BlogForm({ blogId }: BlogFormProps) {
         finalThumbnail = "";
       }
 
-      // Tạo mô tả ngắn tự động từ nội dung bài viết (2 dòng đầu tiên)
-      const autoExcerpt =
-        content.split("\n").slice(0, 2).join("\n").trim() +
-        (content.split("\n").length > 2 ? "..." : "");
+      // Tạo mô tả ngắn tự động từ nội dung HTML
+      const autoExcerpt = createExcerptFromHtml(editorContent);
 
       const blogData = {
         title: title.trim(),
         slug: slug.trim().replace(/\s+/g, "-").toLowerCase(),
         thumbnail: finalThumbnail || null,
-        content,
+        content: editorContent,
         excerpt: autoExcerpt,
         published,
       };
-
-      // console.log("Đang gửi dữ liệu blog:", blogData);
 
       let newBlogId: string | undefined;
 
@@ -331,18 +356,53 @@ export default function BlogForm({ blogId }: BlogFormProps) {
                 </p>
               </div>
 
-              {/* Nội dung bài viết */}
+              {/* Nội dung bài viết với TinyMCE */}
               <div className="space-y-2">
                 <Label htmlFor="content">Nội dung bài viết</Label>
-                <Textarea
-                  id="content"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Nhập nội dung bài viết..."
-                  className="min-h-[300px]"
-                />
-                <p className="text-sm text-muted-foreground">
-                  Mô tả ngắn sẽ được tự động tạo từ 2 dòng đầu của nội dung.
+                <div className="min-h-[300px] border rounded-md">
+                  {editorLoading && (
+                    <div className="flex h-[340px] w-full items-center justify-center">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                  )}
+                  <TinyMCEEditor
+                    id="content"
+                    apiKey={TINYMCE_API_KEY}
+                    onInit={(_: any, editor: Editor) => {
+                      editorRef.current = editor;
+                      setEditorLoading(false);
+                    }}
+                    value={content}
+                    onEditorChange={handleEditorChange}
+                    init={{
+                      height: 340,
+                      menubar: false,
+                      skin: 'oxide',
+                      plugins: [
+                        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+                        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                        'insertdatetime', 'media', 'table', 'preview', 'help', 'wordcount'
+                      ],
+                      toolbar: 'undo redo | blocks | ' +
+                        'bold italic forecolor | alignleft aligncenter ' +
+                        'alignright alignjustify | bullist numlist outdent indent | ' +
+                        'removeformat | image link | help',
+                      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+                      branding: false,
+                      language: 'vi',
+                      language_url: '/langs/vi.js',
+                      placeholder: 'Nhập nội dung bài viết...',
+                      promotion: false,
+                      setup: function(editor: Editor) {
+                        editor.on('init', function() {
+                          setEditorLoading(false);
+                        });
+                      }
+                    }}
+                  />
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Mô tả ngắn sẽ được tự động tạo từ nội dung bài viết.
                 </p>
               </div>
             </CardContent>

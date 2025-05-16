@@ -41,7 +41,7 @@ export default function GenerateSummaryButton({
       loading={loading}
     >
       <WandSparklesIcon className="size-4" />
-      Tóm tắt chuyên môn bằng (AI)
+      Tóm tắt nội dung với AI
     </LoadingButton>
   );
 }

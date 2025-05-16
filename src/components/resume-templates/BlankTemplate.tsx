@@ -140,7 +140,7 @@ function SummarySection({ resumeData }: SectionProps) {
             color: colorHex,
           }}
         >
-          Mục tiêu nghề nghiệp
+          Giới thiệu
         </p>
         <div className="whitespace-pre-line text-sm">{summary}</div>
       </div>

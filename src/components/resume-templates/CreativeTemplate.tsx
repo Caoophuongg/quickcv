@@ -201,7 +201,7 @@ function SummarySection({ resumeData }: SectionProps) {
         style={{ borderColor: colorHex }}
       >
         <h2 className="mb-2 text-xl font-bold" style={{ color: colorHex }}>
-          Mục tiêu nghề nghiệp
+          Giới thiệu
         </h2>
         <p className="text-sm italic leading-relaxed">{summary}</p>
       </div>
