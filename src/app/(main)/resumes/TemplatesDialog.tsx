@@ -67,15 +67,15 @@ export default function TemplatesDialog() {
               }`}
               onClick={() => handleSelectTemplate(template.id)}
             >
-              {/* <div className="aspect-[3/4] overflow-hidden rounded-md">
+              <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted">
                 <Image
                   src={template.thumbnail}
                   alt={template.name}
                   width={300}
                   height={400}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover transition-transform hover:scale-105"
                 />
-              </div> */}
+              </div>
               <div className="mt-2 text-center">
                 <h3 className="font-medium">{template.name}</h3>
                 <p className="text-sm text-muted-foreground">

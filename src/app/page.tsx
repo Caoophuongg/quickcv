@@ -200,7 +200,7 @@ export default function Home() {
                       />
                     </div>
                     <div className="space-y-3 p-5">
-                      <div className="flex items-center gap-2 text-base md:text-lg">
+                      <div className="flex items-center gap-2 text-md md:text-base">
                         <p>
                           by{" "}
                           <span className="text-prim">

@@ -58,6 +58,7 @@ export const educationSchema = z.object({
     .array(
       z.object({
         degree: optionalString,
+        major: optionalString,
         school: optionalString,
         startDate: optionalString,
         endDate: optionalString,
@@ -137,6 +138,7 @@ export const resumeSchema = z.object({
     .array(
       z.object({
         degree: optionalString,
+        major: optionalString,
         school: optionalString,
         startDate: optionalString,
         endDate: optionalString,

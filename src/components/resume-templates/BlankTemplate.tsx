@@ -252,6 +252,7 @@ function EducationSection({ resumeData }: SectionProps) {
               )}
             </div>
             <p className="text-xs font-semibold">{edu.school}</p>
+            {edu.major && <p className="text-xs font-bold">{edu.major}</p>}
           </div>
         ))}
       </div>

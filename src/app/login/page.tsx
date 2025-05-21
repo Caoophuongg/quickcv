@@ -27,6 +27,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
+import AuthFooter from "@/components/AuthFooter";
 
 const loginSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
@@ -103,7 +104,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2 text-center">
           <CardTitle className="text-2xl">Đăng nhập</CardTitle>
@@ -203,6 +204,7 @@ export default function LoginPage() {
           </Link>
         </CardFooter>
       </Card>
+      <AuthFooter />
     </main>
   );
 }

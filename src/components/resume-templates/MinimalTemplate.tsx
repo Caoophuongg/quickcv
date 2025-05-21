@@ -201,6 +201,7 @@ function EducationSection({ resumeData }: SectionProps) {
           <div key={index} className="break-inside-avoid text-center">
             <h3 className="text-sm font-medium">{edu.degree}</h3>
             <p className="text-xs text-gray-600">{edu.school}</p>
+            {edu.major && <p className="text-xs font-bold">{edu.major}</p>}
 
             {edu.startDate && (
               <p className="mt-1 text-xs font-light text-gray-500">

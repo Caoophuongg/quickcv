@@ -18,7 +18,7 @@ export const resumeTemplates: ResumeTemplate[] = [
     id: "blank",
     name: "Template trắng",
     description: "Bắt đầu với một template trống, tùy chỉnh theo ý của bạn",
-    thumbnail: "/templates/blank.png",
+    thumbnail: "/templates/blank.webp",
     templateType: TemplateType.BLANK,
     data: {
       title: "CV của tôi",
@@ -42,7 +42,7 @@ export const resumeTemplates: ResumeTemplate[] = [
     name: "Chuyên nghiệp",
     description:
       "Template hiện đại, chuyên nghiệp phù hợp cho hầu hết các ngành",
-    thumbnail: "/templates/professional.png",
+    thumbnail: "/templates/professional.webp",
     templateType: TemplateType.PROFESSIONAL,
     data: {
       title: "CV Chuyên nghiệp",
@@ -100,7 +100,7 @@ export const resumeTemplates: ResumeTemplate[] = [
     name: "Sáng tạo",
     description:
       "Template năng động, sáng tạo phù hợp cho ngành thiết kế và marketing",
-    thumbnail: "/templates/creative.png",
+    thumbnail: "/templates/creative.webp",
     templateType: TemplateType.CREATIVE,
     data: {
       title: "CV Sáng tạo",
@@ -158,7 +158,7 @@ export const resumeTemplates: ResumeTemplate[] = [
     name: "Tối giản",
     description:
       "Template đơn giản và đầy đủ thông tin, phù hợp cho mọi ngành nghề",
-    thumbnail: "/templates/minimal.png",
+    thumbnail: "/templates/minimal.webp",
     templateType: TemplateType.BLANK,
     data: {
       title: "CV Tối giản",

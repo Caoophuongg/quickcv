@@ -216,6 +216,7 @@ function MainContent({ resumeData }: SectionProps) {
                     </p>
                   )}
                 </div>
+                {edu.major && <p className="text-xs font-bold">{edu.major}</p>}
                 <p className="text-sm">{edu.school}</p>
               </div>
             ))}

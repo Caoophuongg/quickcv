@@ -56,8 +56,8 @@ export default function ResumeEditor({
           CV của bạn - Dấu ấn của chúng tôi
         </p>
       </header>
-      <main className="relative grow">
-        <div className="absolute bottom-0 top-0 flex w-full">
+      <main className="flex grow">
+        <div className="flex w-full">
           <div
             className={cn(
               "w-full space-y-6 overflow-y-auto p-3 md:block md:w-1/2",

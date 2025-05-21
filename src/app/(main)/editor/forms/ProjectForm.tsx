@@ -87,7 +87,7 @@ export default function ProjectForm({
                       <FormItem>
                         <FormLabel>Tên dự án</FormLabel>
                         <FormControl>
-                          <Input placeholder="Nhập tên dự án..." {...field} />
+                          <Input placeholder="Nhập tên dự án..." {...field} value={field.value || ""} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -101,7 +101,7 @@ export default function ProjectForm({
                       <FormItem>
                         <FormLabel>Vai trò của bạn</FormLabel>
                         <FormControl>
-                          <Input placeholder="Frontend Developer..." {...field} />
+                          <Input placeholder="Frontend Developer..." {...field} value={field.value || ""} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -158,6 +158,7 @@ export default function ProjectForm({
                             placeholder="Mô tả dự án và trách nhiệm của bạn..."
                             className="min-h-32 resize-none"
                             {...field}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -193,7 +194,14 @@ export default function ProjectForm({
             type="button"
             variant="outline"
             className="w-full"
-            onClick={() => append({ techStack: [] })}
+            onClick={() => append({
+              name: "",
+              role: "",
+              startDate: "",
+              endDate: "",
+              description: "",
+              techStack: [],
+            })}
           >
             <PlusCircle className="mr-2 h-4 w-4" />
             Thêm dự án

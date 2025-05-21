@@ -117,6 +117,7 @@ export default function EducationForm({
               onClick={() =>
                 append({
                   degree: "",
+                  major: "",
                   school: "",
                   startDate: "",
                   endDate: "",
@@ -177,6 +178,19 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
             <FormLabel>Bằng cấp</FormLabel>
             <FormControl>
               <Input {...field} autoFocus />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`educations.${index}.major`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Chuyên ngành</FormLabel>
+            <FormControl>
+              <Input {...field} value={field.value || ""} />
             </FormControl>
             <FormMessage />
           </FormItem>

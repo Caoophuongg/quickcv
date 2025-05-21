@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
+import AuthFooter from "@/components/AuthFooter";
 
 // Hàm kiểm tra yêu cầu mật khẩu mạnh
 const passwordRequirements = {
@@ -114,7 +115,7 @@ export default function RegisterPage() {
   );
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2 text-center">
           <CardTitle className="text-2xl">Đăng ký tài khoản</CardTitle>
@@ -316,6 +317,7 @@ export default function RegisterPage() {
           </Link>
         </CardFooter>
       </Card>
+      <AuthFooter />
     </main>
   );
 }

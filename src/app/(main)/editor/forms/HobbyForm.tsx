@@ -79,7 +79,7 @@ export default function HobbyForm({
                       <FormItem>
                         <FormLabel>Tên sở thích</FormLabel>
                         <FormControl>
-                          <Input placeholder="Đọc sách, Du lịch..." {...field} />
+                          <Input placeholder="Đọc sách, Du lịch..." {...field} value={field.value || ""} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -97,6 +97,7 @@ export default function HobbyForm({
                             placeholder="Mô tả thêm về sở thích..."
                             className="resize-none"
                             {...field}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -112,7 +113,7 @@ export default function HobbyForm({
             type="button"
             variant="outline"
             className="w-full"
-            onClick={() => append({})}
+            onClick={() => append({ name: "", description: "" })}
           >
             <PlusCircle className="mr-2 h-4 w-4" />
             Thêm sở thích
