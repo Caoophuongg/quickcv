@@ -52,7 +52,7 @@ export default function Navbar() {
             className="rounded-full"
             priority
           />
-          <span className="text-2xl font-bold tracking-tight text-[#7129be]">
+          <span className="text-2xl font-bold tracking-tight text-prim">
             Quick CV
           </span>
         </Link>
@@ -122,13 +122,13 @@ export default function Navbar() {
             <div className="flex gap-3">
               <Link
                 href="/login"
-                className="rounded-lg border px-4 py-2 font-medium text-[#7129be] shadow-lg"
+                className="rounded-lg border px-4 py-2 font-medium text-prim shadow-lg"
               >
                 Đăng nhập
               </Link>
               <Link
                 href="/register"
-                className="rounded-lg bg-[#7129be] px-4 py-2 font-medium text-white shadow-lg hover:bg-[#5f21a5]"
+                className="rounded-lg bg-prim px-4 py-2 font-medium text-white shadow-lg hover:bg-[#8f97d5]"
               >
                 Đăng ký
               </Link>

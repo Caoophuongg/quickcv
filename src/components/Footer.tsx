@@ -20,7 +20,7 @@ export default function Footer() {
                 height={40}
                 className="rounded-full"
               />
-              <span className="text-xl font-bold tracking-tight text-[#7129be]">
+              <span className="text-xl font-bold tracking-tight text-prim">
                 Quick CV
               </span>
             </div>

@@ -1,23 +1,23 @@
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { FileUserIcon, PenLineIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { steps } from "./steps";
+import { FileUserIcon, PenLineIcon } from "lucide-react";
 
 interface FooterProps {
+  isSaving: boolean;
   currentStep: string;
   setCurrentStep: (step: string) => void;
-  showSmResumePreview: boolean;
-  setShowSmResumePreview: (show: boolean) => void;
-  isSaving: boolean;
+  showSmResumePreview?: boolean;
+  setShowSmResumePreview?: (show: boolean) => void;
 }
 
 export default function Footer({
+  isSaving,
   currentStep,
   setCurrentStep,
-  showSmResumePreview,
-  setShowSmResumePreview,
-  isSaving,
+  showSmResumePreview = false,
+  setShowSmResumePreview = () => {},
 }: FooterProps) {
   const previousStep = steps.find(
     (_, index) => steps[index + 1]?.key === currentStep,
@@ -28,8 +28,8 @@ export default function Footer({
   )?.key;
 
   return (
-    <footer className="w-full border-t px-3 py-5">
-      <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3">
+    <footer className="sticky bottom-0 left-0 right-0 z-10 border-t bg-background px-3 py-3 shadow-[0_-2px_5px_rgba(0,0,0,0.05)]">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Button
             variant="secondary"
@@ -47,29 +47,32 @@ export default function Footer({
             Tiếp tục
           </Button>
         </div>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setShowSmResumePreview(!showSmResumePreview)}
-          className="md:hidden"
-          title={
-            showSmResumePreview ? "Show input form" : "Show resume preview"
-          }
-        >
-          {showSmResumePreview ? <PenLineIcon /> : <FileUserIcon />}
-        </Button>
+        
         <div className="flex items-center gap-3">
-          <Button variant="secondary" asChild>
-            <Link href="/resumes">Đóng</Link>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setShowSmResumePreview(!showSmResumePreview)}
+            className="md:hidden"
+            title={
+              showSmResumePreview ? "Hiển thị form nhập liệu" : "Xem trước CV"
+            }
+          >
+            {showSmResumePreview ? <PenLineIcon /> : <FileUserIcon />}
           </Button>
+          
           <p
             className={cn(
-              "text-muted-foreground opacity-0",
+              "text-muted-foreground opacity-0 transition-opacity duration-200",
               isSaving && "opacity-100",
             )}
           >
             Đang lưu
           </p>
+          
+          <Button variant="secondary" asChild>
+            <Link href="/resumes">Đóng</Link>
+          </Button>
         </div>
       </div>
     </footer>

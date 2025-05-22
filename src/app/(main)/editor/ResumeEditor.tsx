@@ -49,18 +49,12 @@ export default function ResumeEditor({
   )?.component;
 
   return (
-    <div className="flex grow flex-col">
-      <header className="space-y-1.5 border-b px-3 py-5 text-center">
-        <h1 className="text-2xl font-bold">Thiết kế CV của bạn</h1>
-        <p className="text-sm text-muted-foreground">
-          CV của bạn - Dấu ấn của chúng tôi
-        </p>
-      </header>
+    <div className="flex min-h-screen flex-col">
       <main className="flex grow">
         <div className="flex w-full">
           <div
             className={cn(
-              "w-full space-y-6 overflow-y-auto p-3 md:block md:w-1/2",
+              "w-full space-y-6 overflow-y-auto p-3 pb-20 md:block md:w-1/2",
               showSmResumePreview && "hidden",
             )}
           >
@@ -81,6 +75,7 @@ export default function ResumeEditor({
           />
         </div>
       </main>
+      
       <Footer
         currentStep={currentStep}
         setCurrentStep={setStep}

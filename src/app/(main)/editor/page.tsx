@@ -11,7 +11,7 @@ interface PageProps {
 }
 
 export const metadata: Metadata = {
-  title: "Design your resume",
+  title: "Thiết kế CV của bạn",
 };
 
 export default async function Page({ searchParams }: PageProps) {
