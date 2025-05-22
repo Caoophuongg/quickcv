@@ -28,6 +28,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import AuthFooter from "@/components/AuthFooter";
+import { Suspense } from "react";
 
 const loginSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
@@ -60,7 +61,15 @@ const LOGIN_ERROR_MESSAGES = {
   }
 };
 
-export default function LoginPage() {
+export default function LoginPageWrapper() {
+  return (
+    <Suspense>
+      <LoginPage />
+    </Suspense>
+  );
+}
+
+function LoginPage() {
   const { login, error, loading } = useAuthContext();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
