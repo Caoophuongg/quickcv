@@ -57,6 +57,8 @@ model Resume {
   country     String?
   phone       String?
   email       String?
+  shortTermGoals String?
+  longTermGoals String?
 
   workExperiences WorkExperience[]
   educations      Education[]

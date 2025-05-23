@@ -40,6 +40,7 @@ export default function MinimalTemplate({
         {/* Body với khoảng trắng rộng, bố cục một cột */}
         <div className="px-8 py-6">
           <SummarySection resumeData={resumeData} />
+          <GoalsSection resumeData={resumeData} />
           <WorkExperienceSection resumeData={resumeData} />
           <EducationSection resumeData={resumeData} />
           <SkillsSection resumeData={resumeData} />
@@ -133,6 +134,38 @@ function SummarySection({ resumeData }: SectionProps) {
       <p className="text-center text-sm leading-relaxed text-gray-600">
         {summary}
       </p>
+    </div>
+  );
+}
+
+function GoalsSection({ resumeData }: SectionProps) {
+  const { shortTermGoals, longTermGoals } = resumeData;
+
+  if (!shortTermGoals && !longTermGoals) return null;
+
+  return (
+    <div className="mb-8">
+      <h2 className="mb-4 text-center text-xs font-normal uppercase tracking-[0.3em]">
+        Mục tiêu nghề nghiệp
+      </h2>
+      
+      {shortTermGoals && (
+        <div className="mb-3 text-center">
+          <h3 className="mb-1 text-sm font-medium">Mục tiêu ngắn hạn:</h3>
+          <p className="text-sm leading-relaxed text-gray-600">
+            {shortTermGoals}
+          </p>
+        </div>
+      )}
+      
+      {longTermGoals && (
+        <div className="text-center">
+          <h3 className="mb-1 text-sm font-medium">Mục tiêu dài hạn:</h3>
+          <p className="text-sm leading-relaxed text-gray-600">
+            {longTermGoals}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

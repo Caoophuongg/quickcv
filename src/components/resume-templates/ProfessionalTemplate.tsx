@@ -158,7 +158,7 @@ function SidebarContent({ resumeData }: SectionProps) {
 }
 
 function MainContent({ resumeData }: SectionProps) {
-  const { summary, workExperiences, educations, skills, projects, hobbies, colorHex } = resumeData;
+  const { summary, shortTermGoals, longTermGoals, workExperiences, educations, skills, projects, hobbies, colorHex } = resumeData;
 
   const workExperiencesNotEmpty = workExperiences?.filter(
     (exp) => Object.values(exp).filter(Boolean).length > 0,
@@ -189,6 +189,33 @@ function MainContent({ resumeData }: SectionProps) {
           </h2>
           <div className="h-1 w-20" style={{ backgroundColor: colorHex }}></div>
           <p className="text-sm leading-relaxed">{summary}</p>
+        </div>
+      )}
+
+      {/* Goals Section */}
+      {(shortTermGoals || longTermGoals) && (
+        <div className="space-y-3">
+          <h2
+            className="text-xl font-bold uppercase tracking-wide"
+            style={{ color: colorHex }}
+          >
+            Mục tiêu nghề nghiệp
+          </h2>
+          <div className="h-1 w-20" style={{ backgroundColor: colorHex }}></div>
+          
+          {shortTermGoals && (
+            <div className="mb-3">
+              <h3 className="text-sm font-semibold">Mục tiêu ngắn hạn:</h3>
+              <p className="text-sm leading-relaxed">{shortTermGoals}</p>
+            </div>
+          )}
+          
+          {longTermGoals && (
+            <div>
+              <h3 className="text-sm font-semibold">Mục tiêu dài hạn:</h3>
+              <p className="text-sm leading-relaxed">{longTermGoals}</p>
+            </div>
+          )}
         </div>
       )}
 

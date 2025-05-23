@@ -53,6 +53,9 @@ export default function CreativeTemplate({
           {/* Summary - Trải rộng 12 cột */}
           <SummarySection resumeData={resumeData} />
 
+          {/* Goals - Trải rộng 12 cột */}
+          <GoalsSection resumeData={resumeData} />
+
           {/* Cột trái - 7 cột */}
           <div className="col-span-7 space-y-6">
             <EducationSection resumeData={resumeData} />
@@ -198,12 +201,51 @@ function SummarySection({ resumeData }: SectionProps) {
     <div className="col-span-12 mb-4 mt-4">
       <div
         className="rounded-lg border-l-4 p-4 shadow-sm"
-        style={{ borderColor: colorHex }}
+        style={{ borderLeftColor: colorHex }}
       >
-        <h2 className="mb-2 text-xl font-bold" style={{ color: colorHex }}>
+        <h2
+          className="mb-2 text-lg font-bold"
+          style={{ color: colorHex }}
+        >
           Giới thiệu
         </h2>
-        <p className="text-sm italic leading-relaxed">{summary}</p>
+        <p className="text-sm leading-relaxed text-gray-600">{summary}</p>
+      </div>
+    </div>
+  );
+}
+
+function GoalsSection({ resumeData }: SectionProps) {
+  const { shortTermGoals, longTermGoals, colorHex } = resumeData;
+
+  if (!shortTermGoals && !longTermGoals) return null;
+
+  return (
+    <div className="col-span-12 mb-4">
+      <div
+        className="rounded-lg border-l-4 p-4 shadow-sm"
+        style={{ borderLeftColor: colorHex }}
+      >
+        <h2
+          className="mb-2 text-lg font-bold"
+          style={{ color: colorHex }}
+        >
+          Mục tiêu nghề nghiệp
+        </h2>
+        
+        {shortTermGoals && (
+          <div className="mb-3">
+            <h3 className="mb-1 text-sm font-semibold">Mục tiêu ngắn hạn:</h3>
+            <p className="text-sm leading-relaxed text-gray-600">{shortTermGoals}</p>
+          </div>
+        )}
+        
+        {longTermGoals && (
+          <div>
+            <h3 className="mb-1 text-sm font-semibold">Mục tiêu dài hạn:</h3>
+            <p className="text-sm leading-relaxed text-gray-600">{longTermGoals}</p>
+          </div>
+        )}
       </div>
     </div>
   );

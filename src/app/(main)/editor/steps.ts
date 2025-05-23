@@ -7,6 +7,7 @@ import SummaryForm from "./forms/SummaryForm";
 import WorkExperienceForm from "./forms/WorkExperienceForm";
 import ProjectForm from "./forms/ProjectForm";
 import HobbyForm from "./forms/HobbyForm";
+import GoalsForm from "./forms/GoalsForm";
 
 export const steps: {
   title: string;
@@ -19,6 +20,11 @@ export const steps: {
     title: "Giới thiệu bản thân",
     component: SummaryForm,
     key: "career-goals",
+  },
+  {
+    title: "Mục tiêu nghề nghiệp",
+    component: GoalsForm,
+    key: "goals",
   },
   {
     title: "Trình độ học vấn",

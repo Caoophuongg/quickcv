@@ -61,6 +61,8 @@ export function mapToResumeValues(data: ResumeServerData): ResumeValues {
     borderStyle: data.borderStyle as BorderStyle,
     colorHex: data.colorHex,
     summary: data.summary || undefined,
+    shortTermGoals: data.shortTermGoals || undefined,
+    longTermGoals: data.longTermGoals || undefined,
     templateType: data.templateType,
   };
 }

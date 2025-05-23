@@ -111,6 +111,13 @@ export const summarySchema = z.object({
 
 export type SummaryValues = z.infer<typeof summarySchema>;
 
+export const goalsSchema = z.object({
+  shortTermGoals: optionalString,
+  longTermGoals: optionalString,
+});
+
+export type GoalsValues = z.infer<typeof goalsSchema>;
+
 export const resumeSchema = z.object({
   title: optionalString,
   description: optionalString,
@@ -123,6 +130,8 @@ export const resumeSchema = z.object({
   phone: optionalString,
   email: optionalString,
   summary: optionalString,
+  shortTermGoals: optionalString,
+  longTermGoals: optionalString,
   workExperiences: z
     .array(
       z.object({

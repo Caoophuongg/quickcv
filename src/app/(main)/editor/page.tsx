@@ -66,6 +66,8 @@ export default async function Page({ searchParams }: PageProps) {
         phone: initialData.phone || null,
         email: initialData.email || null,
         summary: initialData.summary || null,
+        shortTermGoals: initialData.shortTermGoals || null,
+        longTermGoals: initialData.longTermGoals || null,
         colorHex: initialData.colorHex || "#000000",
         borderStyle: initialData.borderStyle || "squircle",
         templateType: templateData.templateType,

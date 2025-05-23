@@ -30,6 +30,8 @@ export const resumeTemplates: ResumeTemplate[] = [
       email: "",
       phone: "",
       summary: "",
+      shortTermGoals: "",
+      longTermGoals: "",
       workExperiences: [],
       educations: [],
       skills: [],
@@ -55,6 +57,8 @@ export const resumeTemplates: ResumeTemplate[] = [
       phone: "0123456789",
       summary:
         "Kỹ sư phần mềm với 5 năm kinh nghiệm trong phát triển web và mobile. Thành thạo ReactJS, Node.js và các công nghệ hiện đại.",
+      shortTermGoals: "Phát triển kỹ năng quản lý dự án và trở thành team lead trong vòng 1-2 năm tới. Tham gia các dự án với công nghệ mới để nâng cao kiến thức chuyên môn.",
+      longTermGoals: "Hướng tới vị trí kỹ sư trưởng (Principal Engineer) trong 3-5 năm, đóng góp vào các quyết định kiến trúc hệ thống và chiến lược công nghệ của công ty.",
       workExperiences: [
         {
           position: "Senior Frontend Developer",
@@ -113,6 +117,8 @@ export const resumeTemplates: ResumeTemplate[] = [
       phone: "0987654321",
       summary:
         "Designer đam mê với 4 năm kinh nghiệm trong thiết kế UI/UX. Chuyên tạo ra các trải nghiệm người dùng đẹp mắt và trực quan.",
+      shortTermGoals: "Nâng cao kỹ năng trong thiết kế hệ thống và animation. Tham gia các dự án lớn để phát triển portfolio cá nhân trong 1-2 năm tới.",
+      longTermGoals: "Trở thành Design Lead cho một team thiết kế và xây dựng các sản phẩm với trải nghiệm người dùng xuất sắc. Đóng góp vào việc phát triển design system cho các sản phẩm quy mô lớn.",
       workExperiences: [
         {
           position: "Senior UI/UX Designer",
@@ -171,6 +177,8 @@ export const resumeTemplates: ResumeTemplate[] = [
       phone: "0369852147",
       summary:
         "Quản lý dự án với hơn 7 năm kinh nghiệm trong lĩnh vực công nghệ. Chuyên môn trong việc lập kế hoạch, triển khai và điều phối các dự án phát triển phần mềm quy mô lớn. Kỹ năng mạnh về lãnh đạo, giao tiếp và quản lý thời gian, giúp đội ngũ đạt hiệu suất tối đa. Có khả năng phân tích và giải quyết vấn đề phức tạp, đảm bảo dự án hoàn thành đúng tiến độ và ngân sách. Kinh nghiệm làm việc với nhiều phương pháp luận như Agile, Scrum, Waterfall.",
+      shortTermGoals: "Hoàn thành chứng chỉ PMP trong vòng 1 năm tới và áp dụng kiến thức mới vào công việc. Tối ưu hóa quy trình quản lý dự án để tăng hiệu quả và giảm thời gian hoàn thành.",
+      longTermGoals: "Thăng tiến lên vị trí Director of Project Management trong vòng 5 năm, quản lý nhiều nhóm dự án và tham gia vào việc định hướng chiến lược cho công ty.",
       workExperiences: [
         {
           position: "Senior Project Manager",

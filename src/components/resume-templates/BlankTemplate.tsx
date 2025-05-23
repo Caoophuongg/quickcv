@@ -37,6 +37,7 @@ export default function BlankTemplate({
       >
         <PersonalInfoHeader resumeData={resumeData} />
         <SummarySection resumeData={resumeData} />
+        <GoalsSection resumeData={resumeData} />
         <EducationSection resumeData={resumeData} />
         <WorkExperienceSection resumeData={resumeData} />
         <SkillsSection resumeData={resumeData} />
@@ -143,6 +144,45 @@ function SummarySection({ resumeData }: SectionProps) {
           Giới thiệu
         </p>
         <div className="whitespace-pre-line text-sm">{summary}</div>
+      </div>
+    </>
+  );
+}
+
+function GoalsSection({ resumeData }: SectionProps) {
+  const { shortTermGoals, longTermGoals, colorHex } = resumeData;
+
+  if (!shortTermGoals && !longTermGoals) return null;
+
+  return (
+    <>
+      <hr
+        className="border-2"
+        style={{
+          borderColor: colorHex,
+        }}
+      />
+      <div className="break-inside-avoid space-y-3">
+        <p
+          className="text-lg font-semibold"
+          style={{
+            color: colorHex,
+          }}
+        >
+          Mục tiêu nghề nghiệp
+        </p>
+        {shortTermGoals && (
+          <div className="space-y-1">
+            <p className="text-sm font-medium">Mục tiêu ngắn hạn:</p>
+            <div className="whitespace-pre-line text-sm">{shortTermGoals}</div>
+          </div>
+        )}
+        {longTermGoals && (
+          <div className="space-y-1">
+            <p className="text-sm font-medium">Mục tiêu dài hạn:</p>
+            <div className="whitespace-pre-line text-sm">{longTermGoals}</div>
+          </div>
+        )}
       </div>
     </>
   );
