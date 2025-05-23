@@ -38,6 +38,7 @@ import {
 import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
 import { toast } from "sonner";
+import { resumeTemplates } from "@/lib/templates";
 
 interface DashboardData {
   totalUsers: number;
@@ -69,7 +70,7 @@ interface CustomizedLabelProps {
   index: number;
 }
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A259F7", "#F24E1E", "#43B78D", "#F2C94C"];
 const RADIAN = Math.PI / 180;
 
 const renderCustomizedLabel = ({
@@ -109,6 +110,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
   const [templateUsage, setTemplateUsage] = useState<TemplateUsage[]>([]);
+  const [templateUsageReal, setTemplateUsageReal] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [apiLoading, setApiLoading] = useState(false);
 
@@ -121,15 +123,20 @@ export default function DashboardPage() {
           "/api/admin/dashboard",
         );
 
-        // Lấy dữ liệu theo tháng và template
+        // Lấy dữ liệu theo tháng và template (cũ)
         const monthlyData = await api.get<{
           monthlyData: MonthlyData[];
           templateUsage: TemplateUsage[];
         }>("/api/admin/dashboard/monthly");
 
+        // Lấy số liệu thực tế sử dụng template
+        const templateUsageRes = await fetch("/api/admin/dashboard/template-usage");
+        const templateUsageData = await templateUsageRes.json();
+
         setData(dashboardData);
         setMonthlyData(monthlyData.monthlyData);
         setTemplateUsage(monthlyData.templateUsage);
+        setTemplateUsageReal(templateUsageData);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         setError("Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.");
@@ -173,6 +180,18 @@ export default function DashboardPage() {
     data.totalUsers > 0
       ? Math.round((data.totalResumes / data.totalUsers) * 100)
       : 0;
+
+  // Map templateType sang tên hiển thị đẹp
+  const templateTypeNameMap: Record<string, string> = {};
+  resumeTemplates.forEach(tpl => {
+    templateTypeNameMap[tpl.templateType] = tpl.name;
+  });
+
+  // Chuyển dữ liệu thực tế sang dạng phù hợp cho biểu đồ
+  const templateChartData = templateUsageReal.map(item => ({
+    name: templateTypeNameMap[item.templateType] || item.templateType,
+    value: item._count.templateType,
+  }));
 
   return (
     <div className="space-y-6">
@@ -398,29 +417,27 @@ export default function DashboardPage() {
         </TabsContent>
         <TabsContent value="templates" className="space-y-4">
           <div className="grid gap-6 md:grid-cols-2">
+            {/* Biểu đồ tròn */}
             <Card className="col-span-1">
               <CardHeader>
-                <CardTitle>Sử dụng mẫu CV</CardTitle>
-                <CardDescription>Phân bố sử dụng các mẫu CV</CardDescription>
+                <CardTitle>Biểu đồ phân bố mẫu CV</CardTitle>
+                <CardDescription>Phân bố sử dụng các mẫu CV thực tế</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart width={400} height={300}>
                     <Pie
-                      data={templateUsage}
+                      data={templateChartData}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={renderCustomizedLabel}
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                       outerRadius={100}
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {templateUsage.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
+                      {templateChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -430,36 +447,25 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
+            {/* Biểu đồ cột */}
             <Card className="col-span-1">
               <CardHeader>
-                <CardTitle>Chi tiết mẫu CV</CardTitle>
-                <CardDescription>Phân tích theo loại mẫu CV</CardDescription>
+                <CardTitle>Biểu đồ cột mẫu CV</CardTitle>
+                <CardDescription>Số lượt sử dụng thực tế từng mẫu CV</CardDescription>
               </CardHeader>
-              <CardContent className="px-2">
+              <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart
-                    width={500}
-                    height={300}
-                    layout="vertical"
-                    data={[
-                      { name: "Blank", value: 35 },
-                      { name: "Professional", value: 40 },
-                      { name: "Creative", value: 15 },
-                      { name: "Minimal", value: 10 },
-                    ]}
-                    margin={{ top: 20, right: 20, bottom: 5, left: 80 }}
-                  >
+                  <BarChart data={templateChartData} layout="vertical" margin={{ top: 20, right: 20, bottom: 5, left: 80 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" />
                     <YAxis dataKey="name" type="category" />
                     <Tooltip />
                     <Legend />
-                    <Bar
-                      dataKey="value"
-                      name="Số lượng sử dụng"
-                      fill="#82ca9d"
-                      radius={[0, 4, 4, 0]}
-                    />
+                    <Bar dataKey="value" name="Số lượt sử dụng" fill="#82ca9d" radius={[0, 4, 4, 0]}>
+                      {templateChartData.map((entry, index) => (
+                        <Cell key={`bar-cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>

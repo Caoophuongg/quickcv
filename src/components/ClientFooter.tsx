@@ -4,9 +4,12 @@ import { usePathname } from "next/navigation";
 
 export default function ClientFooter() {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
-  const isEditor = pathname.startsWith("/editor") || pathname.startsWith("/(main)/editor");
-
-  if (isAdmin || isEditor) return null;
+  
+  // Không hiển thị footer trong trang Editor và Admin
+  const isEditorRoute = pathname.startsWith("/editor");
+  const isAdminRoute = pathname.startsWith("/admin");
+  
+  if (isEditorRoute || isAdminRoute) return null;
+  
   return <Footer />;
 } 

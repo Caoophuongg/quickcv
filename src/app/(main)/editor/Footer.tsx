@@ -49,16 +49,16 @@ export default function Footer({
         </div>
         
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setShowSmResumePreview(!showSmResumePreview)}
-            className="md:hidden"
-            title={
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setShowSmResumePreview(!showSmResumePreview)}
+          className="md:hidden"
+          title={
               showSmResumePreview ? "Hiển thị form nhập liệu" : "Xem trước CV"
-            }
-          >
-            {showSmResumePreview ? <PenLineIcon /> : <FileUserIcon />}
+          }
+        >
+          {showSmResumePreview ? <PenLineIcon /> : <FileUserIcon />}
           </Button>
           
           <p

@@ -3,7 +3,6 @@ import { getAuthSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import SubscriptionLevelProvider from "./SubscriptionLevelProvider";
-import Footer from "@/components/Footer";
 
 export default async function Layout({
   children,
@@ -23,7 +22,6 @@ export default async function Layout({
       <div className="flex min-h-screen flex-col">
         <Navbar />
         <main className="flex-1">{children}</main>
-        <Footer />
       </div>
     </SubscriptionLevelProvider>
   );

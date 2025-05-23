@@ -66,44 +66,45 @@ export default function Home() {
       <div className="w-full px-4 sm:px-6 md:px-8 lg:px-24 xl:px-52">
         <main>
           {/* banner */}
-          <section className="flex flex-col-reverse items-center justify-between gap-8 py-16 md:flex-row md:gap-20 md:py-32">
-            <div className="flex flex-1 flex-col items-start gap-5">
-              <p className="text-xl font-semibold uppercase text-prim">
-                Welcome to QuickCV
-              </p>
-              <h1 className="scroll-m-20 text-xl font-semibold !leading-tight tracking-tight md:text-2xl lg:text-4xl">
-                <span className="inline-block text-prim">
+          <section className="flex flex-col items-center justify-center gap-10 py-16 md:py-32 relative w-full px-0">
+            {/* Hiệu ứng nền gradient nhẹ phía sau */}
+            <div className="absolute inset-0 -z-10 flex justify-center">
+              <div className="w-[500px] h-[500px] bg-gradient-to-br from-prim/20 to-white rounded-full blur-3xl opacity-60"></div>
+            </div>
+            <div className="flex flex-col items-center gap-6 text-center max-w-4xl w-full px-4">
+              <div className="flex items-center gap-2">
+                <span className="text-lg md:text-xl font-semibold uppercase text-prim tracking-wider">Welcome to QuickCV</span>
+              </div>
+              <h1 className="scroll-m-20 text-2xl md:text-4xl lg:text-5xl font-bold !leading-tight tracking-tight text-gray-900">
+                <span className="inline-block text-prim drop-shadow-md">
                   Tạo một CV hấp dẫn
                 </span>{" "}
                 với sự hỗ trợ của AI trong vài phút.
               </h1>
-              <div className="text-md text-foreground/90 md:text-base">
+              <div className="text-base md:text-lg text-foreground/90 font-medium">
                 <p>Tạo CV trực tuyến với sự hỗ trợ của AI</p>
                 <p>
-                  <span className="text-prim">Tạo một hồ sơ chuyên nghiệp</span>{" "}
-                  - dễ dàng tạo một hồ sơ chuyên nghiệp với công cụ hỗ trợ của
-                  chúng tôi.
+                  <span className="text-prim font-semibold">Tạo một hồ sơ chuyên nghiệp</span>
+                  {" "}- dễ dàng tạo một hồ sơ chuyên nghiệp với công cụ hỗ trợ của chúng tôi.
                 </p>
               </div>
               <Button
                 asChild
-                className="w-full bg-prim hover:bg-prim/90 md:w-auto"
+                className="w-full bg-prim hover:bg-prim/90 md:w-auto text-base md:text-lg px-8 py-5 rounded-lg shadow-lg"
               >
-                <Link
-                  href="/resumes"
-                  className="px-6 py-5 text-md md:px-8 md:py-6 md:text-lg"
-                >
+                <Link href="/resumes">
                   Bắt đầu ngay
                 </Link>
               </Button>
             </div>
-            <div className="w-full flex-1">
+            <div className="w-full flex justify-center">
               <Image
                 src="/resume-preview.jpg"
                 alt="Resume preview"
                 width={900}
                 height={0}
-                className="h-auto w-full"
+                className="h-auto w-full max-w-2xl "
+                priority
               />
             </div>
           </section>
