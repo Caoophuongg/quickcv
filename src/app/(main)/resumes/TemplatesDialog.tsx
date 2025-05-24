@@ -21,7 +21,7 @@ export default function TemplatesDialog() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
   const router = useRouter();
 
-  // Sắp xếp templates để đặt template trắng bên trái
+  // Sắp xếp templates để đặt  bên trái
   const sortedTemplates = [...resumeTemplates].sort((a, b) => {
     if (a.id === "blank") return -1;
     if (b.id === "blank") return 1;

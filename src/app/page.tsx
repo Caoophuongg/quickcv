@@ -66,12 +66,12 @@ export default function Home() {
       <div className="w-full px-4 sm:px-6 md:px-8 lg:px-24 xl:px-52">
         <main>
           {/* banner */}
-          <section className="flex flex-col items-center justify-center gap-10 py-16 md:py-32 relative w-full px-0">
+          <section className="flex flex-col items-center justify-center gap-10 py-8 md:py-16 relative w-full px-0">
             {/* Hiệu ứng nền gradient nhẹ phía sau */}
             <div className="absolute inset-0 -z-10 flex justify-center">
               <div className="w-[500px] h-[500px] bg-gradient-to-br from-prim/20 to-white rounded-full blur-3xl opacity-60"></div>
             </div>
-            <div className="flex flex-col items-center gap-6 text-center max-w-4xl w-full px-4">
+            <div className="flex flex-col items-center gap-6 text-center max-w-4xl w-full px-4 ">
               <div className="flex items-center gap-2">
                 <span className="text-lg md:text-xl font-semibold uppercase text-prim tracking-wider">Welcome to QuickCV</span>
               </div>
