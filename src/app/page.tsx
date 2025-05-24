@@ -97,7 +97,7 @@ export default function Home() {
                 </Link>
               </Button>
             </div>
-            <div className="w-full flex justify-center shadow-lg rounded-lg border border-gray-200 hover:scale-105 transition-transform duration-300 ">
+            <div className="w-full flex justify-center hover:scale-105 transition-transform duration-300 ">
               <Image
                 src="/resume-preview.jpg"
                 alt="Resume preview"
