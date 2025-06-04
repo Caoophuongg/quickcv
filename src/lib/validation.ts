@@ -207,3 +207,36 @@ export const generateSummarySchema = z.object({
 });
 
 export type GenerateSummaryInput = z.infer<typeof generateSummarySchema>;
+
+export const generateEducationSchema = z.object({
+  description: z
+    .string()
+    .trim()
+    .min(1, "Required")
+    .min(20, "Must be at least 20 characters"),
+});
+
+export type GenerateEducationInput = z.infer<
+  typeof generateEducationSchema
+>;
+
+export const generateSkillsSchema = z.object({
+  jobTitle: optionalString,
+  workExperience: optionalString,
+  education: optionalString,
+});
+
+export type GenerateSkillsInput = z.infer<
+  typeof generateSkillsSchema
+>;
+
+export const generateGoalsSchema = z.object({
+  jobTitle: optionalString,
+  currentLevel: optionalString,
+  workExperience: optionalString,
+  skills: z.array(z.string()).optional(),
+});
+
+export type GenerateGoalsInput = z.infer<
+  typeof generateGoalsSchema
+>;

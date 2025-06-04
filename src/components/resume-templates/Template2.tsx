@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ResumeTemplateProps, SectionProps } from "./types";
 import useDimensions from "@/hooks/useDimensions";
 
-export default function CreativeTemplate({
+export default function Template2({
   resumeData,
   contentRef,
   className,

@@ -34,7 +34,12 @@ export default function ColorPicker({ color, onChange }: ColorPickerProps) {
         className="border-none bg-transparent shadow-none"
         align="end"
       >
-        <TwitterPicker color={color} onChange={onChange} triangle="top-right" />
+        <TwitterPicker
+          color={color}
+          onChange={onChange}
+          triangle="top-right"
+          colors={["#FF6900", "#FCB900", "#7BDCB5", "#00D084", "#8ED1FC", "#0693E3", "#ABB8C3", "#EB144C", "#F78DA7", "#9900EF", "#000000"]}
+        />
       </PopoverContent>
     </Popover>
   );

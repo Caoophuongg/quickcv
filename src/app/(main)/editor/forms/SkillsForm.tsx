@@ -13,6 +13,7 @@ import { skillsSchema, SkillsValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import GenerateSkillsButton from "./GenerateSkillsButton";
 
 export default function SkillsForm({
   resumeData,
@@ -65,6 +66,7 @@ export default function SkillsForm({
                       const skills = e.target.value.split(",");
                       field.onChange(skills);
                     }}
+                    value={field.value?.join(", ")}
                   />
                 </FormControl>
                 <FormDescription>
@@ -74,6 +76,15 @@ export default function SkillsForm({
               </FormItem>
             )}
           />
+          <div className="flex justify-center pt-2">
+            <GenerateSkillsButton
+              onSkillsGenerated={(skills) => {
+                const currentSkills = form.getValues().skills || [];
+                const uniqueSkills = [...new Set([...currentSkills, ...skills])];
+                form.setValue("skills", uniqueSkills);
+              }}
+            />
+          </div>
         </form>
       </Form>
     </div>

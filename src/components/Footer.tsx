@@ -116,7 +116,7 @@ export default function Footer() {
                 <li className="flex items-start gap-2">
                   <MapPin size={16} className="mt-0.5 text-muted-foreground" />
                   <span className="text-muted-foreground">
-                    268 Lý Thường Kiệt, Phường 14, Quận 10, TP.HCM
+                    Hà Đông, Hà Nội, Việt Nam
                   </span>
                 </li>
               </ul>

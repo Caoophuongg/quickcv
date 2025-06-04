@@ -10,13 +10,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { EditorFormProps } from "@/lib/types";
 import { goalsSchema, GoalsValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import GenerateGoalsButton from "./GenerateGoalsButton";
+import { useToast } from "@/hooks/use-toast";
 
 export default function GoalsForm({
   resumeData,
   setResumeData,
 }: EditorFormProps) {
+  const { toast } = useToast();
+  const [isGenerating, setIsGenerating] = useState(false);
+
   const form = useForm<GoalsValues>({
     resolver: zodResolver(goalsSchema),
     defaultValues: {
@@ -33,6 +38,34 @@ export default function GoalsForm({
     });
     return unsubscribe;
   }, [form, resumeData, setResumeData]);
+
+  const handleGoalsGenerated = (goals: { shortTermGoals: string; longTermGoals: string }) => {
+    try {
+      setIsGenerating(true);
+      
+      // Đặt giá trị vào form và cập nhật
+      form.setValue("shortTermGoals", goals.shortTermGoals, { shouldDirty: true, shouldTouch: true });
+      form.setValue("longTermGoals", goals.longTermGoals, { shouldDirty: true, shouldTouch: true });
+      
+      // Log để debug
+      console.log("Mục tiêu được tạo:", goals);
+      
+      // Thông báo thành công
+      toast({
+        title: "Đã tạo mục tiêu thành công",
+        description: "Mục tiêu nghề nghiệp đã được tạo và cập nhật vào CV của bạn",
+      });
+    } catch (error) {
+      console.error("Lỗi khi cập nhật mục tiêu:", error);
+      toast({
+        variant: "destructive",
+        title: "Có lỗi xảy ra",
+        description: "Không thể cập nhật mục tiêu, vui lòng thử lại",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
@@ -78,6 +111,15 @@ export default function GoalsForm({
               </FormItem>
             )}
           />
+          <div className="flex justify-center pt-2">
+            <GenerateGoalsButton
+              onGoalsGenerated={handleGoalsGenerated}
+              resumeData={{
+                jobTitle: resumeData.jobTitle || "",
+                skills: resumeData.skills || [],
+              }}
+            />
+          </div>
         </form>
       </Form>
     </div>

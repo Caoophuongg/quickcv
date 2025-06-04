@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ResumeTemplateProps, SectionProps } from "./types";
 import useDimensions from "@/hooks/useDimensions";
 
-export default function MinimalTemplate({
+export default function Template3({
   resumeData,
   contentRef,
   className,

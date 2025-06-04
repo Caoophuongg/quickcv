@@ -33,6 +33,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { GripHorizontal } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
+import GenerateEducationButton from "./GenerateEducationButton";
 
 export default function EducationForm({
   resumeData,
@@ -111,7 +112,7 @@ export default function EducationForm({
               ))}
             </SortableContext>
           </DndContext>
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-2">
             <Button
               type="button"
               onClick={() =>
@@ -126,6 +127,11 @@ export default function EducationForm({
             >
               Thêm học vấn
             </Button>
+            <GenerateEducationButton
+              onEducationGenerated={(education) => {
+                append(education);
+              }}
+            />
           </div>
         </form>
       </Form>
@@ -168,6 +174,13 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
           className="size-5 cursor-grab text-muted-foreground focus:outline-none"
           {...attributes}
           {...listeners}
+        />
+      </div>
+      <div className="flex justify-center">
+        <GenerateEducationButton
+          onEducationGenerated={(edu) =>
+            form.setValue(`educations.${index}`, edu)
+          }
         />
       </div>
       <FormField

@@ -21,7 +21,7 @@ export default function TemplatesDialog() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
   const router = useRouter();
 
-  // Sắp xếp templates để đặt  bên trái
+  // Sắp xếp templates để đặt template trắng bên trái
   const sortedTemplates = [...resumeTemplates].sort((a, b) => {
     if (a.id === "blank") return -1;
     if (b.id === "blank") return 1;
@@ -47,59 +47,59 @@ export default function TemplatesDialog() {
           Chọn từ mẫu có sẵn
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl">
-        <DialogHeader>
-          <DialogTitle>Chọn mẫu template</DialogTitle>
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-6">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="text-xl font-semibold">Chọn mẫu template</DialogTitle>
           <DialogDescription>
-            Chọn mẫu có sẵn để bắt đầu tạo CV của bạn. Bạn có thể tùy chỉnh sau
-            khi chọn.
+            Chọn mẫu có sẵn để bắt đầu tạo CV của bạn. Bạn có thể tùy chỉnh sau khi chọn.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 max-h-[60vh] overflow-y-auto pr-2">
           {sortedTemplates.map((template) => (
             <div
               key={template.id}
-              className={`relative cursor-pointer overflow-hidden rounded-lg border p-2 transition-all ${
+              className={`relative cursor-pointer transition-all duration-200 ${
                 selectedTemplate === template.id
-                  ? "border-2 border-primary ring-2 ring-primary/20"
-                  : "hover:border-primary/50"
+                  ? "scale-[1.02]"
+                  : "hover:scale-[1.01]"
               }`}
               onClick={() => handleSelectTemplate(template.id)}
             >
-              <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted">
+              <div className="aspect-[210/297] overflow-hidden rounded-md border border-gray-200 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+                <div className="relative w-full h-full">
                 <Image
                   src={template.thumbnail}
                   alt={template.name}
-                  width={300}
-                  height={400}
-                  className="h-full w-full object-cover transition-transform hover:scale-105"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover"
                 />
+                </div>
               </div>
               <div className="mt-2 text-center">
-                <h3 className="font-medium">{template.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {template.description}
-                </p>
+                <h3 className="font-medium text-sm md:text-base">{template.name}</h3>
               </div>
+              {selectedTemplate === template.id && (
+                <div className="absolute inset-0 rounded-md border-2 border-primary pointer-events-none"></div>
+              )}
             </div>
           ))}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="mt-6 flex items-center justify-between sm:justify-end gap-3">
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="mt-4"
           >
             Hủy
           </Button>
           <Button
             onClick={handleCreateFromTemplate}
             disabled={!selectedTemplate}
-            className="mt-4"
+            className="min-w-[120px]"
           >
-            Tạo CV từ template
+            Tạo CV
           </Button>
         </DialogFooter>
       </DialogContent>

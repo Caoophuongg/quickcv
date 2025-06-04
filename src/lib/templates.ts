@@ -15,11 +15,11 @@ export interface ResumeTemplate {
 // Danh sách các template mẫu
 export const resumeTemplates: ResumeTemplate[] = [
   {
-    id: "blank",
-    name: "Template trắng",
-    description: "Bắt đầu với một template trống, tùy chỉnh theo ý của bạn",
+    id: "template_0",
+    name: "Bản trống",
+    description: "",
     thumbnail: "/templates/blank.webp",
-    templateType: TemplateType.BLANK,
+    templateType: TemplateType.TEMPLATE_0,
     data: {
       title: "CV của tôi",
       firstName: "",
@@ -35,17 +35,16 @@ export const resumeTemplates: ResumeTemplate[] = [
       workExperiences: [],
       educations: [],
       skills: [],
-      colorHex: "#2563eb",
+      colorHex: "#000000",
       borderStyle: "square" as BorderStyle,
     },
   },
   {
-    id: "professional",
-    name: "Chuyên nghiệp",
-    description:
-      "Template hiện đại, chuyên nghiệp phù hợp cho hầu hết các ngành",
-    thumbnail: "/templates/professional.webp",
-    templateType: TemplateType.PROFESSIONAL,
+    id: "template_1",
+    name: "Mẫu 1",
+    description: "",
+    thumbnail: "/templates/template_2.webp",
+    templateType: TemplateType.TEMPLATE_1,
     data: {
       title: "CV Chuyên nghiệp",
       firstName: "Nguyễn",
@@ -95,17 +94,16 @@ export const resumeTemplates: ResumeTemplate[] = [
         "Redux",
         "TypeScript",
       ],
-      colorHex: "#2563eb",
+      colorHex: "#7c3aed",
       borderStyle: "square" as BorderStyle,
     },
   },
   {
-    id: "creative",
-    name: "Sáng tạo",
-    description:
-      "Template năng động, sáng tạo phù hợp cho ngành thiết kế và marketing",
-    thumbnail: "/templates/creative.webp",
-    templateType: TemplateType.CREATIVE,
+    id: "template_2",
+    name: "Mẫu 2",
+    description: "",
+    thumbnail: "/templates/template_3.webp",
+    templateType: TemplateType.TEMPLATE_2,
     data: {
       title: "CV Sáng tạo",
       firstName: "Trần",
@@ -155,17 +153,16 @@ export const resumeTemplates: ResumeTemplate[] = [
         "Wireframing",
         "Prototyping",
       ],
-      colorHex: "#ec4899",
+      colorHex: "#a21caf",
       borderStyle: "squircle" as BorderStyle,
     },
   },
   {
-    id: "minimal",
-    name: "Tối giản",
-    description:
-      "Template đơn giản và đầy đủ thông tin, phù hợp cho mọi ngành nghề",
+    id: "template_3",
+    name: "Mẫu 3",
+    description: "",
     thumbnail: "/templates/minimal.webp",
-    templateType: TemplateType.BLANK,
+    templateType: TemplateType.TEMPLATE_3,
     data: {
       title: "CV Tối giản",
       firstName: "Lê",
@@ -245,6 +242,137 @@ export const resumeTemplates: ResumeTemplate[] = [
       ],
       colorHex: "#000000",
       borderStyle: "square" as BorderStyle,
+    },
+  },
+  {
+    id: "template_4",
+    name: "Mẫu 4",
+    description: "",
+    thumbnail: "/templates/template_5.webp",
+    templateType: TemplateType.TEMPLATE_4,
+    data: {
+      title: "CV Hiện đại",
+      firstName: "Trần",
+      lastName: "Minh",
+      jobTitle: "Kỹ sư Phần mềm",
+      city: "Hà Nội",
+      country: "Việt Nam",
+      email: "minhtran@example.com",
+      phone: "0912345678",
+      summary:
+        "Kỹ sư phần mềm với 3 năm kinh nghiệm phát triển web. Có kiến thức vững về ReactJS, Node.js và tối ưu hóa hiệu suất ứng dụng.",
+      shortTermGoals: "Phát triển sâu hơn về kiến trúc phần mềm và trở thành senior developer trong 1-2 năm tới.",
+      longTermGoals: "Định hướng trở thành solution architect và đóng góp vào các dự án mã nguồn mở lớn.",
+      workExperiences: [
+        {
+          position: "Frontend Developer",
+          company: "Tech Solutions",
+          startDate: "2022-01-01",
+          endDate: "2023-12-31",
+          description:
+            "• Phát triển và tối ưu các ứng dụng web sử dụng React và TypeScript\n• Cải thiện hiệu suất trang web, giảm 40% thời gian tải trang\n• Xây dựng UI component library cho toàn công ty"
+        },
+        {
+          position: "Web Developer",
+          company: "Digital Agency",
+          startDate: "2020-06-01",
+          endDate: "2021-12-31",
+          description:
+            "• Xây dựng các website cho khách hàng sử dụng JavaScript và các framework hiện đại\n• Làm việc với team design để biến UI/UX mockup thành code hoạt động"
+        }
+      ],
+      educations: [
+        {
+          degree: "Kỹ sư Công nghệ thông tin",
+          school: "Đại học Bách Khoa Hà Nội",
+          startDate: "2016-09-01",
+          endDate: "2020-05-31"
+        }
+      ],
+      skills: [
+        "JavaScript",
+        "TypeScript",
+        "ReactJS",
+        "Next.js",
+        "Node.js",
+        "HTML/CSS",
+        "Git",
+        "REST API"
+      ],
+      colorHex: "#1e7b77",
+      borderStyle: "square" as BorderStyle
+    }
+  },
+  {
+    id: "template_5",
+    name: "Mẫu 5",
+    description: "",
+    thumbnail: "/templates/creative.webp",
+    templateType: TemplateType.TEMPLATE_2,
+    data: {
+      title: "CV Thanh lịch",
+      firstName: "Nguyễn",
+      lastName: "Thảo",
+      jobTitle: "Marketing Manager",
+      city: "Thành phố Hồ Chí Minh",
+      country: "Việt Nam",
+      email: "nguyenthao@email.com",
+      phone: "0987654321",
+      summary:
+        "Chuyên viên Marketing với 6 năm kinh nghiệm trong phát triển chiến lược, quản lý thương hiệu và tiếp thị số. Thành tích nổi bật trong việc tăng nhận diện thương hiệu và tỷ lệ chuyển đổi cho nhiều doanh nghiệp lớn.",
+      shortTermGoals: "Phát triển kỹ năng trong Influencer Marketing và Content Strategy. Nâng cao hiệu quả các chiến dịch Marketing đa kênh.",
+      longTermGoals: "Trở thành Marketing Director, dẫn dắt đội ngũ phát triển các chiến lược tiếp thị toàn diện và đổi mới, tạo dấu ấn riêng trong ngành.",
+      workExperiences: [
+        {
+          position: "Senior Marketing Manager",
+          company: "BrandVision",
+          startDate: "2020-05-01",
+          endDate: "2023-12-31",
+          description:
+            "• Phát triển và triển khai chiến lược marketing tổng thể cho nhiều thương hiệu\n• Quản lý ngân sách marketing hơn 1 tỷ VND hàng năm, đạt ROI trung bình 200%\n• Lãnh đạo đội ngũ 10 nhân viên marketing, bao gồm digital marketing, content và design\n• Tăng tương tác trên mạng xã hội 150% và tỷ lệ chuyển đổi 35% trong 2 năm",
+        },
+        {
+          position: "Digital Marketing Specialist",
+          company: "TechMedia",
+          startDate: "2017-02-01",
+          endDate: "2020-04-30",
+          description:
+            "• Quản lý các chiến dịch quảng cáo kỹ thuật số trên nhiều nền tảng\n• Phân tích dữ liệu và tối ưu hóa chiến dịch để tăng hiệu quả\n• Phát triển nội dung sáng tạo và hấp dẫn cho các kênh truyền thông xã hội\n• Tăng lượng truy cập trang web 75% và tỷ lệ chuyển đổi 25%",
+        },
+      ],
+      educations: [
+        {
+          degree: "Thạc sĩ Quản trị Kinh doanh",
+          school: "Đại học Kinh tế TP.HCM",
+          startDate: "2015-09-01",
+          endDate: "2017-06-30",
+        },
+        {
+          degree: "Cử nhân Marketing",
+          school: "Đại học Ngoại thương",
+          startDate: "2011-09-01",
+          endDate: "2015-05-31",
+        },
+      ],
+      skills: [
+        "Digital Marketing",
+        "Brand Management",
+        "Social Media Strategy",
+        "Content Creation",
+        "SEO/SEM",
+        "Email Marketing",
+        "Google Analytics",
+        "Facebook Ads",
+        "Instagram Marketing",
+        "TikTok Marketing",
+        "Adobe Creative Suite",
+        "Project Management",
+        "Team Leadership",
+        "Budget Management",
+        "Marketing Analytics",
+      ],
+      colorHex: "#000000",
+      borderStyle: "squircle" as BorderStyle,
     },
   },
 ];
