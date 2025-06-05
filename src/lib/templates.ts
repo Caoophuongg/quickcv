@@ -161,7 +161,7 @@ export const resumeTemplates: ResumeTemplate[] = [
     id: "template_3",
     name: "Mẫu 3",
     description: "",
-    thumbnail: "/templates/minimal.webp",
+    thumbnail: "/templates/template_4.webp",
     templateType: TemplateType.TEMPLATE_3,
     data: {
       title: "CV Tối giản",
