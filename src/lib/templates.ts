@@ -16,9 +16,9 @@ export interface ResumeTemplate {
 export const resumeTemplates: ResumeTemplate[] = [
   {
     id: "template_0",
-    name: "Bản trống",
+    name: "MặcMặc định",
     description: "",
-    thumbnail: "/templates/blank.webp",
+    thumbnail: "/templates/template_0.webp",
     templateType: TemplateType.TEMPLATE_0,
     data: {
       title: "CV của tôi",
@@ -303,11 +303,12 @@ export const resumeTemplates: ResumeTemplate[] = [
       borderStyle: "square" as BorderStyle
     }
   },
+  /* Template 5 đã bị comment tạm thời
   {
     id: "template_5",
     name: "Mẫu 5",
     description: "",
-    thumbnail: "/templates/creative.webp",
+    thumbnail: "/templates/template_5.webp",
     templateType: TemplateType.TEMPLATE_2,
     data: {
       title: "CV Thanh lịch",
@@ -375,4 +376,5 @@ export const resumeTemplates: ResumeTemplate[] = [
       borderStyle: "squircle" as BorderStyle,
     },
   },
+  */
 ];
